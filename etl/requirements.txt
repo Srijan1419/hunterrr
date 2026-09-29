@@ -1,0 +1,22 @@
+# ETL dependencies for job-market-intel.
+#
+# dlt 1.27.0 and 1.27.1 were yanked: their incremental merge truncates the destination
+# table. The pin below is non-negotiable, and `etl/tests/test_dependencies.py` fails the
+# build if the installed dlt is one of those releases.
+#
+# Verified on Python 3.11.9 with dlt 1.30.0. ADR-001 specifies Python 3.12; the floor
+# here is what was actually run, not what the ADR asks for.
+dlt>=1.27.2
+
+# Required by dlt's SQLAlchemy destination (ADR-005) and used directly by
+# `etl/pipeline/schema.py` to create the contract's tables and indexes.
+sqlalchemy>=2.0
+
+# Required by f1-10: official libSQL client for syncing to Turso over HTTPS.
+# Not a custom HTTP wrapper — the acceptance criteria mandate the official client.
+libsql-client>=0.3.0
+
+# Test dependencies. The ETL's whole reason for writing to a local SQLite file is that
+# `pytest` runs with no network and no API key (ADR-005), so these are the only things
+# needed to run the suite offline.
+pytest>=8.0

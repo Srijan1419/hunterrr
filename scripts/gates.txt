@@ -1,0 +1,20 @@
+# job-market-intel — project gates. One command per line, run before a task's own tests.
+#
+# HOW THIS FILE IS READ TODAY: it is not. The current verify.ps1 resolves its gate file
+# as `Join-Path $PSScriptRoot 'gates.txt'` against the parent repository's copy of
+# scripts/, so that file's gates apply to this project while it lives as a subfolder.
+# This file is forward-prep: once job-market-intel is split into its own repository with
+# `git subtree split --prefix=job-market-intel`, this becomes the real gate file and the
+# parent repository's copy stops applying.
+#
+# Rules for anything added below:
+#   - one command per line, no shell chaining
+#   - a gate must pass with no network access and no API key; the ETL suite is
+#     deliberately offline-testable and a gate that needs credentials is a broken gate
+#   - blank lines and lines starting with '#' are ignored
+#
+# Examples (uncomment for the stack, as it actually lands):
+# cd etl && pytest -q
+# cd web && npm run lint
+# cd web && npm run typecheck
+# cd web && npm test

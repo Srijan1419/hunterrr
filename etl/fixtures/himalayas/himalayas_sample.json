@@ -1,0 +1,245 @@
+{
+  "comments": "21/08/2026: Cursor pagination is now available and is the preferred way to page through the feed. Pass the nextCursor value from each response back as ?cursor=. It is faster than offset and will never return the same job twice. The offset parameter is deprecated and will be removed in a future release. 13/03/2026: The API has been updated to include the companySlug field in the response.",
+  "updatedAt": 1790571697,
+  "offset": 0,
+  "limit": 20,
+  "totalCount": 97976,
+  "nextCursor": "MjAyNi0wOS0yOFQwNDoyNTo0Mi43OTA5NTVafDIyOTM4MDE",
+  "jobs": [
+    {
+      "title": "Mobile Application Developer - AI Neobank App",
+      "excerpt": "About DoitWe are focused on reinventing how people spend, save, invest, exchange, travel, and more.",
+      "companyName": "Bjak",
+      "companySlug": "bjak",
+      "companyLogo": "https://cdn-images.himalayas.app/8ub8wtihrfrm3vfivlkcojai4np3",
+      "employmentType": "Full Time",
+      "minSalary": null,
+      "maxSalary": null,
+      "salaryPeriod": "annual",
+      "seniority": [
+        "Mid-level"
+      ],
+      "currency": null,
+      "locationRestrictions": [
+        "Ireland"
+      ],
+      "timezoneRestrictions": [
+        1
+      ],
+      "categories": [
+        "Mobile-AI-Developer",
+        "AI-Application-Developer",
+        "Mobile-AI-Development",
+        "Mobile-Application-Developer",
+        "AI-Application-Development",
+        "AI-ML-Application-Developer",
+        "Mobile-Apps-Development"
+      ],
+      "parentCategories": [],
+      "description": "<h3><strong>About Doit</strong></h3><p>We are focused on reinventing how people spend, save, invest, exchange, travel, and more. Our objective is to build tools that will help people get more from their money and become an expert at ease. We believe AI will help make finance smart, assessible and safe.   </p><p>We are looking for the most talented and driven people we can find. We are looking for people who work for their passion, not counting hours. Who loves building great next-generation products, not status quo. Who cares about redefining how everyone around us can get the best financial applications, not for an exclusive few. We have teams working around the world, with over 20 nationalities and growing from our offices and remotely. Join us and build a better future for our society.  </p><p><em>In 2019, we built the first mobile-first, insurance platform, enabling insurance to be accessible online by millions in the region. Today, it's the leading insurance platform in Southeast Asia.</em></p><h3><strong>The Role</strong></h3><p>We are looking for Android engineers to build the native Android experience for Doit's AI Neobank App.<br><br>This role is for someone who cares about clean user flows, fast performance, product quality and shipping reliable mobile features used by real customers.</p><h3><strong>What You'll Own</strong></h3><ul>\n<li><p>Build and ship Android features using Kotlin.</p></li>\n<li><p>Create clean mobile flows for insurance, payments, claims, renewals and financial services.</p></li>\n<li><p>Work with product and design to simplify complex user journeys.</p></li>\n<li><p>Integrate backend APIs and ensure mobile flows are stable, secure and reliable.</p></li>\n<li><p>Improve app performance, crash rate, loading states, responsiveness and memory usage.</p></li>\n<li><p>Use analytics, user behaviour and production issues to improve the product.</p></li>\n<li><p>Build AI-assisted mobile experiences only where they genuinely improve the user journey.</p></li>\n</ul><h3><strong>What We're Looking For</strong></h3><ul>\n<li><p>3+ years of Android development experience using Kotlin.</p></li>\n<li><p>Strong Android fundamentals and experience shipping production apps.</p></li>\n<li><p>Good knowledge of Jetpack, Coroutines, Flow and modern Android architecture.</p></li>\n<li><p>Strong sense of mobile UX, usability, edge cases and user flows.</p></li>\n<li><p>Experience integrating REST APIs and debugging production issues.</p></li>\n<li><p>Fast execution, high ownership and strong attention to product quality.</p></li>\n<li><p>App links, GitHub, screenshots or examples of shipped work are a strong advantage.</p></li>\n</ul><h3><strong>Tech Stack</strong></h3><ul>\n<li><h3>Kotlin</h3></li>\n<li><h3>Jetpack Compose</h3></li>\n<li><h3>Android SDK</h3></li>\n<li><h3>Coroutines &amp; Flow</h3></li>\n<li><h3>SQL / NoSQL</h3></li>\n<li><h3>TensorFlow Lite (on-device inference)</h3></li>\n</ul><h3><strong>The Kind of Builder We Want</strong></h3><ul>\n<li><p>Thinks in user journeys, not just screens.</p></li>\n<li><p>Cares about making complex financial products feel simple.</p></li>\n<li><h3>Moves fast without creating messy code.</h3></li>\n<li><p>Notices UX, performance and reliability issues before users complain.</p></li>\n<li><p>Honest about what they personally built, what was team-owned and what impact they can or cannot claim.</p></li>\n</ul><h3><strong>This Role Is Not For</strong></h3><ul>\n<li><p>Engineers who only want fully defined tickets.</p></li>\n<li><p>Developers who build screens without caring about user experience.</p></li>\n<li><p>People who ignore crashes, edge cases, loading states or performance.</p></li>\n<li><p>Engineers who move slowly in a startup environment.</p></li>\n<li><p>People who exaggerate impact without explaining their actual contribution.</p></li>\n</ul><h3><strong>Location</strong></h3><p>This role is remote, but candidates must be based in <strong>Ireland</strong>. We are hiring specifically for this market, so applicants should already be based in <strong>Ireland</strong>.</p><h3><strong>Language</strong></h3><p>English is our main working language across global teams. Strong English communication is required.</p><h3><strong>Interview Process</strong></h3><h3>Our process is designed to move fast:</h3><ol>\n<li><h3>Online assessment or practical task</h3></li>\n<li><h3>Role-specific interview</h3></li>\n<li><h3>CEO / final round</h3></li>\n</ol><p>For strong candidates, we aim to complete the process and make an offer within 1 week from the start of the interview process. Candidates who complete assessments quickly will be prioritized.</p><p>Originally posted on <a href=\"https://himalayas.app\">Himalayas</a></p>",
+      "pubDate": 1790571697,
+      "expiryDate": 1795755696,
+      "applicationLink": "https://himalayas.app/companies/bjak/jobs/mobile-application-developer-ai-neobank-app-7461560433",
+      "guid": "https://himalayas.app/companies/bjak/jobs/mobile-application-developer-ai-neobank-app-7461560433"
+    },
+    {
+      "title": "Product Lead - AI Neobank App",
+      "excerpt": "About BJAKThe original mission of BJAK is we believe people deserve smarter ways to plan, save and grow their money.",
+      "companyName": "Bjak",
+      "companySlug": "bjak",
+      "companyLogo": "https://cdn-images.himalayas.app/8ub8wtihrfrm3vfivlkcojai4np3",
+      "employmentType": "Full Time",
+      "minSalary": null,
+      "maxSalary": null,
+      "salaryPeriod": "annual",
+      "seniority": [
+        "Manager",
+        "Director"
+      ],
+      "currency": null,
+      "locationRestrictions": [
+        "Spain"
+      ],
+      "timezoneRestrictions": [
+        0,
+        1
+      ],
+      "categories": [
+        "AI-Product-Lead",
+        "AI-Product-Manager-Lead",
+        "Banking-Product-Manager",
+        "Fintech-Product-Lead",
+        "Senior-AI-Product-Lead",
+        "Head-Of-AI-Product",
+        "Team-Lead-AI-Products",
+        "Product-Lead"
+      ],
+      "parentCategories": [
+        "Product"
+      ],
+      "description": "<h3>About BJAK</h3><p>The original mission of BJAK is we believe people deserve smarter ways to plan, save and grow their money. This is the origin of our name.<br><br>Started in 2019, we built the first mobile-first, insurance platform, enabling insurance to be accessible online by millions in the region. Today, its the leading insurance platform in Southeast Asia.<br><br>Today, we are expanding ways to help people in the region — this includes spending, saving, investing, exchanging, travelling, and more. Our mission is help people get more from their money every day.<br><br>We have teams working around the world, with over 20 nationalities from our offices and remotely, who truly enjoys their work. We are looking for the most talented and driven people we can find. We are looking for people who work for their passion, not counting hours. Who loves building great next-generation products, not status quo. Who cares about redefining how everyone around us can get the best financial applications, not for an exclusive few.<br><br>If you're this person, we'd love to talk to you.</p><h3><strong>The Role</strong></h3><p>We are looking for product leads to shape and drive major product areas within BJAK's AI Neobank app.<br><br>This role is for senior product builders who can own direction, execution, product quality and outcomes across multiple workstreams or squads.</p><h3><strong>What You'll Own</strong></h3><ul>\n<li><p>Lead product direction for major AI Neobank app areas.</p></li>\n<li><p>Define priorities, roadmap, product standards and success metrics across multiple features or squads.</p></li>\n<li><p>Guide PMs, Product Owners, designers and engineers toward clear execution.</p></li>\n<li><p>Work across insurance, payments, savings, investing, travel and other financial services.</p></li>\n<li><p>Turn regulatory, operational and business constraints into practical product decisions.</p></li>\n<li><p>Drive launch quality, post-launch learning and continuous improvement.</p></li>\n<li><p>Help build a product culture focused on speed, clarity, user value and honest measurement.</p></li>\n</ul><h3>\n<br><strong>What We're Looking For</strong>\n</h3><ul>\n<li><p>Strong experience leading digital product areas, not just individual features.</p></li>\n<li><p>Able to balance strategy, execution, UX, data, engineering and business outcomes.</p></li>\n<li><p>Strong judgement on prioritization, trade-offs and product sequencing.</p></li>\n<li><p>Experience leading or mentoring PMs / POs / cross-functional squads is a strong advantage.</p></li>\n<li><p>Comfortable with high ambiguity, fast changes and senior stakeholder pressure.</p></li>\n<li><p>Able to simplify complex financial products into usable journeys.</p></li>\n<li><p>Experience in fintech, insurance, payments, consumer apps or regulated products is a strong advantage.</p></li>\n</ul><h3>\n<br><strong>The Kind of Builder We Want</strong>\n</h3><ul>\n<li><p>Can set direction and still go deep into details.</p></li>\n<li><p>Pushes teams to move faster without lowering product quality.</p></li>\n<li><p>Knows when to simplify, when to scale and when to say no.</p></li>\n<li><p>Can lead through clarity, not bureaucracy.</p></li>\n<li><p>Avoids false claims and understands that product impact usually comes from many iterations and teams.</p></li>\n</ul><h3>\n<br><strong>This Role Is Not For</strong>\n</h3><ul>\n<li><p>Product leaders who only manage people and meetings.</p></li>\n<li><p>People who cannot go deep into product details.</p></li>\n<li><p>Candidates who are too slow for a high-growth environment.</p></li>\n<li><p>Leaders who push vanity metrics without understanding real user impact.</p></li>\n<li><p>People who need large teams before they can create progress.</p></li>\n</ul><h3>\n<br><strong>Location</strong>\n</h3><p>This role is remote, but candidates must be based in <strong>Spain</strong>. We are hiring specifically for this market, so applicants should already be based in <strong>Spain</strong>.</p><h3><strong>Language</strong></h3><p>English is our main working language across global teams. Strong English communication is required.</p><h3><strong>Interview Process</strong></h3><h3>Our process is designed to move fast:</h3><h3>1. Online assessment or practical task</h3><h3>2. Role-specific interview</h3><h3>3. CEO / final round</h3><p>For strong candidates, we aim to complete the process and make an offer within 1 week from the start of the interview process. Candidates who complete assessments quickly will be prioritized.</p><p>Originally posted on <a href=\"https://himalayas.app\">Himalayas</a></p>",
+      "pubDate": 1790571628,
+      "expiryDate": 1795755627,
+      "applicationLink": "https://himalayas.app/companies/bjak/jobs/product-lead-ai-neobank-app-833162000",
+      "guid": "https://himalayas.app/companies/bjak/jobs/product-lead-ai-neobank-app-833162000"
+    },
+    {
+      "title": "Product Manager - AI Neobank App",
+      "excerpt": "About BJAKThe original mission of BJAK is we believe people deserve smarter ways to plan, save and grow their money.",
+      "companyName": "Bjak",
+      "companySlug": "bjak",
+      "companyLogo": "https://cdn-images.himalayas.app/8ub8wtihrfrm3vfivlkcojai4np3",
+      "employmentType": "Full Time",
+      "minSalary": null,
+      "maxSalary": null,
+      "salaryPeriod": "annual",
+      "seniority": [
+        "Mid-level"
+      ],
+      "currency": null,
+      "locationRestrictions": [
+        "Ireland"
+      ],
+      "timezoneRestrictions": [
+        1
+      ],
+      "categories": [
+        "Banking-Product-Manager",
+        "Bank-Product-Manager",
+        "AI-Product-Manager",
+        "AI-ML-Product-Manager",
+        "Product-Manager-II-AI",
+        "Digital-Banking-Product-Management",
+        "Product-Manager"
+      ],
+      "parentCategories": [
+        "Product"
+      ],
+      "description": "<h3>About BJAK</h3><p>The original mission of BJAK is we believe people deserve smarter ways to plan, save and grow their money. This is the origin of our name.<br><br>Started in 2019, we built the first mobile-first, insurance platform, enabling insurance to be accessible online by millions in the region. Today, its the leading insurance platform in Southeast Asia.<br><br>Today, we are expanding ways to help people in the region — this includes spending, saving, investing, exchanging, travelling, and more. Our mission is help people get more from their money every day.<br><br>We have teams working around the world, with over 20 nationalities from our offices and remotely, who truly enjoys their work. We are looking for the most talented and driven people we can find. We are looking for people who work for their passion, not counting hours. Who loves building great next-generation products, not status quo. Who cares about redefining how everyone around us can get the best financial applications, not for an exclusive few.<br><br>If you're this person, we'd love to talk to you.</p><h3><strong>The Role</strong></h3><p>We are looking for product managers to own product areas within BJAK's AI Neobank app.<br><br>This role is for builders who can understand users, define product direction, work with engineering and design, launch fast and keep improving after release.</p><h3><strong>What You'll Own</strong></h3><ul>\n<li><p>Own product areas across insurance, payments, savings, investing, travel or other financial services.</p></li>\n<li><p>Define user problems, product scope, success metrics, roadmap and launch plans.</p></li>\n<li><p>Work with engineering, design, data, operations, compliance and business teams.</p></li>\n<li><p>Turn complex financial products into simple, usable customer journeys.</p></li>\n<li><p>Use data, feedback, research and production issues to improve product decisions.</p></li>\n<li><p>Launch features, monitor performance and drive iterations.</p></li>\n<li><p>Make trade-offs between speed, user experience, business impact, compliance and operational complexity.</p></li>\n</ul><h3><strong>What We're Looking For</strong></h3><ul>\n<li><p>Experience as Product Manager, Product Owner, founder, growth/product operator or similar role.</p></li>\n<li><p>Strong product sense and ability to simplify complex workflows.</p></li>\n<li><p>Able to work with engineers and designers to ship real products.</p></li>\n<li><p>Comfortable with metrics, user feedback, experiments and post-launch learning.</p></li>\n<li><p>Strong writing, prioritization and stakeholder management.</p></li>\n<li><p>High ownership and ability to drive work with limited guidance.</p></li>\n<li><p>Experience in fintech, insurance, payments, consumer apps or high-growth products is a strong advantage.</p></li>\n</ul><h3><strong>The Kind of Builder We Want</strong></h3><ul>\n<li><p>Starts from user problems, not feature lists.</p></li>\n<li><p>Can make decisions with incomplete information.</p></li>\n<li><p>Knows how to ship quickly and learn after launch.</p></li>\n<li><p>Works well with engineering without hiding behind process.</p></li>\n<li><p>Honest about what changed because of their work versus wider team effort.</p></li>\n</ul><h3><strong>This Role Is Not For</strong></h3><ul>\n<li><p>People who only write decks and do not drive execution.</p></li>\n<li><p>PMs who cannot work deeply with engineering.</p></li>\n<li><p>Candidates who need perfect data before making decisions.</p></li>\n<li><p>People who launch features and then stop caring.</p></li>\n<li><p>PMs who exaggerate business impact without understanding attribution.</p></li>\n</ul><h3><strong>Location</strong></h3><p>This role is remote, but candidates must be based in <strong>Ireland</strong>. We are hiring specifically for this market, so applicants should already be based in <strong>Ireland</strong>.</p><h3><strong>Language</strong></h3><p>English is our main working language across global teams. Strong English communication is required.</p><h3><strong>Interview Process</strong></h3><h3>Our process is designed to move fast:</h3><h3>1. Online assessment or practical task</h3><h3>2. Role-specific interview</h3><h3>3. CEO / final round</h3><p>For strong candidates, we aim to complete the process and make an offer within 1 week from the start of the interview process. Candidates who complete assessments quickly will be prioritized.</p><p>Originally posted on <a href=\"https://himalayas.app\">Himalayas</a></p>",
+      "pubDate": 1790571557,
+      "expiryDate": 1795755557,
+      "applicationLink": "https://himalayas.app/companies/bjak/jobs/product-manager-ai-neobank-app-996242723",
+      "guid": "https://himalayas.app/companies/bjak/jobs/product-manager-ai-neobank-app-996242723"
+    },
+    {
+      "title": "Technical Product Manager",
+      "excerpt": "About BJAKThe original mission of BJAK is we believe people deserve smarter ways to plan, save and grow their money.",
+      "companyName": "Bjak",
+      "companySlug": "bjak",
+      "companyLogo": "https://cdn-images.himalayas.app/8ub8wtihrfrm3vfivlkcojai4np3",
+      "employmentType": "Full Time",
+      "minSalary": null,
+      "maxSalary": null,
+      "salaryPeriod": "annual",
+      "seniority": [
+        "Mid-level",
+        "Senior"
+      ],
+      "currency": null,
+      "locationRestrictions": [
+        "Philippines"
+      ],
+      "timezoneRestrictions": [
+        8
+      ],
+      "categories": [
+        "Technical-Product-Manager",
+        "Technical-Product-Management",
+        "Technical-Product-Leader",
+        "Technical-Product-Lead",
+        "Technical-Product-Management-Jobs",
+        "Tech-Product-Manager",
+        "Technical-Product-Manager-DevOps",
+        "Technical-Product-Owner",
+        "Product-Manager",
+        "Product"
+      ],
+      "parentCategories": [
+        "Product"
+      ],
+      "description": "<h3>About BJAK</h3><p>The original mission of BJAK is we believe people deserve smarter ways to plan, save and grow their money. This is the origin of our name.</p><p>Started in 2019, we built the first mobile-first, insurance platform, enabling insurance to be accessible online by millions in the region. Today, its the leading insurance platform in Southeast Asia.</p><p>Today, we are expanding ways to help people in the region — this includes spending, saving, investing, exchanging, travelling, and more. Our mission is help people get more from their money every day.</p><p>We have teams working around the world, with over 20 nationalities from our offices and remotely, who truly enjoys their work. We are looking for the most talented and driven people we can find. We are looking for people who work for their passion, not counting hours. Who loves building great next-generation products, not status quo. Who cares about redefining how everyone around us can get the best financial applications, not for an exclusive few.</p><p>If you're this person, we'd love to talk to you.</p><h3>The Role</h3><p>BJAK is building a Neobank Superapp for Southeast Asia. As a Technical Product Manager, you’ll own a product vertical end to end—such as payments and expense management, remittance, insurance, or wealth and trading—from strategy, outcomes, and roadmap through to the technical design and delivery of the systems behind it.</p><p>This is a product where real money moves, mistakes are immediately visible, and licensing, compliance, and third-party rails are core product constraints—not considerations around the edges. </p><p>We are AI-native by default, but AI is a means, not the goal. The bar is knowing where a model can genuinely improve an outcome, where deterministic systems must remain in control, and how to build products that are reliable, auditable, and trusted when money is involved.</p><h3>What you'll be doing</h3><ul>\n<li><p><strong>Own a vertical end-to-end</strong> — outcomes and metrics, a backlog prioritised by value / risk / dependency / strategic priority, acceptance criteria crisp enough to build and test against.</p></li>\n<li><p><strong>Shape the technical design with engineering</strong> — system boundaries, money-movement correctness (idempotency, ledgering, reconciliation), third-party-rail reliance and rail-down behaviour, failure/retry/refund paths, security, latency, scalability, recovery.</p></li>\n<li><p><strong>Make hard trade-offs</strong> across correctness, speed, cost, reliability and UX — and defend them to an engineering, compliance or ops lead who pushes back.</p></li>\n<li><p><strong>Treat regulated constraints as first-class product inputs</strong> — licensing scope, CDD/KYC and limits, sanctions/PEP screening, transaction monitoring, data residency and privacy. Know which are hard launch gates and which are forward-readiness.</p></li>\n<li><p><strong>Apply AI where it earns its place</strong> — define what it's allowed to decide, where a human stays in the loop, how it's evaluated, and what it does when unsure. Every AI-surfaced number traces back to a real record.</p></li>\n<li><p><strong>Ship against external gates</strong> — build feature-complete behind flags; go live per rail as each partner and regulatory gate clears.</p></li>\n<li><p><strong>Work across Engineering, Design, Compliance, Operations, Treasury and Finance/Reconciliation.</strong></p></li>\n</ul><h3>What you'll need</h3><ul>\n<li><p><em><strong>Product leadership</strong></em> — significant experience owning a complex technical product end-to-end; strong judgement and decisiveness under ambiguity; ability to balance ambition against technical, regulatory and operational reality; can hold their own with senior engineers.</p></li>\n<li><p><em><strong>Technical foundation</strong></em> — solid system design (boundaries, datastores, queues/workflows, APIs, failure modes, consistency under concurrency); comfort reading, reviewing and challenging design docs; can sketch an architecture and a sequence. No production code, but technical enough that engineers don't have to simplify.</p></li>\n<li><p><em><strong>Domain</strong></em>— experience in a regulated / high-consequence domain (payments, banking, remittance, insurance, …) or demonstrable fast-ramp ability; understands why money movement is different (correctness over convenience, irreversible states, partners you don't control).</p></li>\n<li><p><em><strong>AI judgement</strong></em> — hands-on with LLM-based products; can frame a feature as eval-able (offline, online, human feedback); realistic on hallucination/drift/data gaps, including data-blocked vs model-blocked and when a model must not be in the loop at all.</p></li>\n<li><p><em><strong>Nice to have</strong></em> — engineer or highly-technical-PM background · zero-to-one · shipped AI-heavy consumer products · defined eval metrics for ML/LLM systems · AI UX + failure-handling intuition · SEA market experience.</p></li>\n</ul><h3>Outcomes</h3><ul>\n<li><p>Clear vertical strategy and legible roadmap </p></li>\n<li><p>Ships fast and clears the gates that actually block launch </p></li>\n<li><p>Money is correct and users are never misled about the state of their funds </p></li>\n<li><p>AI features are valuable, predictable and trusted </p></li>\n<li><p>Trade-offs made deliberately under uncertainty and hold up when challenged</p></li>\n<li><p>Engineering, design, compliance, and operations are aligned with minimal friction</p></li>\n</ul><h3><strong>Location</strong></h3><p>This role is remote, but candidates must be based in <strong>Philippines</strong>. We are hiring specifically for this market, so applicants should already be based in <strong>Philippines.</strong></p><h3><strong>Language</strong></h3><p>English is our main working language across global teams. Strong English communication is required.</p><h3><strong>Interview Process</strong></h3><h3>Our process is designed to move fast:</h3><h3>1. Online assessment or practical task</h3><h3>2. Role-specific interview</h3><h3>3. CEO / final round</h3><p>For strong candidates, we aim to complete the process and make an offer within 1 week from the start of the interview process. Candidates who complete assessments quickly will be prioritized.</p><p>Originally posted on <a href=\"https://himalayas.app\">Himalayas</a></p>",
+      "pubDate": 1790571236,
+      "expiryDate": 1795755236,
+      "applicationLink": "https://himalayas.app/companies/bjak/jobs/technical-product-manager-410057252",
+      "guid": "https://himalayas.app/companies/bjak/jobs/technical-product-manager-410057252"
+    },
+    {
+      "title": "Product Lead - AI Neobank App",
+      "excerpt": "About BJAKThe original mission of BJAK is we believe people deserve smarter ways to plan, save and grow their money.",
+      "companyName": "Bjak",
+      "companySlug": "bjak",
+      "companyLogo": "https://cdn-images.himalayas.app/8ub8wtihrfrm3vfivlkcojai4np3",
+      "employmentType": "Full Time",
+      "minSalary": null,
+      "maxSalary": null,
+      "salaryPeriod": "annual",
+      "seniority": [
+        "Manager",
+        "Director"
+      ],
+      "currency": null,
+      "locationRestrictions": [
+        "Sweden"
+      ],
+      "timezoneRestrictions": [
+        1
+      ],
+      "categories": [
+        "AI-Product-Lead",
+        "AI-Product-Manager-Lead",
+        "Banking-Product-Manager",
+        "Fintech-Product-Lead",
+        "Senior-AI-Product-Lead",
+        "Bank-Product-Manager",
+        "Head-Of-AI-Product",
+        "Team-Lead-AI-Products",
+        "Product-Lead"
+      ],
+      "parentCategories": [
+        "Product"
+      ],
+      "description": "<h3>About BJAK</h3><p>The original mission of BJAK is we believe people deserve smarter ways to plan, save and grow their money. This is the origin of our name.<br><br>Started in 2019, we built the first mobile-first, insurance platform, enabling insurance to be accessible online by millions in the region. Today, its the leading insurance platform in Southeast Asia.<br><br>Today, we are expanding ways to help people in the region — this includes spending, saving, investing, exchanging, travelling, and more. Our mission is help people get more from their money every day.<br><br>We have teams working around the world, with over 20 nationalities from our offices and remotely, who truly enjoys their work. We are looking for the most talented and driven people we can find. We are looking for people who work for their passion, not counting hours. Who loves building great next-generation products, not status quo. Who cares about redefining how everyone around us can get the best financial applications, not for an exclusive few.<br><br>If you're this person, we'd love to talk to you.</p><h3><strong>The Role</strong></h3><p>We are looking for product leads to shape and drive major product areas within BJAK's AI Neobank app.<br><br>This role is for senior product builders who can own direction, execution, product quality and outcomes across multiple workstreams or squads.</p><h3><strong>What You'll Own</strong></h3><ul>\n<li><p>Lead product direction for major AI Neobank app areas.</p></li>\n<li><p>Define priorities, roadmap, product standards and success metrics across multiple features or squads.</p></li>\n<li><p>Guide PMs, Product Owners, designers and engineers toward clear execution.</p></li>\n<li><p>Work across insurance, payments, savings, investing, travel and other financial services.</p></li>\n<li><p>Turn regulatory, operational and business constraints into practical product decisions.</p></li>\n<li><p>Drive launch quality, post-launch learning and continuous improvement.</p></li>\n<li><p>Help build a product culture focused on speed, clarity, user value and honest measurement.</p></li>\n</ul><h3>\n<br><strong>What We're Looking For</strong>\n</h3><ul>\n<li><p>Strong experience leading digital product areas, not just individual features.</p></li>\n<li><p>Able to balance strategy, execution, UX, data, engineering and business outcomes.</p></li>\n<li><p>Strong judgement on prioritization, trade-offs and product sequencing.</p></li>\n<li><p>Experience leading or mentoring PMs / POs / cross-functional squads is a strong advantage.</p></li>\n<li><p>Comfortable with high ambiguity, fast changes and senior stakeholder pressure.</p></li>\n<li><p>Able to simplify complex financial products into usable journeys.</p></li>\n<li><p>Experience in fintech, insurance, payments, consumer apps or regulated products is a strong advantage.</p></li>\n</ul><h3>\n<br><strong>The Kind of Builder We Want</strong>\n</h3><ul>\n<li><p>Can set direction and still go deep into details.</p></li>\n<li><p>Pushes teams to move faster without lowering product quality.</p></li>\n<li><p>Knows when to simplify, when to scale and when to say no.</p></li>\n<li><p>Can lead through clarity, not bureaucracy.</p></li>\n<li><p>Avoids false claims and understands that product impact usually comes from many iterations and teams.</p></li>\n</ul><h3>\n<br><strong>This Role Is Not For</strong>\n</h3><ul>\n<li><p>Product leaders who only manage people and meetings.</p></li>\n<li><p>People who cannot go deep into product details.</p></li>\n<li><p>Candidates who are too slow for a high-growth environment.</p></li>\n<li><p>Leaders who push vanity metrics without understanding real user impact.</p></li>\n<li><p>People who need large teams before they can create progress.</p></li>\n</ul><h3>\n<br><strong>Location</strong>\n</h3><p>This role is remote, but candidates must be based in <strong>Sweden</strong>. We are hiring specifically for this market, so applicants should already be based in <strong>Sweden</strong>.</p><h3><strong>Language</strong></h3><p>English is our main working language across global teams. Strong English communication is required.</p><h3><strong>Interview Process</strong></h3><h3>Our process is designed to move fast:</h3><h3>1. Online assessment or practical task</h3><h3>2. Role-specific interview</h3><h3>3. CEO / final round</h3><p>For strong candidates, we aim to complete the process and make an offer within 1 week from the start of the interview process. Candidates who complete assessments quickly will be prioritized.</p><p>Originally posted on <a href=\"https://himalayas.app\">Himalayas</a></p>",
+      "pubDate": 1790570998,
+      "expiryDate": 1795754998,
+      "applicationLink": "https://himalayas.app/companies/bjak/jobs/product-lead-ai-neobank-app-2119832135",
+      "guid": "https://himalayas.app/companies/bjak/jobs/product-lead-ai-neobank-app-2119832135"
+    },
+    {
+      "title": "Backend Software Engineer - AI Finance Agent",
+      "excerpt": "About BJAKThe original mission of BJAK is we believe people deserve smarter ways to plan, save and grow their money.",
+      "companyName": "Bjak",
+      "companySlug": "bjak",
+      "companyLogo": "https://cdn-images.himalayas.app/8ub8wtihrfrm3vfivlkcojai4np3",
+      "employmentType": "Full Time",
+      "minSalary": null,
+      "maxSalary": null,
+      "salaryPeriod": "annual",
+      "seniority": [
+        "Mid-level"
+      ],
+      "currency": null,
+      "locationRestrictions": [
+        "Poland"
+      ],
+      "timezoneRestrictions": [
+        1
+      ],
+      "categories": [
+        "Backend-AI-Engineer",
+        "AI-Backend-Engineer",
+        "Fintech-Backend-Developer",
+        "Backend-AI-Engineering",
+        "Software-Engineer",
+        "Developer"
+      ],
+      "parentCategories": [
+        "Developer"
+      ],
+      "description": "<h3><strong>About BJAK</strong></h3><p>The original mission of BJAK is we believe people deserve smarter ways to plan, save and grow their money. This is the origin of our name.<br><br>Started in 2019, we built the first mobile-first, insurance platform, enabling insurance to be accessible online by millions in the region. Today, its the leading insurance platform in Southeast Asia.<br><br>Today, we are expanding ways to help people in the region — this includes spending, saving, investing, exchanging, travelling, and more. Our mission is help people get more from their money every day.<br><br>We have teams working around the world, with over 20 nationalities from our offices and remotely, who truly enjoys their work. We are looking for the most talented and driven people we can find. We are looking for people who work for their passion, not counting hours. Who loves building great next-generation products, not status quo. Who cares about redefining how everyone around us can get the best financial applications, not for an exclusive few.<br><br>If you're this person, we'd love to talk to you.</p><h3><strong>The Role</strong></h3><p>We are looking for backend engineers to build the core systems behind BJAK's AI Finance Agent.<br><br>This role is for engineers who can build reliable APIs, workflows and financial product infrastructure that can scale across markets, partners and millions of users.</p><h3><strong>What You'll Own</strong></h3><ul>\n<li><p>Build backend services, APIs and workflows for the AI Neobank app.</p></li>\n<li><p>Support products across insurance, payments, wallet, savings, investing, travel and financial services.</p></li>\n<li><p>Design reliable systems for user accounts, transactions, partner integrations, reconciliation, notifications and operations.</p></li>\n<li><p>Work with product and mobile teams to ship customer-facing journeys quickly.</p></li>\n<li><p>Integrate with banks, payment gateways, insurers, data providers and other partners.</p></li>\n<li><p>Improve system reliability, observability, security and performance.</p></li>\n<li><p>Build systems that are practical, auditable and ready for regulated financial products.</p></li>\n</ul><h3><strong>What We're Looking For</strong></h3><ul>\n<li><p>3+ years of backend engineering experience.</p></li>\n<li><p>Strong fundamentals in APIs, databases, system design and production debugging.</p></li>\n<li><p>Experience building scalable services and integrating third-party systems.</p></li>\n<li><p>Good understanding of security, reliability, data quality and operational edge cases.</p></li>\n<li><p>Able to make practical trade-offs between speed, quality and risk.</p></li>\n<li><p>Comfortable working with product, mobile, operations and business teams.</p></li>\n<li><p>Experience in fintech, payments, insurance, lending, banking or regulated products is a strong advantage.</p></li>\n</ul><h3><strong>The Kind of Builder We Want</strong></h3><ul>\n<li><p>Builds systems that work in the real world, not just on diagrams.</p></li>\n<li><p>Thinks through edge cases, failure modes and operational impact.</p></li>\n<li><p>Can move fast without creating fragile foundations.</p></li>\n<li><p>Takes ownership of production issues and long-term reliability.</p></li>\n<li><p>Explains clearly what they personally built versus what the team delivered.</p></li>\n</ul><h3><strong>This Role Is Not For</strong></h3><ul>\n<li><p>Engineers who only want isolated backend tasks.</p></li>\n<li><p>People who ignore security, data consistency, monitoring or operational risk.</p></li>\n<li><p>Developers who cannot work with fast-changing product requirements.</p></li>\n<li><p>Candidates who talk about scale but have not handled production systems.</p></li>\n<li><p>People who exaggerate impact without being clear on ownership.</p></li>\n</ul><h3><strong>Location</strong></h3><p>This role is remote, but candidates must be based in <strong>Poland</strong>. We are hiring specifically for this market, so applicants should already be based in <strong>Poland</strong>.</p><h3><strong>Language</strong></h3><p>English is our main working language across global teams. Strong English communication is required.</p><h3><strong>Interview Process</strong></h3><h3>Our process is designed to move fast:</h3><h3>1. Online assessment or practical task</h3><h3>2. Technical interview</h3><h3>3. CEO / final round</h3><p>For strong candidates, we aim to complete the process and make an offer within 1 week from the start of the interview process. Candidates who complete assessments quickly will be prioritized.</p><p>Originally posted on <a href=\"https://himalayas.app\">Himalayas</a></p>",
+      "pubDate": 1790570861,
+      "expiryDate": 1795754861,
+      "applicationLink": "https://himalayas.app/companies/bjak/jobs/backend-software-engineer-ai-finance-agent-4971024681",
+      "guid": "https://himalayas.app/companies/bjak/jobs/backend-software-engineer-ai-finance-agent-4971024681"
+    }
+  ]
+}

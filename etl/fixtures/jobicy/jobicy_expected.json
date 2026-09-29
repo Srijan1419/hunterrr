@@ -1,0 +1,496 @@
+[
+  {
+    "contract": "job-market-intel/etl/contract/schema.md + normalization.md",
+    "contract_version": "f1-02/2026-09-28",
+    "generated_by": "a reference implementation of the documented rules, executed against the committed fixtures. Not the production normalizer (that is task 7); if the two disagree, the contract document wins.",
+    "covers": "only the fields the four-step ladder determines deterministically. job_skills is absent by design: skills come from the LLM (task 8) and have no deterministic oracle.",
+    "ladder_step_note": "step=1 source field, step=2 deterministic rule, step=3 LLM, step=4 unknown. No expected value here uses step 3."
+  },
+  {
+    "_fixture_case": "jobLevel_Any_no_signal",
+    "id": "jobicy:154117",
+    "source_id": "154117",
+    "country": "US",
+    "countries_all": [
+      "US"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "USA",
+    "location_encoding_repaired": false,
+    "seniority": "senior",
+    "role_type": "non_technical",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 4478,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 4478,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 2,
+      "role_type": 1,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:source_field_jobGeo(country:USA->US)",
+      "seniority": "rule:seniority_title(senior:expert)",
+      "role_type": "source_field:jobIndustry=Legal & Compliance",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "jobLevel_Entry-Level_Junior_comma_inside_one_string",
+    "id": "jobicy:151655",
+    "source_id": "151655",
+    "country": "MX",
+    "countries_all": [
+      "MX"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "Mexico",
+    "location_encoding_repaired": false,
+    "seniority": "entry",
+    "role_type": "non_technical",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 3471,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 3471,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 1,
+      "role_type": 1,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:source_field_jobGeo(country:Mexico->MX)",
+      "seniority": "source_field:jobLevel='Entry-Level, Junior'->entry",
+      "role_type": "source_field:jobIndustry=Sales",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "jobLevel_Midweight",
+    "id": "jobicy:147495",
+    "source_id": "147495",
+    "country": "US",
+    "countries_all": [
+      "US"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "USA",
+    "location_encoding_repaired": false,
+    "seniority": "mid",
+    "role_type": "technical",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 9517,
+    "description_truncated_for_llm": true,
+    "llm_input_chars": 5736,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 1,
+      "role_type": 1,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:source_field_jobGeo(country:USA->US)",
+      "seniority": "source_field:jobLevel='Midweight'->mid",
+      "role_type": "source_field:jobIndustry=Data Science & Analytics",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "jobLevel_Director_with_pay_disclosed",
+    "id": "jobicy:154115",
+    "source_id": "154115",
+    "country": "CA",
+    "countries_all": [
+      "CA"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "Canada",
+    "location_encoding_repaired": false,
+    "seniority": "lead",
+    "role_type": "non_technical",
+    "salary_min": 130000,
+    "salary_max": 170000,
+    "salary_currency": "unknown",
+    "salary_period": "annual",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 6065,
+    "description_truncated_for_llm": true,
+    "llm_input_chars": 5803,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 1,
+      "role_type": 1,
+      "salary": 1
+    },
+    "rules_fired": {
+      "country": "rule:source_field_jobGeo(country:Canada->CA)",
+      "seniority": "source_field:jobLevel='Director'->lead",
+      "role_type": "source_field:jobIndustry=Customer Support & Success",
+      "salary": "accept"
+    }
+  },
+  {
+    "_fixture_case": "jobGeo_Anywhere_global",
+    "id": "jobicy:151889",
+    "source_id": "151889",
+    "country": null,
+    "countries_all": null,
+    "remote_scope": "global",
+    "location_raw": "Anywhere",
+    "location_encoding_repaired": false,
+    "seniority": "unknown",
+    "role_type": "technical",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 6073,
+    "description_truncated_for_llm": true,
+    "llm_input_chars": 5819,
+    "ladder_steps": {
+      "country": 1,
+      "seniority": 4,
+      "role_type": 1,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:source_asserts_global_jobGeo=Anywhere",
+      "seniority": "no_source_field_no_keyword_hit",
+      "role_type": "source_field:jobIndustry=Technical Support",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "jobGeo_multi_region_and_country_double_spaced",
+    "id": "jobicy:147422",
+    "source_id": "147422",
+    "country": "CA",
+    "countries_all": [
+      "CA",
+      "US"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "EMEA, LATAM, Canada, USA",
+    "location_encoding_repaired": false,
+    "seniority": "unknown",
+    "role_type": "non_technical",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 5550,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 5550,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 4,
+      "role_type": 1,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:source_field_jobGeo(region_not_country:EMEA;region_not_country:LATAM;country:Canada->CA;country:USA->US)",
+      "seniority": "no_source_field_no_keyword_hit",
+      "role_type": "source_field:jobIndustry=Finance & Accounting",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "jobGeo_two_countries_double_spaced",
+    "id": "jobicy:154118",
+    "source_id": "154118",
+    "country": "CA",
+    "countries_all": [
+      "CA",
+      "US"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "Canada, USA",
+    "location_encoding_repaired": false,
+    "seniority": "lead",
+    "role_type": "non_technical",
+    "salary_min": 220000,
+    "salary_max": 250000,
+    "salary_currency": "USD",
+    "salary_period": "annual",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 5134,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 5134,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 1,
+      "role_type": 1,
+      "salary": 1
+    },
+    "rules_fired": {
+      "country": "rule:source_field_jobGeo(country:Canada->CA;country:USA->US)",
+      "seniority": "source_field:jobLevel='Director'->lead",
+      "role_type": "source_field:jobIndustry=Business Development",
+      "salary": "accept"
+    }
+  },
+  {
+    "_fixture_case": "jobGeo_two_countries_european",
+    "id": "jobicy:154104",
+    "source_id": "154104",
+    "country": "CZ",
+    "countries_all": [
+      "CZ",
+      "SK"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "Czechia, Slovakia",
+    "location_encoding_repaired": false,
+    "seniority": "senior",
+    "role_type": "non_technical",
+    "salary_min": 700600,
+    "salary_max": 700600,
+    "salary_currency": "CZK",
+    "salary_period": "annual",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 9264,
+    "description_truncated_for_llm": true,
+    "llm_input_chars": 5982,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 1,
+      "role_type": 1,
+      "salary": 1
+    },
+    "rules_fired": {
+      "country": "rule:source_field_jobGeo(country:Czechia->CZ;country:Slovakia->SK)",
+      "seniority": "source_field:jobLevel='Senior'->senior",
+      "role_type": "source_field:jobIndustry=Customer Support & Success",
+      "salary": "accept"
+    }
+  },
+  {
+    "_fixture_case": "jobGeo_single_country",
+    "id": "jobicy:151895",
+    "source_id": "151895",
+    "country": "UA",
+    "countries_all": [
+      "UA"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "Ukraine",
+    "location_encoding_repaired": false,
+    "seniority": "unknown",
+    "role_type": "technical",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 4152,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 4152,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 4,
+      "role_type": 1,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:source_field_jobGeo(country:Ukraine->UA)",
+      "seniority": "no_source_field_no_keyword_hit",
+      "role_type": "source_field:jobIndustry=Technical Support",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "salary_min_present_max_absent",
+    "id": "jobicy:151779",
+    "source_id": "151779",
+    "country": "US",
+    "countries_all": [
+      "US"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "USA",
+    "location_encoding_repaired": false,
+    "seniority": "senior",
+    "role_type": "technical",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 7646,
+    "description_truncated_for_llm": true,
+    "llm_input_chars": 5994,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 1,
+      "role_type": 1,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:source_field_jobGeo(country:USA->US)",
+      "seniority": "source_field:jobLevel='Senior'->senior",
+      "role_type": "source_field:jobIndustry=Software Engineering",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "salary_period_monthly",
+    "id": "jobicy:151893",
+    "source_id": "151893",
+    "country": null,
+    "countries_all": null,
+    "remote_scope": "unknown",
+    "location_raw": "LATAM",
+    "location_encoding_repaired": false,
+    "seniority": "unknown",
+    "role_type": "non_technical",
+    "salary_min": 500,
+    "salary_max": 600,
+    "salary_currency": "USD",
+    "salary_period": "monthly",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 2231,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 2231,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 4,
+      "role_type": 1,
+      "salary": 1
+    },
+    "rules_fired": {
+      "country": "rule:source_field_jobGeo(region_not_country:LATAM)",
+      "seniority": "no_source_field_no_keyword_hit",
+      "role_type": "source_field:jobIndustry=Admin & Virtual Assistance",
+      "salary": "accept"
+    }
+  },
+  {
+    "_fixture_case": "salary_period_hourly",
+    "id": "jobicy:154111",
+    "source_id": "154111",
+    "country": "US",
+    "countries_all": [
+      "US"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "USA",
+    "location_encoding_repaired": false,
+    "seniority": "unknown",
+    "role_type": "non_technical",
+    "salary_min": 20,
+    "salary_max": 25,
+    "salary_currency": "USD",
+    "salary_period": "hourly",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 2679,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 2679,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 4,
+      "role_type": 1,
+      "salary": 1
+    },
+    "rules_fired": {
+      "country": "rule:source_field_jobGeo(country:USA->US)",
+      "seniority": "no_source_field_no_keyword_hit",
+      "role_type": "source_field:jobIndustry=Education & E-learning",
+      "salary": "accept"
+    }
+  },
+  {
+    "_fixture_case": "salary_currency_eur",
+    "id": "jobicy:151861",
+    "source_id": "151861",
+    "country": null,
+    "countries_all": null,
+    "remote_scope": "unknown",
+    "location_raw": "Europe",
+    "location_encoding_repaired": false,
+    "seniority": "senior",
+    "role_type": "technical",
+    "salary_min": 154000,
+    "salary_max": 188000,
+    "salary_currency": "EUR",
+    "salary_period": "annual",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 17940,
+    "description_truncated_for_llm": true,
+    "llm_input_chars": 5985,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 1,
+      "role_type": 1,
+      "salary": 1
+    },
+    "rules_fired": {
+      "country": "rule:source_field_jobGeo(region_not_country:Europe)",
+      "seniority": "source_field:jobLevel='Senior'->senior",
+      "role_type": "source_field:jobIndustry=DevOps & Infrastructure",
+      "salary": "accept"
+    }
+  },
+  {
+    "_fixture_case": "industry_technical",
+    "id": "jobicy:154114",
+    "source_id": "154114",
+    "country": "US",
+    "countries_all": [
+      "US"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "USA",
+    "location_encoding_repaired": false,
+    "seniority": "senior",
+    "role_type": "technical",
+    "salary_min": 230000,
+    "salary_max": 250000,
+    "salary_currency": "USD",
+    "salary_period": "annual",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 6341,
+    "description_truncated_for_llm": true,
+    "llm_input_chars": 5560,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 1,
+      "role_type": 1,
+      "salary": 1
+    },
+    "rules_fired": {
+      "country": "rule:source_field_jobGeo(country:USA->US)",
+      "seniority": "source_field:jobLevel='Senior'->senior",
+      "role_type": "source_field:jobIndustry=Software Engineering",
+      "salary": "accept"
+    }
+  }
+]

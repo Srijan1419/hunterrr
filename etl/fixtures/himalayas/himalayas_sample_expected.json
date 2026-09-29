@@ -1,0 +1,232 @@
+[
+  {
+    "contract": "job-market-intel/etl/contract/schema.md + normalization.md",
+    "contract_version": "f1-02/2026-09-28",
+    "generated_by": "a reference implementation of the documented rules, executed against the committed fixtures. Not the production normalizer (that is task 7); if the two disagree, the contract document wins.",
+    "covers": "only the fields the four-step ladder determines deterministically. job_skills is absent by design: skills come from the LLM (task 8) and have no deterministic oracle.",
+    "ladder_step_note": "step=1 source field, step=2 deterministic rule, step=3 LLM, step=4 unknown. No expected value here uses step 3."
+  },
+  {
+    "_fixture_case": "sample",
+    "id": "himalayas:https://himalayas.app/companies/bjak/jobs/mobile-application-developer-ai-neobank-app-7461560433",
+    "source_id": "https://himalayas.app/companies/bjak/jobs/mobile-application-developer-ai-neobank-app-7461560433",
+    "country": "IE",
+    "countries_all": [
+      "IE"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "Ireland",
+    "location_encoding_repaired": false,
+    "seniority": "mid",
+    "role_type": "technical",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": 60,
+    "timezone_offsets_all_minutes": [
+      60
+    ],
+    "description_chars": 3706,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 3706,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 1,
+      "role_type": 2,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:source_field_locationRestrictions(country:Ireland->IE)",
+      "seniority": "source_field:seniority=['Mid-level']->mid",
+      "role_type": "rule:role_type_title_only(technical:developer,mobile)",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "sample",
+    "id": "himalayas:https://himalayas.app/companies/bjak/jobs/product-lead-ai-neobank-app-833162000",
+    "source_id": "https://himalayas.app/companies/bjak/jobs/product-lead-ai-neobank-app-833162000",
+    "country": "ES",
+    "countries_all": [
+      "ES"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "Spain",
+    "location_encoding_repaired": false,
+    "seniority": "lead",
+    "role_type": "unknown",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": 0,
+    "timezone_offsets_all_minutes": [
+      0,
+      60
+    ],
+    "description_chars": 3784,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 3784,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 1,
+      "role_type": 4,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:source_field_locationRestrictions(country:Spain->ES)",
+      "seniority": "source_field:seniority=['Manager', 'Director']->lead",
+      "role_type": "no_source_field_no_keyword_hit",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "sample",
+    "id": "himalayas:https://himalayas.app/companies/bjak/jobs/product-manager-ai-neobank-app-996242723",
+    "source_id": "https://himalayas.app/companies/bjak/jobs/product-manager-ai-neobank-app-996242723",
+    "country": "IE",
+    "countries_all": [
+      "IE"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "Ireland",
+    "location_encoding_repaired": false,
+    "seniority": "mid",
+    "role_type": "unknown",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": 60,
+    "timezone_offsets_all_minutes": [
+      60
+    ],
+    "description_chars": 3701,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 3701,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 1,
+      "role_type": 4,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:source_field_locationRestrictions(country:Ireland->IE)",
+      "seniority": "source_field:seniority=['Mid-level']->mid",
+      "role_type": "no_source_field_no_keyword_hit",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "sample",
+    "id": "himalayas:https://himalayas.app/companies/bjak/jobs/technical-product-manager-410057252",
+    "source_id": "https://himalayas.app/companies/bjak/jobs/technical-product-manager-410057252",
+    "country": "PH",
+    "countries_all": [
+      "PH"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "Philippines",
+    "location_encoding_repaired": false,
+    "seniority": "senior",
+    "role_type": "technical",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": 480,
+    "timezone_offsets_all_minutes": [
+      480
+    ],
+    "description_chars": 5505,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 5505,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 1,
+      "role_type": 2,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:source_field_locationRestrictions(country:Philippines->PH)",
+      "seniority": "source_field:seniority=['Mid-level', 'Senior']->senior",
+      "role_type": "rule:role_type_title_only(technical:technical)",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "sample",
+    "id": "himalayas:https://himalayas.app/companies/bjak/jobs/product-lead-ai-neobank-app-2119832135",
+    "source_id": "https://himalayas.app/companies/bjak/jobs/product-lead-ai-neobank-app-2119832135",
+    "country": "SE",
+    "countries_all": [
+      "SE"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "Sweden",
+    "location_encoding_repaired": false,
+    "seniority": "lead",
+    "role_type": "unknown",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": 60,
+    "timezone_offsets_all_minutes": [
+      60
+    ],
+    "description_chars": 3786,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 3786,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 1,
+      "role_type": 4,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:source_field_locationRestrictions(country:Sweden->SE)",
+      "seniority": "source_field:seniority=['Manager', 'Director']->lead",
+      "role_type": "no_source_field_no_keyword_hit",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "sample",
+    "id": "himalayas:https://himalayas.app/companies/bjak/jobs/backend-software-engineer-ai-finance-agent-4971024681",
+    "source_id": "https://himalayas.app/companies/bjak/jobs/backend-software-engineer-ai-finance-agent-4971024681",
+    "country": "PL",
+    "countries_all": [
+      "PL"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "Poland",
+    "location_encoding_repaired": false,
+    "seniority": "mid",
+    "role_type": "technical",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": 60,
+    "timezone_offsets_all_minutes": [
+      60
+    ],
+    "description_chars": 3846,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 3846,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 1,
+      "role_type": 1,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:source_field_locationRestrictions(country:Poland->PL)",
+      "seniority": "source_field:seniority=['Mid-level']->mid",
+      "role_type": "source_field:parentCategories=Developer",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  }
+]

@@ -1,0 +1,211 @@
+[
+  {
+    "contract": "job-market-intel/etl/contract/schema.md + normalization.md",
+    "contract_version": "f1-02/2026-09-28",
+    "generated_by": "a reference implementation of the documented rules, executed against the committed fixtures. Not the production normalizer (that is task 7); if the two disagree, the contract document wins.",
+    "covers": "only the fields the four-step ladder determines deterministically. job_skills is absent by design: skills come from the LLM (task 8) and have no deterministic oracle.",
+    "ladder_step_note": "step=1 source field, step=2 deterministic rule, step=3 LLM, step=4 unknown. No expected value here uses step 3."
+  },
+  {
+    "_fixture_case": "sample",
+    "id": "remoteok:1137434",
+    "source_id": "1137434",
+    "country": "US",
+    "countries_all": [
+      "US"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "SIHO - Columbus, IN",
+    "location_encoding_repaired": false,
+    "seniority": "lead",
+    "role_type": "unknown",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 4014,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 4014,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 2,
+      "role_type": 4,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location(unmatched:SIHO;city:Columbus->US;remote_qualifier_words:in;us_state:IN->US)",
+      "seniority": "rule:seniority_title(lead:director)",
+      "role_type": "no_source_field_no_keyword_hit",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "sample",
+    "id": "remoteok:1137431",
+    "source_id": "1137431",
+    "country": null,
+    "countries_all": null,
+    "remote_scope": "unknown",
+    "location_raw": null,
+    "location_encoding_repaired": false,
+    "seniority": "unknown",
+    "role_type": "unknown",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 3816,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 3816,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 4,
+      "role_type": 4,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location()",
+      "seniority": "no_source_field_no_keyword_hit",
+      "role_type": "no_source_field_no_keyword_hit",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "sample",
+    "id": "remoteok:1137429",
+    "source_id": "1137429",
+    "country": null,
+    "countries_all": null,
+    "remote_scope": "unknown",
+    "location_raw": null,
+    "location_encoding_repaired": false,
+    "seniority": "unknown",
+    "role_type": "unknown",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 2448,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 2448,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 4,
+      "role_type": 4,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location()",
+      "seniority": "no_source_field_no_keyword_hit",
+      "role_type": "no_source_field_no_keyword_hit",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "sample",
+    "id": "remoteok:1137428",
+    "source_id": "1137428",
+    "country": null,
+    "countries_all": null,
+    "remote_scope": "unknown",
+    "location_raw": null,
+    "location_encoding_repaired": false,
+    "seniority": "unknown",
+    "role_type": "non_technical",
+    "salary_min": 70000,
+    "salary_max": 80000,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 1409,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 1409,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 4,
+      "role_type": 2,
+      "salary": 1
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location()",
+      "seniority": "no_source_field_no_keyword_hit",
+      "role_type": "rule:role_type_title_only(non_technical:video)",
+      "salary": "accept"
+    }
+  },
+  {
+    "_fixture_case": "sample",
+    "id": "remoteok:1137427",
+    "source_id": "1137427",
+    "country": null,
+    "countries_all": null,
+    "remote_scope": "unknown",
+    "location_raw": null,
+    "location_encoding_repaired": false,
+    "seniority": "unknown",
+    "role_type": "technical",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 634,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 634,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 4,
+      "role_type": 2,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location()",
+      "seniority": "no_source_field_no_keyword_hit",
+      "role_type": "rule:role_type_title_only(technical:engineer,software)",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "sample",
+    "id": "remoteok:1137421",
+    "source_id": "1137421",
+    "country": "DE",
+    "countries_all": [
+      "DE"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "Germany",
+    "location_encoding_repaired": false,
+    "seniority": "lead",
+    "role_type": "technical",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 5067,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 5067,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 2,
+      "role_type": 2,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location(country:Germany->DE)",
+      "seniority": "rule:seniority_title(lead:manager)",
+      "role_type": "rule:role_type_title_only(technical:technical)",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  }
+]

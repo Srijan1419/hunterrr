@@ -1,0 +1,221 @@
+[
+  {
+    "contract": "job-market-intel/etl/contract/schema.md + normalization.md",
+    "contract_version": "f1-02/2026-09-28",
+    "generated_by": "a reference implementation of the documented rules, executed against the committed fixtures. Not the production normalizer (that is task 7); if the two disagree, the contract document wins.",
+    "covers": "only the fields the four-step ladder determines deterministically. job_skills is absent by design: skills come from the LLM (task 8) and have no deterministic oracle.",
+    "ladder_step_note": "step=1 source field, step=2 deterministic rule, step=3 LLM, step=4 unknown. No expected value here uses step 3."
+  },
+  {
+    "_fixture_case": "sample",
+    "id": "jobicy:154115",
+    "source_id": "154115",
+    "country": "CA",
+    "countries_all": [
+      "CA"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "Canada",
+    "location_encoding_repaired": false,
+    "seniority": "lead",
+    "role_type": "non_technical",
+    "salary_min": 130000,
+    "salary_max": 170000,
+    "salary_currency": "unknown",
+    "salary_period": "annual",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 6065,
+    "description_truncated_for_llm": true,
+    "llm_input_chars": 5803,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 1,
+      "role_type": 1,
+      "salary": 1
+    },
+    "rules_fired": {
+      "country": "rule:source_field_jobGeo(country:Canada->CA)",
+      "seniority": "source_field:jobLevel='Director'->lead",
+      "role_type": "source_field:jobIndustry=Customer Support & Success",
+      "salary": "accept"
+    }
+  },
+  {
+    "_fixture_case": "sample",
+    "id": "jobicy:154114",
+    "source_id": "154114",
+    "country": "US",
+    "countries_all": [
+      "US"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "USA",
+    "location_encoding_repaired": false,
+    "seniority": "senior",
+    "role_type": "technical",
+    "salary_min": 230000,
+    "salary_max": 250000,
+    "salary_currency": "USD",
+    "salary_period": "annual",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 6341,
+    "description_truncated_for_llm": true,
+    "llm_input_chars": 5560,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 1,
+      "role_type": 1,
+      "salary": 1
+    },
+    "rules_fired": {
+      "country": "rule:source_field_jobGeo(country:USA->US)",
+      "seniority": "source_field:jobLevel='Senior'->senior",
+      "role_type": "source_field:jobIndustry=Software Engineering",
+      "salary": "accept"
+    }
+  },
+  {
+    "_fixture_case": "sample",
+    "id": "jobicy:154119",
+    "source_id": "154119",
+    "country": "US",
+    "countries_all": [
+      "US"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "USA",
+    "location_encoding_repaired": false,
+    "seniority": "senior",
+    "role_type": "technical",
+    "salary_min": 165000,
+    "salary_max": 210000,
+    "salary_currency": "USD",
+    "salary_period": "annual",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 6161,
+    "description_truncated_for_llm": true,
+    "llm_input_chars": 5380,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 1,
+      "role_type": 1,
+      "salary": 1
+    },
+    "rules_fired": {
+      "country": "rule:source_field_jobGeo(country:USA->US)",
+      "seniority": "source_field:jobLevel='Senior'->senior",
+      "role_type": "source_field:jobIndustry=Web, UI & UX Design",
+      "salary": "accept"
+    }
+  },
+  {
+    "_fixture_case": "sample",
+    "id": "jobicy:154118",
+    "source_id": "154118",
+    "country": "CA",
+    "countries_all": [
+      "CA",
+      "US"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "Canada, USA",
+    "location_encoding_repaired": false,
+    "seniority": "lead",
+    "role_type": "non_technical",
+    "salary_min": 220000,
+    "salary_max": 250000,
+    "salary_currency": "USD",
+    "salary_period": "annual",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 5134,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 5134,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 1,
+      "role_type": 1,
+      "salary": 1
+    },
+    "rules_fired": {
+      "country": "rule:source_field_jobGeo(country:Canada->CA;country:USA->US)",
+      "seniority": "source_field:jobLevel='Director'->lead",
+      "role_type": "source_field:jobIndustry=Business Development",
+      "salary": "accept"
+    }
+  },
+  {
+    "_fixture_case": "sample",
+    "id": "jobicy:154117",
+    "source_id": "154117",
+    "country": "US",
+    "countries_all": [
+      "US"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "USA",
+    "location_encoding_repaired": false,
+    "seniority": "senior",
+    "role_type": "non_technical",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 4478,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 4478,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 2,
+      "role_type": 1,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:source_field_jobGeo(country:USA->US)",
+      "seniority": "rule:seniority_title(senior:expert)",
+      "role_type": "source_field:jobIndustry=Legal & Compliance",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "sample",
+    "id": "jobicy:154104",
+    "source_id": "154104",
+    "country": "CZ",
+    "countries_all": [
+      "CZ",
+      "SK"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "Czechia, Slovakia",
+    "location_encoding_repaired": false,
+    "seniority": "senior",
+    "role_type": "non_technical",
+    "salary_min": 700600,
+    "salary_max": 700600,
+    "salary_currency": "CZK",
+    "salary_period": "annual",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 9264,
+    "description_truncated_for_llm": true,
+    "llm_input_chars": 5982,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 1,
+      "role_type": 1,
+      "salary": 1
+    },
+    "rules_fired": {
+      "country": "rule:source_field_jobGeo(country:Czechia->CZ;country:Slovakia->SK)",
+      "seniority": "source_field:jobLevel='Senior'->senior",
+      "role_type": "source_field:jobIndustry=Customer Support & Success",
+      "salary": "accept"
+    }
+  }
+]

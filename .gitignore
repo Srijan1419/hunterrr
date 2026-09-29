@@ -1,0 +1,21 @@
+# job-market-intel — keeps build output, local state, and secrets out of the repo.
+# Scoped to this project so it travels with the subtree split into the standalone repo.
+
+# Dependencies
+node_modules/
+
+# Secrets and local environment. NVIDIA_API_KEY and TURSO_* live here, never in git.
+.env
+
+# Python bytecode
+__pycache__/
+
+# Local pipeline database. The pipeline writes jobs.duckdb.db; it is derived data,
+# rebuildable from raw_jobs, and must never be committed.
+*.duckdb.db
+
+# Worker/agent CLI state, if any is ever created inside this project
+.opencode/
+
+# pytest's cache directory, created by the first `pytest` run (f1-03 onwards).
+.pytest_cache/

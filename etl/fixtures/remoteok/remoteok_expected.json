@@ -1,0 +1,621 @@
+[
+  {
+    "contract": "job-market-intel/etl/contract/schema.md + normalization.md",
+    "contract_version": "f1-02/2026-09-28",
+    "generated_by": "a reference implementation of the documented rules, executed against the committed fixtures. Not the production normalizer (that is task 7); if the two disagree, the contract document wins.",
+    "covers": "only the fields the four-step ladder determines deterministically. job_skills is absent by design: skills come from the LLM (task 8) and have no deterministic oracle.",
+    "ladder_step_note": "step=1 source field, step=2 deterministic rule, step=3 LLM, step=4 unknown. No expected value here uses step 3."
+  },
+  {
+    "_fixture_case": "salary_min_eq_0_and_salary_max_eq_0",
+    "id": "remoteok:1137434",
+    "source_id": "1137434",
+    "country": "US",
+    "countries_all": [
+      "US"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "SIHO - Columbus, IN",
+    "location_encoding_repaired": false,
+    "seniority": "lead",
+    "role_type": "unknown",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 4014,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 4014,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 2,
+      "role_type": 4,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location(unmatched:SIHO;city:Columbus->US;remote_qualifier_words:in;us_state:IN->US)",
+      "seniority": "rule:seniority_title(lead:director)",
+      "role_type": "no_source_field_no_keyword_hit",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "salary_disclosed_nonzero_pair",
+    "id": "remoteok:1137428",
+    "source_id": "1137428",
+    "country": null,
+    "countries_all": null,
+    "remote_scope": "unknown",
+    "location_raw": null,
+    "location_encoding_repaired": false,
+    "seniority": "unknown",
+    "role_type": "non_technical",
+    "salary_min": 70000,
+    "salary_max": 80000,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 1409,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 1409,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 4,
+      "role_type": 2,
+      "salary": 1
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location()",
+      "seniority": "no_source_field_no_keyword_hit",
+      "role_type": "rule:role_type_title_only(non_technical:video)",
+      "salary": "accept"
+    }
+  },
+  {
+    "_fixture_case": "location_blank_empty_string",
+    "id": "remoteok:1137431",
+    "source_id": "1137431",
+    "country": null,
+    "countries_all": null,
+    "remote_scope": "unknown",
+    "location_raw": null,
+    "location_encoding_repaired": false,
+    "seniority": "unknown",
+    "role_type": "unknown",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 3816,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 3816,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 4,
+      "role_type": 4,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location()",
+      "seniority": "no_source_field_no_keyword_hit",
+      "role_type": "no_source_field_no_keyword_hit",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "location_remote_us_token",
+    "id": "remoteok:1136950",
+    "source_id": "1136950",
+    "country": "US",
+    "countries_all": [
+      "US"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "Remote - US",
+    "location_encoding_repaired": false,
+    "seniority": "unknown",
+    "role_type": "non_technical",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 2077,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 2077,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 4,
+      "role_type": 2,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location(remote_qualifier_words:remote;unmatched:Remote;country_code:US->US)",
+      "seniority": "no_source_field_no_keyword_hit",
+      "role_type": "rule:role_type_title_only(non_technical:marketing)",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "location_remoto_spanish_token",
+    "id": "remoteok:1136570",
+    "source_id": "1136570",
+    "country": null,
+    "countries_all": null,
+    "remote_scope": "unknown",
+    "location_raw": "Remoto",
+    "location_encoding_repaired": false,
+    "seniority": "senior",
+    "role_type": "technical",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 2091,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 2091,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 2,
+      "role_type": 2,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location(remote_qualifier_words:remoto;unmatched:Remoto)",
+      "seniority": "rule:seniority_title(senior:iii)",
+      "role_type": "rule:role_type_title_only(technical:engineer,mobile,software)",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "location_remote_uk_token",
+    "id": "remoteok:1136379",
+    "source_id": "1136379",
+    "country": "GB",
+    "countries_all": [
+      "GB"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "Remote UK",
+    "location_encoding_repaired": false,
+    "seniority": "unknown",
+    "role_type": "non_technical",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 1687,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 1687,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 4,
+      "role_type": 2,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location(remote_qualifier_words:remote;country_code:Remote UK->GB)",
+      "seniority": "no_source_field_no_keyword_hit",
+      "role_type": "rule:role_type_title_only(non_technical:sales)",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "location_bare_remote",
+    "id": "remoteok:1137394",
+    "source_id": "1137394",
+    "country": null,
+    "countries_all": null,
+    "remote_scope": "unknown",
+    "location_raw": "Remote",
+    "location_encoding_repaired": false,
+    "seniority": "lead",
+    "role_type": "technical",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 2444,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 2444,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 2,
+      "role_type": 2,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location(remote_qualifier_words:remote;unmatched:Remote)",
+      "seniority": "rule:seniority_title(lead:architect)",
+      "role_type": "rule:role_type_title_only(technical:architect)",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "location_select_usa_remote_locations",
+    "id": "remoteok:1136797",
+    "source_id": "1136797",
+    "country": "US",
+    "countries_all": [
+      "US"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "Select USA Remote Locations",
+    "location_encoding_repaired": false,
+    "seniority": "executive",
+    "role_type": "non_technical",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 6010,
+    "description_truncated_for_llm": true,
+    "llm_input_chars": 5661,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 2,
+      "role_type": 2,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location(remote_qualifier_words:select,remote,locations;country:Select USA Remote Locations->US)",
+      "seniority": "rule:seniority_title(executive:executive)",
+      "role_type": "rule:role_type_title_only(non_technical:account executive)",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "location_geo_plus_remote_token",
+    "id": "remoteok:1137406",
+    "source_id": "1137406",
+    "country": "MX",
+    "countries_all": [
+      "MX"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "Mexico City, Mexico - Remote",
+    "location_encoding_repaired": false,
+    "seniority": "lead",
+    "role_type": "unknown",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 7943,
+    "description_truncated_for_llm": true,
+    "llm_input_chars": 5742,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 2,
+      "role_type": 4,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location(remote_qualifier_words:city;city:Mexico City->MX;country:Mexico->MX;remote_qualifier_words:remote;unmatched:Remote)",
+      "seniority": "rule:seniority_title(lead:manager)",
+      "role_type": "no_source_field_no_keyword_hit",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "location_multigeo_with_trailing_empty_component",
+    "id": "remoteok:1137374",
+    "source_id": "1137374",
+    "country": "GB",
+    "countries_all": [
+      "GB"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "Greater Newcastle Area,",
+    "location_encoding_repaired": false,
+    "seniority": "unknown",
+    "role_type": "unknown",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 3769,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 3769,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 4,
+      "role_type": 4,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location(remote_qualifier_words:greater,area;city:Greater Newcastle Area->GB)",
+      "seniority": "no_source_field_no_keyword_hit",
+      "role_type": "no_source_field_no_keyword_hit",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "location_multigeo_full_address",
+    "id": "remoteok:1136094",
+    "source_id": "1136094",
+    "country": "US",
+    "countries_all": [
+      "US"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "Austin, Austin, Texas, United States",
+    "location_encoding_repaired": false,
+    "seniority": "unknown",
+    "role_type": "non_technical",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 7056,
+    "description_truncated_for_llm": true,
+    "llm_input_chars": 5779,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 4,
+      "role_type": 2,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location(city:Austin->US;city:Austin->US;country:Texas->US;country:United States->US)",
+      "seniority": "no_source_field_no_keyword_hit",
+      "role_type": "rule:role_type_title_only(non_technical:marketing)",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "location_region_token_not_a_country",
+    "id": "remoteok:1136568",
+    "source_id": "1136568",
+    "country": null,
+    "countries_all": null,
+    "remote_scope": "unknown",
+    "location_raw": "LATAM",
+    "location_encoding_repaired": false,
+    "seniority": "unknown",
+    "role_type": "unknown",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 1526,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 1526,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 4,
+      "role_type": 4,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location(region_not_country:LATAM)",
+      "seniority": "no_source_field_no_keyword_hit",
+      "role_type": "no_source_field_no_keyword_hit",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "location_bare_country",
+    "id": "remoteok:1137421",
+    "source_id": "1137421",
+    "country": "DE",
+    "countries_all": [
+      "DE"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "Germany",
+    "location_encoding_repaired": false,
+    "seniority": "lead",
+    "role_type": "technical",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 5067,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 5067,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 2,
+      "role_type": 2,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location(country:Germany->DE)",
+      "seniority": "rule:seniority_title(lead:manager)",
+      "role_type": "rule:role_type_title_only(technical:technical)",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "location_double_encoded_utf8_bytes_stored_as_latin1",
+    "id": "remoteok:1137373",
+    "source_id": "1137373",
+    "country": null,
+    "countries_all": null,
+    "remote_scope": "unknown",
+    "location_raw": "مسقط, مسقط مسقط عمان",
+    "location_encoding_repaired": true,
+    "seniority": "lead",
+    "role_type": "unknown",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 3384,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 3384,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 2,
+      "role_type": 4,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location()",
+      "seniority": "rule:seniority_title(lead:manager)",
+      "role_type": "no_source_field_no_keyword_hit",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "tags_empty_array",
+    "id": "remoteok:1137429",
+    "source_id": "1137429",
+    "country": null,
+    "countries_all": null,
+    "remote_scope": "unknown",
+    "location_raw": null,
+    "location_encoding_repaired": false,
+    "seniority": "unknown",
+    "role_type": "unknown",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 2448,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 2448,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 4,
+      "role_type": 4,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location()",
+      "seniority": "no_source_field_no_keyword_hit",
+      "role_type": "no_source_field_no_keyword_hit",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "tag_senior",
+    "id": "remoteok:1137414",
+    "source_id": "1137414",
+    "country": "AU",
+    "countries_all": [
+      "AU"
+    ],
+    "remote_scope": "country_restricted",
+    "location_raw": "Melbourne",
+    "location_encoding_repaired": false,
+    "seniority": "lead",
+    "role_type": "unknown",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 4134,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 4134,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 2,
+      "role_type": 4,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location(city:Melbourne->AU)",
+      "seniority": "rule:seniority_title(lead:manager)",
+      "role_type": "no_source_field_no_keyword_hit",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  },
+  {
+    "_fixture_case": "tag_junior",
+    "id": "remoteok:1137418",
+    "source_id": "1137418",
+    "country": null,
+    "countries_all": null,
+    "remote_scope": "unknown",
+    "location_raw": null,
+    "location_encoding_repaired": false,
+    "seniority": "entry",
+    "role_type": "technical",
+    "salary_min": 60000,
+    "salary_max": 80000,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 2722,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 2722,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 2,
+      "role_type": 2,
+      "salary": 1
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location()",
+      "seniority": "rule:seniority_title(entry:junior)",
+      "role_type": "rule:role_type_title_only(technical:analyst)",
+      "salary": "accept"
+    }
+  },
+  {
+    "_fixture_case": "optional_field_verified_present",
+    "id": "remoteok:1137381",
+    "source_id": "1137381",
+    "country": null,
+    "countries_all": null,
+    "remote_scope": "unknown",
+    "location_raw": null,
+    "location_encoding_repaired": false,
+    "seniority": "unknown",
+    "role_type": "non_technical",
+    "salary_min": null,
+    "salary_max": null,
+    "salary_currency": "unknown",
+    "salary_period": "unknown",
+    "timezone_offset_minutes": null,
+    "timezone_offsets_all_minutes": null,
+    "description_chars": 4424,
+    "description_truncated_for_llm": false,
+    "llm_input_chars": 4424,
+    "ladder_steps": {
+      "country": 2,
+      "seniority": 4,
+      "role_type": 2,
+      "salary": 4
+    },
+    "rules_fired": {
+      "country": "rule:free_text_location()",
+      "seniority": "no_source_field_no_keyword_hit",
+      "role_type": "rule:role_type_title_only(non_technical:marketing)",
+      "salary": "reject:not_both_bounds_present_and_positive"
+    }
+  }
+]

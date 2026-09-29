@@ -1,0 +1,75 @@
+job-market-intel
+Copyright (c) 2026 job-market-intel contributors
+
+This product is licensed under the MIT License; see LICENSE.
+
+This file records the third-party projects this codebase references, the license each
+one carries, and the obligations that attach. It exists because the Apache-2.0
+libraries below require attribution and a statement of changes, and because one of our
+data sources imposes a condition on how its data may be displayed.
+
+
+THIRD-PARTY LIBRARIES
+=====================
+
+dlt — Apache License 2.0
+  https://github.com/dlt-hub/dlt
+  Code-first data-injection library; used for the ETL layer instead of hand-rolling
+  schema inference, incremental loading, and retries.
+  Status: adopted. Pinned to dlt>=1.27.2; 1.27.0 and 1.27.1 were yanked by the
+  maintainers over a data-loss bug in incremental merge, which is the exact operation
+  this pipeline performs. The pin is enforced by a test.
+  Apache-2.0 obligations: the dlt copyright notice and license text ship with the
+  dependency and are reproduced by its own distribution. This project links dlt
+  unmodified and makes no changes to it, so there is nothing further to state here. If
+  we ever vendor or patch dlt, this file must record that and describe the change.
+
+Crawl4AI — Apache License 2.0
+  https://github.com/unclecode/crawl4ai
+  LLM-ready web crawler. Considered for browser-rendering of JS-heavy listing pages.
+  Status: referenced only, NOT a dependency of v1. Every source we ingest returns JSON
+  over plain HTTP, so there is no JavaScript page to render. Adopting it now would buy
+  a browser download in CI and nothing else. The seam is reserved for a future HTML
+  detail-page enrichment path that would raise pay coverage, and is adopted only if a
+  measured sample of target pages justifies it.
+  Apache-2.0 obligations: none are triggered by v1, because the code is not
+  redistributed here. If it is added later, its notice and license ship with the
+  dependency and any local modification must be described in this file.
+
+Better Auth — MIT License
+  https://github.com/better-auth/better-auth
+  Framework-agnostic authentication library for TypeScript. Used for email and
+  password authentication, self-hosted, with its tables in the same libSQL database as
+  the rest of the app.
+  Status: adopted, pending implementation.
+  MIT obligations: the copyright notice and license text ship with the dependency and
+  are reproduced by its own distribution. This project uses it unmodified.
+
+
+DATA SOURCE ATTRIBUTION
+=======================
+
+Remote OK — public API, https://remoteok.com/api
+  Every response from the Remote OK API carries the publisher's terms inside the first
+  object's `legal` field, which reads:
+
+    "Please link back (with follow, and without nofollow!) to the URL on Remote OK and
+     mention Remote OK as a source, so we get traffic back from your site. If you do
+     not we'll have to suspend API access. Please don't use the Remote OK logo without
+     written permission."
+
+  That is a condition of access, and this project accepts it. Concretely, the deployed
+  application must:
+
+    1. display a visible "Remote OK" attribution link pointing at remoteok.com on every
+       page, with rel="follow" and no rel="nofollow";
+    2. name Remote OK as a source wherever posting data is shown; and
+    3. not render the Remote OK logo.
+
+  The notice is preserved as data rather than discarded: the source module keeps the
+  `legal` object verbatim instead of dropping it during parsing, so the obligation stays
+  visible in the stored payload and the pipeline cannot silently erase it.
+
+  Jobicy (https://jobicy.com) and Himalayas (https://himalayas.app) are ingested under
+  the same public, no-key, no-login rule and are attributed on the coverage page. No
+  platform requiring login to a personal account is scraped by this project.

@@ -1,0 +1,421 @@
+{
+ "_fixture_note": "Live verification of the CEO's candidate slug list against all three public board APIs, one direct HTTP request per (slug, provider) pair. Every row below is the observed status code and the real body prefix -- nothing is assumed from the company list, which names companies and not their board providers.",
+ "captured_at": "2026-09-28T00:00:00Z",
+ "requires": "no key, no login, no account",
+ "candidates": [
+  "stripe",
+  "airbnb",
+  "dropbox",
+  "gitlab",
+  "notion",
+  "figma",
+  "reddit",
+  "coinbase",
+  "asana",
+  "twilio",
+  "appstle",
+  "gemcommerce"
+ ],
+ "endpoint_patterns": {
+  "greenhouse": "https://boards-api.greenhouse.io/v1/boards/{slug}/jobs",
+  "lever": "https://api.lever.co/v0/postings/{slug}?mode=json",
+  "ashby": "https://api.ashbyhq.com/posting-api/job-board/{slug}"
+ },
+ "checks_run": 36,
+ "seed_slugs": {
+  "greenhouse": [
+   "stripe",
+   "airbnb",
+   "dropbox",
+   "gitlab",
+   "figma",
+   "reddit",
+   "coinbase",
+   "asana",
+   "twilio"
+  ],
+  "lever": [],
+  "ashby": [
+   "notion"
+  ]
+ },
+ "dropped_slugs": {
+  "greenhouse": [
+   "notion",
+   "appstle",
+   "gemcommerce"
+  ],
+  "lever": [
+   "stripe",
+   "airbnb",
+   "dropbox",
+   "gitlab",
+   "notion",
+   "figma",
+   "reddit",
+   "coinbase",
+   "asana",
+   "twilio",
+   "appstle",
+   "gemcommerce"
+  ],
+  "ashby": [
+   "stripe",
+   "airbnb",
+   "dropbox",
+   "gitlab",
+   "figma",
+   "reddit",
+   "coinbase",
+   "asana",
+   "twilio",
+   "appstle",
+   "gemcommerce"
+  ]
+ },
+ "verdict_counts": {
+  "greenhouse": {
+   "keep": 9,
+   "drop": 3
+  },
+  "lever": {
+   "keep": 0,
+   "drop": 12
+  },
+  "ashby": {
+   "keep": 1,
+   "drop": 11
+  }
+ },
+ "notes": [
+  "Lever's seed list is EMPTY: none of the 12 candidates returned 200 with postings on api.lever.co. The Lever adapter and its fixture are still built, against the verified board 'gopuff', so the parser is not a guess.",
+  "ashby/reddit and ashby/coinbase answer HTTP 200 with an empty jobs array. They are dropped from the seed list and committed as the empty-board case instead.",
+  "appstle and gemcommerce returned 404 on all three providers, so they are on none of the three and are dropped rather than forced in."
+ ],
+ "checks": [
+  {
+   "candidate": "stripe",
+   "provider": "greenhouse",
+   "url": "https://boards-api.greenhouse.io/v1/boards/stripe/jobs",
+   "http": 200,
+   "postings": 701,
+   "verdict": "keep",
+   "reason": "HTTP 200 with postings"
+  },
+  {
+   "candidate": "stripe",
+   "provider": "lever",
+   "url": "https://api.lever.co/v0/postings/stripe?mode=json",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body '{\"ok\":false,\"error\":\"Document not found\"}'"
+  },
+  {
+   "candidate": "stripe",
+   "provider": "ashby",
+   "url": "https://api.ashbyhq.com/posting-api/job-board/stripe",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body 'Not Found'"
+  },
+  {
+   "candidate": "airbnb",
+   "provider": "greenhouse",
+   "url": "https://boards-api.greenhouse.io/v1/boards/airbnb/jobs",
+   "http": 200,
+   "postings": 160,
+   "verdict": "keep",
+   "reason": "HTTP 200 with postings"
+  },
+  {
+   "candidate": "airbnb",
+   "provider": "lever",
+   "url": "https://api.lever.co/v0/postings/airbnb?mode=json",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body '{\"ok\":false,\"error\":\"Document not found\"}'"
+  },
+  {
+   "candidate": "airbnb",
+   "provider": "ashby",
+   "url": "https://api.ashbyhq.com/posting-api/job-board/airbnb",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body 'Not Found'"
+  },
+  {
+   "candidate": "dropbox",
+   "provider": "greenhouse",
+   "url": "https://boards-api.greenhouse.io/v1/boards/dropbox/jobs",
+   "http": 200,
+   "postings": 44,
+   "verdict": "keep",
+   "reason": "HTTP 200 with postings"
+  },
+  {
+   "candidate": "dropbox",
+   "provider": "lever",
+   "url": "https://api.lever.co/v0/postings/dropbox?mode=json",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body '{\"ok\":false,\"error\":\"Document not found\"}'"
+  },
+  {
+   "candidate": "dropbox",
+   "provider": "ashby",
+   "url": "https://api.ashbyhq.com/posting-api/job-board/dropbox",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body 'Not Found'"
+  },
+  {
+   "candidate": "gitlab",
+   "provider": "greenhouse",
+   "url": "https://boards-api.greenhouse.io/v1/boards/gitlab/jobs",
+   "http": 200,
+   "postings": 199,
+   "verdict": "keep",
+   "reason": "HTTP 200 with postings"
+  },
+  {
+   "candidate": "gitlab",
+   "provider": "lever",
+   "url": "https://api.lever.co/v0/postings/gitlab?mode=json",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body '{\"ok\":false,\"error\":\"Document not found\"}'"
+  },
+  {
+   "candidate": "gitlab",
+   "provider": "ashby",
+   "url": "https://api.ashbyhq.com/posting-api/job-board/gitlab",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body 'Not Found'"
+  },
+  {
+   "candidate": "notion",
+   "provider": "greenhouse",
+   "url": "https://boards-api.greenhouse.io/v1/boards/notion/jobs",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body '{\"status\":404,\"error\":\"Job not found\"}'"
+  },
+  {
+   "candidate": "notion",
+   "provider": "lever",
+   "url": "https://api.lever.co/v0/postings/notion?mode=json",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body '{\"ok\":false,\"error\":\"Document not found\"}'"
+  },
+  {
+   "candidate": "notion",
+   "provider": "ashby",
+   "url": "https://api.ashbyhq.com/posting-api/job-board/notion",
+   "http": 200,
+   "postings": 128,
+   "verdict": "keep",
+   "reason": "HTTP 200 with postings"
+  },
+  {
+   "candidate": "figma",
+   "provider": "greenhouse",
+   "url": "https://boards-api.greenhouse.io/v1/boards/figma/jobs",
+   "http": 200,
+   "postings": 163,
+   "verdict": "keep",
+   "reason": "HTTP 200 with postings"
+  },
+  {
+   "candidate": "figma",
+   "provider": "lever",
+   "url": "https://api.lever.co/v0/postings/figma?mode=json",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body '{\"ok\":false,\"error\":\"Document not found\"}'"
+  },
+  {
+   "candidate": "figma",
+   "provider": "ashby",
+   "url": "https://api.ashbyhq.com/posting-api/job-board/figma",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body 'Not Found'"
+  },
+  {
+   "candidate": "reddit",
+   "provider": "greenhouse",
+   "url": "https://boards-api.greenhouse.io/v1/boards/reddit/jobs",
+   "http": 200,
+   "postings": 150,
+   "verdict": "keep",
+   "reason": "HTTP 200 with postings"
+  },
+  {
+   "candidate": "reddit",
+   "provider": "lever",
+   "url": "https://api.lever.co/v0/postings/reddit?mode=json",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body '{\"ok\":false,\"error\":\"Document not found\"}'"
+  },
+  {
+   "candidate": "reddit",
+   "provider": "ashby",
+   "url": "https://api.ashbyhq.com/posting-api/job-board/reddit",
+   "http": 200,
+   "postings": 0,
+   "verdict": "drop",
+   "reason": "HTTP 200 with zero postings: the board exists but is empty"
+  },
+  {
+   "candidate": "coinbase",
+   "provider": "greenhouse",
+   "url": "https://boards-api.greenhouse.io/v1/boards/coinbase/jobs",
+   "http": 200,
+   "postings": 210,
+   "verdict": "keep",
+   "reason": "HTTP 200 with postings"
+  },
+  {
+   "candidate": "coinbase",
+   "provider": "lever",
+   "url": "https://api.lever.co/v0/postings/coinbase?mode=json",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body '{\"ok\":false,\"error\":\"Document not found\"}'"
+  },
+  {
+   "candidate": "coinbase",
+   "provider": "ashby",
+   "url": "https://api.ashbyhq.com/posting-api/job-board/coinbase",
+   "http": 200,
+   "postings": 0,
+   "verdict": "drop",
+   "reason": "HTTP 200 with zero postings: the board exists but is empty"
+  },
+  {
+   "candidate": "asana",
+   "provider": "greenhouse",
+   "url": "https://boards-api.greenhouse.io/v1/boards/asana/jobs",
+   "http": 200,
+   "postings": 97,
+   "verdict": "keep",
+   "reason": "HTTP 200 with postings"
+  },
+  {
+   "candidate": "asana",
+   "provider": "lever",
+   "url": "https://api.lever.co/v0/postings/asana?mode=json",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body '{\"ok\":false,\"error\":\"Document not found\"}'"
+  },
+  {
+   "candidate": "asana",
+   "provider": "ashby",
+   "url": "https://api.ashbyhq.com/posting-api/job-board/asana",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body 'Not Found'"
+  },
+  {
+   "candidate": "twilio",
+   "provider": "greenhouse",
+   "url": "https://boards-api.greenhouse.io/v1/boards/twilio/jobs",
+   "http": 200,
+   "postings": 138,
+   "verdict": "keep",
+   "reason": "HTTP 200 with postings"
+  },
+  {
+   "candidate": "twilio",
+   "provider": "lever",
+   "url": "https://api.lever.co/v0/postings/twilio?mode=json",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body '{\"ok\":false,\"error\":\"Document not found\"}'"
+  },
+  {
+   "candidate": "twilio",
+   "provider": "ashby",
+   "url": "https://api.ashbyhq.com/posting-api/job-board/twilio",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body 'Not Found'"
+  },
+  {
+   "candidate": "appstle",
+   "provider": "greenhouse",
+   "url": "https://boards-api.greenhouse.io/v1/boards/appstle/jobs",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body '{\"status\":404,\"error\":\"Job not found\"}'"
+  },
+  {
+   "candidate": "appstle",
+   "provider": "lever",
+   "url": "https://api.lever.co/v0/postings/appstle?mode=json",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body '{\"ok\":false,\"error\":\"Document not found\"}'"
+  },
+  {
+   "candidate": "appstle",
+   "provider": "ashby",
+   "url": "https://api.ashbyhq.com/posting-api/job-board/appstle",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body 'Not Found'"
+  },
+  {
+   "candidate": "gemcommerce",
+   "provider": "greenhouse",
+   "url": "https://boards-api.greenhouse.io/v1/boards/gemcommerce/jobs",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body '{\"status\":404,\"error\":\"Job not found\"}'"
+  },
+  {
+   "candidate": "gemcommerce",
+   "provider": "lever",
+   "url": "https://api.lever.co/v0/postings/gemcommerce?mode=json",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body '{\"ok\":false,\"error\":\"Document not found\"}'"
+  },
+  {
+   "candidate": "gemcommerce",
+   "provider": "ashby",
+   "url": "https://api.ashbyhq.com/posting-api/job-board/gemcommerce",
+   "http": 404,
+   "postings": null,
+   "verdict": "drop",
+   "reason": "HTTP 404, body 'Not Found'"
+  }
+ ]
+}
