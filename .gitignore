@@ -25,3 +25,6 @@ sync_failed.flag
 local.db*
 .next/
 *.duckdb__*.db
+
+# Personal pointer to the agency's working rules (machine-specific)
+CLAUDE.local.md
