@@ -476,6 +476,50 @@ class TestSeniorityLadder:
         assert rules.seniority_from_text("Software Internship")[0] == "entry"
         assert "internship" in rules.seniority_from_text("Software Internship")[1]
 
+    @pytest.mark.parametrize(
+        "title",
+        [
+            "Account Executive",
+            "Strategic Account Executive Lodging",
+            "Sales Executive - Hotel Solution",
+            "Executive Assistant, Growth Marketing",
+            "New Business Account Executive (German speaker)",
+            "Account Executive, SMB (London, United Kingdom)",
+        ],
+    )
+    def test_executive_as_a_job_function_is_not_executive_seniority(self, title):
+        """On the first real run, 190 postings were labelled executive-level because their
+        title contained the word "executive". Those are Account Executives, Sales Executives
+        and Executive Assistants: ordinary sales and support jobs, not the C-suite. A title
+        that says only that must resolve to nothing, so the ladder falls through to `unknown`
+        (or the LLM step) instead of publishing a wrong seniority as fact."""
+        assert rules.seniority_from_text(title)[0] is None, title
+
+    def test_a_real_seniority_word_still_wins_next_to_an_executive_function(self):
+        """The bare word used to outrank these by rank. Now the genuine signal decides."""
+        assert rules.seniority_from_text("Senior Account Executive")[0] == "senior"
+        assert rules.seniority_from_text("Junior Sales Executive")[0] == "entry"
+        assert rules.seniority_from_text("Account Executive Manager")[0] == "lead"
+
+    @pytest.mark.parametrize(
+        "title",
+        [
+            "Chief Executive Officer",
+            "Chief Technology Officer",
+            "CFO",
+            "Executive Vice President, Sales",
+            "VP of Engineering",
+            "Head of Growth",
+        ],
+    )
+    def test_real_executive_titles_are_still_executive(self, title):
+        """Dropping the bare word must not blind the ladder to the people it was meant for:
+        C-suite, `vp`, `vice president` and `head of` are the evidence the contract lists."""
+        assert rules.seniority_from_text(title)[0] == "executive", title
+
+    def test_an_executive_director_is_a_director(self):
+        assert rules.seniority_from_text("Executive Director")[0] == "lead"
+
     def test_no_keyword_is_an_honest_unknown_not_a_guess(self):
         value, rule = rules.seniority_from_text("Danish Speaking Solutions Consultant")
         assert value is None

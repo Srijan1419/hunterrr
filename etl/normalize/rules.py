@@ -64,15 +64,18 @@ SENIORITY_PHRASES: tuple[tuple[str, str], ...] = (
     ("vice president", "executive"),
     ("head of", "executive"),
     # -- executive ---------------------------------------------------------------------
-    # `executive` is not in `vocabularies.md` §1's evidence column, which lists C-suite, `vp`,
-    # `vice president` and `head of`. It is here because the committed oracle labels
-    # "Strategic Account Executive Lodging" `seniority: executive` with
-    # `rule:seniority_title(executive:executive)`, and §1 notes that 3 of 99 RemoteOK titles
-    # reach `executive` at all — this is one of them. The table is "typical evidence", not a
-    # closed list, and a word the corpus actually publishes cannot be left out of it.
+    # C-suite, `vp`, `vice president` and `head of` - the evidence `vocabularies.md` §1 lists.
+    #
+    # The bare word "executive" is deliberately NOT here. It used to be, added to match a
+    # committed fixture that labelled "Strategic Account Executive Lodging" executive-level.
+    # That label was wrong, and on the first real run it mislabelled 190 postings: "Account
+    # Executive", "Sales Executive" and "Executive Assistant" are job FUNCTIONS, ordinary
+    # sales and support roles, not executive seniority. Real executives are caught by the
+    # entries below ("Chief Executive Officer" matches "chief"; "Executive Vice President"
+    # matches "vice president"; "Executive Director" matches "director"). A title that says
+    # only "Account Executive" now falls through to an honest `unknown` (or to the LLM step).
     ("chief", "executive"), ("cto", "executive"), ("ceo", "executive"), ("cfo", "executive"),
     ("coo", "executive"), ("ciso", "executive"), ("cro", "executive"), ("vp", "executive"),
-    ("executive", "executive"),
     # -- lead --------------------------------------------------------------------------
     ("director", "lead"), ("principal", "lead"), ("staff", "lead"), ("manager", "lead"),
     ("supervisor", "lead"), ("lead", "lead"), ("architect", "lead"), ("fellow", "lead"),

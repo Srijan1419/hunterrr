@@ -1,4 +1,4 @@
-# ETL dependencies for job-market-intel.
+# ETL dependencies for hunterrr.
 #
 # dlt 1.27.0 and 1.27.1 were yanked: their incremental merge truncates the destination
 # table. The pin below is non-negotiable, and `etl/tests/test_dependencies.py` fails the
@@ -12,9 +12,10 @@ dlt>=1.27.2
 # `etl/pipeline/schema.py` to create the contract's tables and indexes.
 sqlalchemy>=2.0
 
-# Required by f1-10: official libSQL client for syncing to Turso over HTTPS.
-# Not a custom HTTP wrapper — the acceptance criteria mandate the official client.
-libsql-client>=0.3.0
+# No libSQL client library on purpose. `etl/sync_to_turso.py` talks to Turso's HTTP API
+# (`/v2/pipeline`) with the standard library: the `libsql-client` package it first used
+# was last released in 2023 and its batch requests are now rejected by Turso's server
+# (HTTP 400), which only a live run - never the mocked tests - could reveal.
 
 # Test dependencies. The ETL's whole reason for writing to a local SQLite file is that
 # `pytest` runs with no network and no API key (ADR-005), so these are the only things

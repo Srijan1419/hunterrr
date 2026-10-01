@@ -254,7 +254,7 @@
     "remote_scope": "country_restricted",
     "location_raw": "Select USA Remote Locations",
     "location_encoding_repaired": false,
-    "seniority": "executive",
+    "seniority": "senior",
     "role_type": "non_technical",
     "salary_min": null,
     "salary_max": null,

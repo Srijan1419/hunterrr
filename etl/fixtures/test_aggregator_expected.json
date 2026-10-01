@@ -69,7 +69,7 @@
       "skill": "api",
       "skill_label": "api",
       "country": "US",
-      "seniority": "executive",
+      "seniority": "senior",
       "postings_count": 1
     },
     {
@@ -157,7 +157,7 @@
       "skill": "consulting",
       "skill_label": "consulting",
       "country": "US",
-      "seniority": "executive",
+      "seniority": "senior",
       "postings_count": 1
     },
     {
@@ -301,7 +301,7 @@
       "skill": "education",
       "skill_label": "education",
       "country": "US",
-      "seniority": "executive",
+      "seniority": "lead",
       "postings_count": 1
     },
     {
@@ -309,7 +309,7 @@
       "skill": "education",
       "skill_label": "education",
       "country": "US",
-      "seniority": "lead",
+      "seniority": "senior",
       "postings_count": 1
     },
     {
@@ -397,7 +397,7 @@
       "skill": "exec",
       "skill_label": "exec",
       "country": "US",
-      "seniority": "executive",
+      "seniority": "lead",
       "postings_count": 1
     },
     {
@@ -405,7 +405,7 @@
       "skill": "exec",
       "skill_label": "exec",
       "country": "US",
-      "seniority": "lead",
+      "seniority": "senior",
       "postings_count": 1
     },
     {
@@ -453,7 +453,7 @@
       "skill": "finance",
       "skill_label": "finance",
       "country": "US",
-      "seniority": "executive",
+      "seniority": "senior",
       "postings_count": 1
     },
     {
@@ -485,7 +485,7 @@
       "skill": "full time",
       "skill_label": "full time",
       "country": "US",
-      "seniority": "executive",
+      "seniority": "senior",
       "postings_count": 1
     },
     {
@@ -501,7 +501,7 @@
       "skill": "game dev",
       "skill_label": "game dev",
       "country": "US",
-      "seniority": "executive",
+      "seniority": "senior",
       "postings_count": 1
     },
     {
@@ -565,7 +565,7 @@
       "skill": "infosec",
       "skill_label": "infosec",
       "country": "US",
-      "seniority": "executive",
+      "seniority": "senior",
       "postings_count": 1
     },
     {
@@ -725,7 +725,7 @@
       "skill": "marketing",
       "skill_label": "marketing",
       "country": "US",
-      "seniority": "executive",
+      "seniority": "senior",
       "postings_count": 1
     },
     {
@@ -749,7 +749,7 @@
       "skill": "medical",
       "skill_label": "medical",
       "country": "US",
-      "seniority": "executive",
+      "seniority": "lead",
       "postings_count": 1
     },
     {
@@ -757,7 +757,7 @@
       "skill": "medical",
       "skill_label": "medical",
       "country": "US",
-      "seniority": "lead",
+      "seniority": "senior",
       "postings_count": 1
     },
     {
@@ -797,7 +797,7 @@
       "skill": "mobile",
       "skill_label": "mobile",
       "country": "US",
-      "seniority": "executive",
+      "seniority": "senior",
       "postings_count": 1
     },
     {
@@ -869,7 +869,7 @@
       "skill": "ops",
       "skill_label": "ops",
       "country": "US",
-      "seniority": "executive",
+      "seniority": "lead",
       "postings_count": 1
     },
     {
@@ -877,7 +877,7 @@
       "skill": "ops",
       "skill_label": "ops",
       "country": "US",
-      "seniority": "lead",
+      "seniority": "senior",
       "postings_count": 1
     },
     {
@@ -1005,7 +1005,7 @@
       "skill": "saas",
       "skill_label": "saas",
       "country": "US",
-      "seniority": "executive",
+      "seniority": "senior",
       "postings_count": 1
     },
     {
@@ -1149,7 +1149,7 @@
       "skill": "sales",
       "skill_label": "Sales",
       "country": "US",
-      "seniority": "executive",
+      "seniority": "senior",
       "postings_count": 1
     },
     {
@@ -1861,7 +1861,7 @@
       "skill": "senior",
       "skill_label": "senior",
       "country": "US",
-      "seniority": "executive",
+      "seniority": "senior",
       "postings_count": 1
     },
     {
@@ -2005,7 +2005,7 @@
       "skill": "speech",
       "skill_label": "speech",
       "country": "US",
-      "seniority": "executive",
+      "seniority": "senior",
       "postings_count": 1
     },
     {
@@ -2013,7 +2013,7 @@
       "skill": "stats",
       "skill_label": "stats",
       "country": "US",
-      "seniority": "executive",
+      "seniority": "senior",
       "postings_count": 1
     },
     {
@@ -2485,7 +2485,7 @@
       "skill": "travel",
       "skill_label": "travel",
       "country": "US",
-      "seniority": "executive",
+      "seniority": "senior",
       "postings_count": 1
     },
     {

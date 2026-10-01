@@ -378,8 +378,11 @@ def test_sync_table_skills_daily(local_db: Path):
     count = _sync_table(mock_client, engine, "skills_daily")
 
     assert count == 3
-    batch = mock_client.batches[0]
-    for stmt_dict in batch:
+    assert len(mock_client.batches) == 1  # delete + inserts are one atomic batch
+    delete, *inserts = mock_client.batches[0]
+    assert delete["sql"].startswith("DELETE FROM skills_daily WHERE day IN (")
+    assert len(inserts) == 3
+    for stmt_dict in inserts:
         assert "INSERT OR REPLACE INTO skills_daily" in stmt_dict["sql"]
         assert len(stmt_dict["args"]) == 6  # skills_daily has 6 columns
 
@@ -392,8 +395,11 @@ def test_sync_table_source_coverage(local_db: Path):
     count = _sync_table(mock_client, engine, "source_coverage")
 
     assert count == 3
-    batch = mock_client.batches[0]
-    for stmt_dict in batch:
+    assert len(mock_client.batches) == 1  # delete + inserts are one atomic batch
+    delete, *inserts = mock_client.batches[0]
+    assert delete["sql"].startswith("DELETE FROM source_coverage WHERE day IN (")
+    assert len(inserts) == 3
+    for stmt_dict in inserts:
         assert "INSERT OR REPLACE INTO source_coverage" in stmt_dict["sql"]
         assert len(stmt_dict["args"]) == 11  # source_coverage has 11 columns
 
@@ -562,3 +568,232 @@ def test_primary_keys_defined():
 def test_sync_tables_match_contract():
     """Verify SYNC_TABLES matches the four derived tables from the contract."""
     assert set(SYNC_TABLES) == {"jobs", "job_skills", "skills_daily", "source_coverage"}
+
+
+# --- the HTTP client: what the first live sync taught us -------------------------------
+#
+# The mocked tests above passed while the first real sync failed on every table: the old
+# `libsql-client` posted a batch shape Turso's server rejects (HTTP 400 "JSON parse error:
+# invalid type: map, expected a string"). These tests pin the shape of what we send and
+# what we do with the answer, against a fake transport - no network, no credentials.
+
+import io
+import math
+import urllib.error
+
+from etl import sync_to_turso as turso_mod
+from etl.sync_to_turso import (
+    MAX_CHARS_PER_BATCH,
+    MAX_STATEMENTS_PER_BATCH,
+    TursoError,
+    TursoHttpClient,
+    build_atomic_batch,
+    to_http_url,
+    _chunk_statements,
+    _to_hrana_value,
+)
+
+
+class _FakeResponse:
+    def __init__(self, payload):
+        self._payload = payload
+
+    def read(self):
+        return json.dumps(self._payload).encode()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+
+def _ok_batch(step_errors):
+    return {"results": [
+        {"type": "ok", "response": {"type": "batch", "result": {"step_results": [], "step_errors": step_errors}}},
+        {"type": "ok", "response": {"type": "close"}},
+    ]}
+
+
+def _client(opener):
+    return TursoHttpClient("libsql://x.turso.io/", "tok", opener=opener, sleep=lambda s: None)
+
+
+def test_to_http_url_converts_the_libsql_scheme_and_drops_the_trailing_slash():
+    assert to_http_url("libsql://hunterr.aws-ap-south-1.turso.io") == "https://hunterr.aws-ap-south-1.turso.io"
+    assert to_http_url("libsql://x.turso.io/") == "https://x.turso.io"
+
+
+@pytest.mark.parametrize("url", ["https://db.turso.io", "http://127.0.0.1:8080"])
+def test_to_http_url_leaves_http_schemes_alone(url):
+    assert to_http_url(url) == url
+
+
+def test_create_turso_client_builds_the_http_client():
+    assert isinstance(turso_mod.create_turso_client("libsql://x.turso.io", "tok"), TursoHttpClient)
+
+
+def test_batch_posts_one_atomic_pipeline_request_with_the_bearer_token():
+    seen = {}
+
+    def opener(request, timeout):
+        seen["url"] = request.full_url
+        seen["auth"] = request.get_header("Authorization")
+        seen["body"] = json.loads(request.data)
+        return _FakeResponse(_ok_batch([None, None, None, None, None]))
+
+    _client(opener).batch([
+        {"sql": "INSERT INTO t VALUES (?)", "args": ("a",)},
+        {"sql": "INSERT INTO t VALUES (?)", "args": (2,)},
+    ])
+
+    assert seen["url"] == "https://x.turso.io/v2/pipeline"
+    assert seen["auth"] == "Bearer tok"
+    kinds = [r["type"] for r in seen["body"]["requests"]]
+    assert kinds == ["batch", "close"]
+    steps = seen["body"]["requests"][0]["batch"]["steps"]
+    sqls = [s["stmt"]["sql"] for s in steps]
+    assert sqls == ["BEGIN", "INSERT INTO t VALUES (?)", "INSERT INTO t VALUES (?)", "COMMIT", "ROLLBACK"]
+    assert steps[1]["stmt"]["args"] == [{"type": "text", "value": "a"}]
+    assert steps[2]["stmt"]["args"] == [{"type": "integer", "value": "2"}]
+
+
+def test_atomic_batch_only_commits_if_every_statement_ran_and_rolls_back_otherwise():
+    steps = build_atomic_batch([{"sql": "S1"}, {"sql": "S2"}])["steps"]
+    assert "condition" not in steps[0]                                     # BEGIN is unconditional
+    assert steps[1]["condition"] == {"type": "ok", "step": 0}              # S1 only after BEGIN
+    assert steps[2]["condition"] == {"type": "ok", "step": 1}              # S2 only after S1
+    assert steps[3]["stmt"]["sql"] == "COMMIT" and steps[3]["condition"] == {"type": "ok", "step": 2}
+    assert steps[4]["stmt"]["sql"] == "ROLLBACK"
+    assert steps[4]["condition"] == {"type": "not", "cond": {"type": "ok", "step": 3}}
+
+
+def test_a_failing_statement_surfaces_the_servers_own_message():
+    errors = [None, {"message": "UNIQUE constraint failed: jobs.id", "code": "SQLITE_CONSTRAINT"}, None, None]
+    with pytest.raises(TursoError, match="UNIQUE constraint failed: jobs.id"):
+        _client(lambda r, timeout: _FakeResponse(_ok_batch(errors))).batch([{"sql": "S"}])
+
+
+def test_a_client_error_raises_immediately_with_the_response_body_and_is_not_retried():
+    calls = []
+
+    def opener(request, timeout):
+        calls.append(1)
+        raise urllib.error.HTTPError(
+            request.full_url, 400, "Bad Request", {}, io.BytesIO(b'{"error":"JSON parse error"}')
+        )
+
+    with pytest.raises(TursoError, match="HTTP 400.*JSON parse error"):
+        _client(opener).batch([{"sql": "S"}])
+    assert len(calls) == 1
+
+
+def test_a_transient_server_error_is_retried_then_succeeds():
+    calls = []
+
+    def opener(request, timeout):
+        calls.append(1)
+        if len(calls) == 1:
+            raise urllib.error.HTTPError(request.full_url, 503, "Unavailable", {}, io.BytesIO(b"busy"))
+        return _FakeResponse(_ok_batch([None, None, None, None]))
+
+    _client(opener).batch([{"sql": "S"}])
+    assert len(calls) == 2
+
+
+def test_a_server_error_that_never_clears_raises_after_the_attempt_limit():
+    calls = []
+
+    def opener(request, timeout):
+        calls.append(1)
+        raise urllib.error.HTTPError(request.full_url, 502, "Bad Gateway", {}, io.BytesIO(b"down"))
+
+    with pytest.raises(TursoError, match="HTTP 502"):
+        _client(opener).batch([{"sql": "S"}])
+    assert len(calls) == 3
+
+
+def test_an_unreachable_server_is_retried_and_reported_as_unreachable():
+    def opener(request, timeout):
+        raise urllib.error.URLError("no route to host")
+
+    with pytest.raises(TursoError, match="could not reach Turso"):
+        _client(opener).batch([{"sql": "S"}])
+
+
+def test_an_empty_batch_sends_nothing():
+    def opener(request, timeout):
+        raise AssertionError("no request should be made for an empty batch")
+
+    _client(opener).batch([])
+
+
+def test_execute_returns_rows_as_python_values():
+    payload = {"results": [
+        {"type": "ok", "response": {"type": "execute", "result": {"rows": [[
+            {"type": "integer", "value": "7"},
+            {"type": "text", "value": "hi"},
+            {"type": "null"},
+            {"type": "float", "value": 1.5},
+        ]]}}},
+        {"type": "ok", "response": {"type": "close"}},
+    ]}
+    assert _client(lambda r, timeout: _FakeResponse(payload)).execute("select 1") == [(7, "hi", None, 1.5)]
+
+
+def test_values_are_encoded_the_way_the_hrana_protocol_wants_them():
+    assert _to_hrana_value(None) == {"type": "null"}
+    assert _to_hrana_value(True) == {"type": "integer", "value": "1"}
+    assert _to_hrana_value(2**40) == {"type": "integer", "value": str(2**40)}
+    assert _to_hrana_value(2.5) == {"type": "float", "value": 2.5}
+    assert _to_hrana_value("é") == {"type": "text", "value": "é"}
+    assert _to_hrana_value(b"\x00\x01")["type"] == "blob"
+
+
+@pytest.mark.parametrize("bad", [math.nan, math.inf, 2**63, object()])
+def test_values_sqlite_cannot_store_are_refused_before_anything_is_sent(bad):
+    with pytest.raises((ValueError, OverflowError, TypeError)):
+        _to_hrana_value(bad)
+
+
+def test_chunking_caps_both_the_row_count_and_the_payload_size():
+    small = [("INSERT", (i,)) for i in range(MAX_STATEMENTS_PER_BATCH * 2 + 1)]
+    chunks = _chunk_statements(small)
+    assert [len(c) for c in chunks] == [MAX_STATEMENTS_PER_BATCH, MAX_STATEMENTS_PER_BATCH, 1]
+
+    big_text = "x" * (MAX_CHARS_PER_BATCH // 3)
+    heavy = [("INSERT", (big_text,)) for _ in range(7)]
+    chunks = _chunk_statements(heavy)
+    assert all(len(c) <= 3 for c in chunks)
+    assert sum(len(c) for c in chunks) == 7                                # nothing dropped
+
+
+def test_chunking_an_oversized_single_row_still_sends_it():
+    chunks = _chunk_statements([("INSERT", ("y" * (MAX_CHARS_PER_BATCH * 2),))])
+    assert len(chunks) == 1 and len(chunks[0]) == 1
+
+
+def test_the_failure_flag_lives_in_the_project_root_where_the_workflow_looks():
+    root = Path(turso_mod.__file__).resolve().parents[1]
+    assert turso_mod.FAILURE_FLAG == root / "sync_failed.flag"
+    assert (root / "etl").is_dir()
+
+
+def test_jobs_tables_are_upserted_not_deleted(local_db: Path):
+    """History tables (jobs, job_skills) must never be wiped by a sync."""
+    engine = sa.create_engine(f"sqlite:///{local_db}")
+    for table in ("jobs", "job_skills"):
+        client = MockLibSQLClient()
+        _sync_table(client, engine, table)
+        assert all("DELETE" not in s["sql"] for b in client.batches for s in b)
+
+
+def test_partition_delete_lists_each_day_once(local_db: Path):
+    engine = sa.create_engine(f"sqlite:///{local_db}")
+    client = MockLibSQLClient()
+    _sync_table(client, engine, "skills_daily")
+    delete = client.batches[0][0]
+    days = {r["day"] for r in sa.create_engine(f"sqlite:///{local_db}").connect().execute(
+        sa.text("SELECT day FROM skills_daily")).mappings()}
+    assert sorted(delete["args"]) == sorted(days)
+    assert delete["sql"].count("?") == len(days)
