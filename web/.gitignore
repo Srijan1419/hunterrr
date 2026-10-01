@@ -51,3 +51,4 @@ local.db
 .vscode
 *.swp
 *.swo
+.env*

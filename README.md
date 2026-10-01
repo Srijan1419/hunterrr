@@ -1,5 +1,7 @@
 # Hunterrr
 
+**Live: https://hunterrr.vercel.app** · **Source: https://github.com/Srijan1419/hunterrr**
+
 **A remote job market intelligence dashboard.** A scheduled ETL pipeline pulls postings
 from public, no-login job feeds, normalizes and enriches them, and a public analytics
 site reports what it finds — including where the data itself is thin, because a
