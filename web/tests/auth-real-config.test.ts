@@ -33,7 +33,7 @@ describe("auth, built from the real client and real config", () => {
     await apply();
 
     ({ auth } = await import("@/lib/auth/config"));
-  });
+  }, 60_000); // drizzle-kit is a heavy cold import; 10s is too tight on a busy machine
 
   it("hands Better Auth all four of its tables", async () => {
     const { db } = await import("@/lib/db/client");
