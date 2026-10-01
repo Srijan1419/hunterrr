@@ -1,6 +1,12 @@
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
-import * as schema from "./schema";
+import * as appSchema from "./schema";
+import * as authSchema from "./auth-schema";
+
+// Better Auth's drizzle adapter resolves its tables (user, session, account,
+// verification) from the schema this client was built with. Without authSchema
+// here, sign-up fails with "Drizzle schema mismatch" even though the tables exist.
+const schema = { ...appSchema, ...authSchema };
 
 /**
  * libSQL client for Turso over HTTPS.
