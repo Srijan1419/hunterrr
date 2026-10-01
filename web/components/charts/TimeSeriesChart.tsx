@@ -130,7 +130,7 @@ export function TimeSeriesChart({
             key={i}
             d={d}
             fill="none"
-            className="stroke-foreground"
+            className="stroke-primary"
             strokeWidth={2}
             strokeLinejoin="round"
             strokeLinecap="round"
@@ -144,7 +144,7 @@ export function TimeSeriesChart({
               cx={x(i)}
               cy={y(p.value)}
               r={2.5}
-              className="fill-foreground"
+              className="fill-primary"
             />
           ) : null
         )}

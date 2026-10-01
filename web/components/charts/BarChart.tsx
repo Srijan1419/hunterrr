@@ -86,7 +86,7 @@ export function BarChart({
                 width={barWidth}
                 height={BAR_HEIGHT}
                 rx={3}
-                className="fill-foreground/85"
+                className="fill-primary"
               />
               <text
                 x={LABEL_WIDTH + barWidth + 8}

@@ -1,30 +1,93 @@
 @import "tailwindcss";
 
+/*
+  Design tokens. The components use shadcn-style names (bg-card, text-muted-foreground,
+  bg-primary ...); Tailwind v4 only generates those classes if the colours are declared
+  here. Dark-first: a deep ink background, one electric accent (violet -> cyan).
+*/
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: #ffffff;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --radius-lg: 0.75rem;
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #0f172a;
+  --background: #f7f7fb;
+  --foreground: #0d1020;
+  --card: #ffffff;
+  --muted: #eceef6;
+  --muted-foreground: #5b6178;
+  --border: #dfe2ee;
+  --input: #cfd3e4;
+  --ring: #7c5cff;
+  --primary: #6d4aff;
+  --primary-foreground: #ffffff;
+  --secondary: #eceef6;
+  --accent: #e6e1ff;
+  --destructive: #e5484d;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0f172a;
-    --foreground: #f8fafc;
+    --background: #0a0b14;
+    --foreground: #eef0fb;
+    --card: #121425;
+    --muted: #1a1d33;
+    --muted-foreground: #9aa0bd;
+    --border: #23264080;
+    --input: #2a2e50;
+    --ring: #8b73ff;
+    --primary: #7c5cff;
+    --primary-foreground: #ffffff;
+    --secondary: #1a1d33;
+    --accent: #251f52;
+    --destructive: #f2555a;
   }
 }
 
 * {
-  border-color: #e2e8f0;
+  border-color: var(--border);
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+  /* a soft aurora behind everything */
+  background-image:
+    radial-gradient(60rem 30rem at 15% -10%, rgb(124 92 255 / 0.18), transparent 60%),
+    radial-gradient(50rem 28rem at 90% 0%, rgb(34 211 238 / 0.12), transparent 60%);
+  background-repeat: no-repeat;
+}
+
+.text-gradient {
+  background-image: linear-gradient(100deg, #a78bfa 0%, #7c5cff 40%, #22d3ee 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.grid-fade {
+  background-image:
+    linear-gradient(to right, rgb(128 132 170 / 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(128 132 170 / 0.12) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
 }
