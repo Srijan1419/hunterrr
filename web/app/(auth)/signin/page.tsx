@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Link from "next/link";
+import { GoogleButton } from "@/components/GoogleButton";
 
 const signinSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -116,6 +117,8 @@ export default function SigninPage() {
             </Button>
           </form>
         </Form>
+
+        <GoogleButton />
 
         <p className="text-center text-sm text-muted-foreground">
           Don't have an account?{" "}

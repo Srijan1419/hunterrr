@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Link from "next/link";
+import { GoogleButton } from "@/components/GoogleButton";
 
 const signupSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -162,6 +163,8 @@ export default function SignupPage() {
             </Button>
           </form>
         </Form>
+
+        <GoogleButton />
 
         <p className="text-center text-sm text-muted-foreground">
           Already have an account?{" "}
