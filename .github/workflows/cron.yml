@@ -1,0 +1,91 @@
+name: Pipeline Cron
+
+on:
+  schedule:
+    # Every 6 hours: 00:00, 06:00, 12:00, 18:00 UTC
+    - cron: '0 */6 * * *'
+  workflow_dispatch: {}  # Manual trigger only
+
+# Prevent concurrent runs - cancel in-progress runs on new trigger
+concurrency:
+  group: pipeline-cron
+  cancel-in-progress: true
+
+jobs:
+  run-pipeline:
+    name: Run ETL Pipeline
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: read  # Needed for checkout
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: 'etl/requirements.txt'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r etl/requirements.txt
+
+      # The LLM extraction cache is a local file, so a fresh runner starts empty and would
+      # re-pay for every posting. Restore the newest one; save it even if the run fails so
+      # partial progress survives and later runs converge.
+      - name: Restore LLM cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .cache
+          key: llm-cache-${{ github.run_id }}
+          restore-keys: llm-cache-
+
+      - name: Run pipeline with retries
+        env:
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          JOBS_DB_PATH: jobs.duckdb.db
+          LLM_CACHE_PATH: .cache/llm_cache.duckdb.db
+        run: |
+          set -euo pipefail
+          mkdir -p .cache
+          MAX_ATTEMPTS=3
+          ATTEMPT=1
+          while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
+            echo "=== Pipeline attempt $ATTEMPT of $MAX_ATTEMPTS ==="
+            if python -m etl.run_pipeline; then
+              echo "Pipeline succeeded on attempt $ATTEMPT"
+              exit 0
+            else
+              echo "Pipeline failed on attempt $ATTEMPT (exit code: $?)"
+              if [ $ATTEMPT -lt $MAX_ATTEMPTS ]; then
+                echo "Waiting 5 minutes before retry..."
+                sleep 300
+              fi
+              ATTEMPT=$((ATTEMPT + 1))
+            fi
+          done
+          echo "All $MAX_ATTEMPTS attempts failed"
+          exit 1
+
+      - name: Save LLM cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .cache
+          key: llm-cache-${{ github.run_id }}
+
+      - name: Verify sync succeeded (no failure flag)
+        run: |
+          if [ -f sync_failed.flag ]; then
+            echo "::error::Sync failure flag detected"
+            cat sync_failed.flag
+            exit 1
+          fi
+          echo "Sync succeeded - no failure flag present"

@@ -1,4 +1,4 @@
-# job-market-intel — keeps build output, local state, and secrets out of the repo.
+# hunterrr — keeps build output, local state, and secrets out of the repo.
 # Scoped to this project so it travels with the subtree split into the standalone repo.
 
 # Dependencies
@@ -19,3 +19,9 @@ __pycache__/
 
 # pytest's cache directory, created by the first `pytest` run (f1-03 onwards).
 .pytest_cache/
+
+# Failure signal written by the Turso sync, and local web DBs
+sync_failed.flag
+local.db*
+.next/
+*.duckdb__*.db
