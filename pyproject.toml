@@ -1,0 +1,7 @@
+[tool.pytest.ini_options]
+testpaths = ["etl/tests"]
+asyncio_mode = "auto"
+markers = [
+    "live: tests requiring real network access (excluded from offline runs)",
+    "pg: tests requiring a live Postgres database",
+]
