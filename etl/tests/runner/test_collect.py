@@ -102,6 +102,8 @@ async def test_plan_fetch_write_basic(engine, tmp_path):
     assert rep.status == "ok"
     assert rep.counts["tasks_planned"] == 3 and rep.counts["tasks_fetched"] == 3
     assert scalar(engine, "SELECT count(*) FROM hunterrr.raw_documents") == 3
+    # The body is kept (gzipped) for the process step, which clears it once the posting is written.
+    assert scalar(engine, "SELECT count(*) FROM hunterrr.raw_documents WHERE clean_text_gz IS NOT NULL") == 3
     assert scalar(engine, "SELECT count(*) FROM hunterrr.board_poll_state") == 3
     assert scalar(engine, "SELECT count(*) FROM hunterrr.boards WHERE last_ok_at IS NOT NULL AND consecutive_failures = 0") == 3
     assert scalar(engine, "SELECT last_posting_count FROM hunterrr.boards ORDER BY id LIMIT 1") == 2

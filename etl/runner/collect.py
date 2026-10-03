@@ -17,6 +17,7 @@ import asyncio
 import base64
 import hashlib
 import inspect
+import gzip
 import json
 import time
 from collections import defaultdict
@@ -276,6 +277,8 @@ async def run_collect(
                     "fetched_at": doc.fetched_at, "http_status": doc.http_status,
                     "content_type": doc.content_type, "content_hash": digest,
                     "archive_ref": None, "fetch_meta": json.dumps(dict(doc.fetch_meta or {})),
+                    # Pending work for the process step; it clears this once the posting is written.
+                    "clean_text_gz": gzip.compress(doc.body, 6),
                 }
                 raw_rows.append(row)
                 docs_to_archive.append((row, doc, digest))
