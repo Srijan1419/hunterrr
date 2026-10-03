@@ -261,3 +261,39 @@ class TestUnconfiguredProviders:
         assert resolve_provider(get_spec("groq"), Settings(_env_file=None), model="m") is None
         # And the v1 path, which the task left alone, still honours it.
         assert get_provider("groq").api_key == "a-key-the-router-must-not-see"
+
+
+class TestOneBadModelDoesNotParkItsProvider:
+    """Found on the first live run: one 503 or one 400 from one model parked the WHOLE provider."""
+
+    def _router(self, settings, bad_status):
+        from .harness import http_error
+
+        def script(body, provider):
+            if provider.model == "openai/gpt-oss-20b":
+                raise http_error(bad_status, "Failed to generate JSON", model=provider.model, provider=provider.name)
+            return echo_model({"seniority": "mid", "role_type": "technical", "skills": []})(body, provider)
+
+        transport = ScriptedTransport(default=script)
+        return LlmRouter(settings, routing=Routing(job_extract=("groq",)), transport=transport), transport
+
+    def test_a_400_from_one_model_still_lets_the_next_model_on_the_provider_answer(self, settings):
+        router, transport = self._router(settings, 400)
+        answer = router.complete_json("job_extract", system="s", user="u", schema=Extraction)
+        assert answer is not None
+        assert transport.routes[0] == "groq/openai/gpt-oss-20b" and "groq/openai/gpt-oss-120b" in transport.routes
+
+    def test_a_503_is_model_level_too_and_the_bad_model_is_skipped_on_the_next_call(self, settings):
+        router, transport = self._router(settings, 503)
+        assert router.complete_json("job_extract", system="s", user="u", schema=Extraction) is not None
+        before = transport.count
+        assert router.complete_json("job_extract", system="s", user="u2", schema=Extraction) is not None
+        assert "groq/openai/gpt-oss-20b" not in transport.routes[before:]  # still cooling
+
+    def test_a_429_still_parks_the_whole_provider(self, settings):
+        from .harness import http_error
+
+        transport = ScriptedTransport(default=http_error(429, "rate limit", provider="groq"))
+        router = LlmRouter(settings, routing=Routing(job_extract=("groq",)), transport=transport)
+        assert router.complete_json("job_extract", system="s", user="u", schema=Extraction) is None
+        assert transport.count == 1  # no other groq model was tried

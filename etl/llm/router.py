@@ -76,6 +76,9 @@ from .providers import (
 
 logger = logging.getLogger(__name__)
 
+#: How long one failing model sits out (the provider stays open for its other models).
+MODEL_COOLDOWN_SECONDS = 120.0
+
 #: The one method every caller uses. `T` is the caller's own pydantic model, so the return type
 #: is the thing they declared — the router never hands back a `dict` somebody has to trust.
 T = TypeVar("T", bound=BaseModel)
@@ -273,6 +276,9 @@ class LlmRouter:
         self.timeout = timeout
         self.cooldowns = Cooldowns(seconds=cooldown_seconds, clock=clock)
         self.quarantine = Quarantine()
+        # One overloaded or JSON-refusing MODEL must not park its whole provider (that threw away
+        # most free capacity in the first live run): such failures cool the model alone.
+        self.model_cooldown_until: dict[tuple[str, str], float] = {}
         self.daily_caps = {
             name: DailyCap(
                 limit=self._daily_cap(spec),
@@ -390,6 +396,10 @@ class LlmRouter:
                     self.stats.skipped_quarantined += 1
                     last_reason, last_detail = "quarantined", f"{provider_name}/{model}"
                     continue
+                if self.clock() < self.model_cooldown_until.get((provider_name, model), float("-inf")):
+                    self.stats.skipped_cooldown += 1
+                    last_reason, last_detail = "cooldown", f"{provider_name}/{model}"
+                    continue
                 cap = self._cap_for(provider_name, spec)
                 if cap.reached(provider_name, model):
                     self.stats.skipped_daily_cap += 1
@@ -421,6 +431,8 @@ class LlmRouter:
                     return RouterOutcome(value, "ok", provider=provider_name, model=model,
                                          attempts=attempts)
                 last_reason, last_detail = reason, detail
+                if self.cooldowns.cooling(provider_name):
+                    break  # the provider itself was parked (429, timeout, auth): skip its other models
 
         self.stats.unknowns += 1
         logger.debug(
@@ -509,6 +521,15 @@ class LlmRouter:
             return attempt, "ok", provider.model, value
         return 2, "invalid_json", problem, None  # pragma: no cover - the loop returns above
 
+    @staticmethod
+    def _model_level_failure(error: LlmTransportError) -> bool:
+        """A failure that says something about ONE model, not the account or the endpoint."""
+        status = error.status or 0
+        if 500 <= status <= 599 or status == 400:
+            return True
+        # OpenRouter's free models report their own upstream limit as a 429 "Provider returned error".
+        return status == 429 and "provider returned error" in str(error).lower()
+
     def _record_failure(self, provider: Provider, error: LlmTransportError) -> None:
         """Turn a transport failure into the two states the next provider lookup reads."""
         detail = str(error)
@@ -524,8 +545,13 @@ class LlmRouter:
         if error.status == 402:
             # Out of credit, or out of tier. Nothing will change inside one run.
             self.cooldowns.trip_forever(provider.name)
+        elif self._model_level_failure(error):
+            self.model_cooldown_until[(provider.name, model)] = self.clock() + MODEL_COOLDOWN_SECONDS
+            logger.info("router cooled model %s/%s for %ss after %s", provider.name, model,
+                        int(MODEL_COOLDOWN_SECONDS), detail)
+            return
         else:
-            # 429, 5xx, timeout, 401, 400-that-is-not-a-missing-model: park the provider and
+            # 429, timeout, 401: park the provider and
             # move on. Sixty seconds is long enough to outlast a rate window and short enough
             # that the next posting in a batch still gets a shot.
             self.cooldowns.trip(provider.name)
