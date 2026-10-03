@@ -130,3 +130,14 @@ def test_greenhouse_escaped_html_becomes_text():
     e = extract(StoredDocument("greenhouse", "acme/3", "https://x.example/3", body, "application/json"))
     text = e.fields["description_md"].value
     assert "<" not in text and "&lt;" not in text and "Build things & ship." in text
+
+
+@pytest.mark.parametrize("raw,dropped", [
+    ("Remote, EMEA", True), ("Remote, San Francisco, CA", True), ("Berlin", True),
+    ("Remote", False), ("Remote, Global", False), ("Anywhere", False), ("Worldwide - Remote", False),
+])
+def test_worldwide_dropped_when_the_location_names_a_place(raw, dropped):
+    f = empty_fields()
+    f["locations"] = Field([{"raw": raw, "city": None, "region": None, "country": None}], "source")
+    out, _ = run("We are hiring engineers anywhere in the world.", fields=f)
+    assert (out["eligibility_scope"].value is None) == dropped

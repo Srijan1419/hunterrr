@@ -10,6 +10,8 @@ FX = ParseContext(fx={"USD": D("84")})
 
 # (text, min, max, currency, period)
 POSITIVE = [
+    ("monthly base pay: $9,500", 9_500, 9_500, "USD", "month"),
+    ("hourly rate $55.00", 55, 55, "USD", "hour"),
     ("₹12–18 LPA", 1_200_000, 1_800_000, "INR", "year"),
     ("12-18 LPA", 1_200_000, 1_800_000, "INR", "year"),
     ("INR 12 to 18 lakhs per annum", 1_200_000, 1_800_000, "INR", "year"),
@@ -39,6 +41,11 @@ POSITIVE = [
 ]
 
 UNKNOWN = [
+    "USA monthly base pay: $9,500 and USA hourly base pay: $55.00",  # two different figures
+    "Compensation is $9,500",  # no period and small: could be monthly or yearly
+    "Salary 7.4",  # no currency marker
+    "We raised $50m in funding",
+    "Revenue of $200M",
     "competitive", "competitive salary", "DOE", "depends on experience",
     "best in industry", "attractive package", "unpaid", "equity only",
     "market rate", "negotiable", "", "   ", "2020-2024", "Call 555-123-4567",

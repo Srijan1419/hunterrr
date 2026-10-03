@@ -173,11 +173,12 @@ def parse_pay(text: Any, ctx: ParseContext | None = None) -> Field:
 
 
 _MAX_CANDIDATES = 50
-_FUNDING_AFTER = re.compile(r"\s{0,2}(?:m|b|mn|bn|million|billion)", re.IGNORECASE)
+_PRE_PERIOD = re.compile(r"\b(hourly|monthly|daily|yearly|annual|annually)\b", re.IGNORECASE)
+_FUNDING_AFTER = re.compile(r"\s{0,2}(?:m\b|b\b|mn\b|bn\b|million|billion)", re.IGNORECASE)
 _FUNDING_WORDS = re.compile(
-    r"raised|funding|valuation|revenue|series\s+[a-z]|funded", re.IGNORECASE)
+    r"raised|funding|valuation|revenue|series\s+[a-z]\b|\bfunded", re.IGNORECASE)
 _PAY_WORDS = re.compile(
-    r"salary|compensation|pay|ctc|base|per\s+year|lpa|annual", re.IGNORECASE)
+    r"salary|compensation|\bpay\b|\bctc\b|\bbase\b|per\s+year|\blpa\b|annual", re.IGNORECASE)
 
 
 def _key(value: Mapping[str, Any]) -> tuple:
@@ -193,11 +194,13 @@ def _is_funding(capped: str, m: re.Match) -> bool:
 
 
 def _below_floor(value: Mapping[str, Any]) -> bool:
-    """Under 1,000 per year in a hard currency is not a salary (INR is exempt)."""
-    if value["period"] != "year" or value["currency"] == "INR":
+    """Under 1,000 per year (10,000 for INR) is not a salary."""
+    if value["period"] != "year":
         return False
     top = value["max"] if value["max"] is not None else value["min"]
-    return top is not None and top < 1000
+    if top is None:
+        return False
+    return top < (10_000 if value["currency"] == "INR" else 1000)
 
 
 def _near_pay_word(capped: str, m: re.Match) -> bool:
@@ -250,7 +253,13 @@ def _interpret(m: re.Match, capped: str, fx: Mapping[str, Any]) -> Field | None:
     if not span.strip():
         return None
 
+    explicit = per is not None or (m1 or m2 or "").strip().lower() == "lpa"
     period = _norm_period(per, m1 or m2 if not per else None)
+    if not explicit:
+        before = _PRE_PERIOD.findall(capped[max(0, m.start() - 40):m.start()])
+        if before:
+            period = _norm_period(before[-1], None)
+            explicit = True
     # If the period came from magnitude LPA it is yearly; an explicit
     # period word already won inside _norm_period.
     if per is None and (m1 or m2) and (m1 or m2).strip().lower() == "lpa":
@@ -270,6 +279,10 @@ def _interpret(m: re.Match, capped: str, fx: Mapping[str, Any]) -> Field | None:
         value_min, value_max = n1, None
     else:
         value_min, value_max = n1, n1
+
+    top_value = value_max if value_max is not None else value_min
+    if not explicit and top_value is not None and top_value < Decimal(10_000):
+        return None  # "$9,500" with no period could be monthly or yearly: do not guess
 
     mult = Decimal(_PERIOD_MULT[period])
     annual_min: Decimal | None = None

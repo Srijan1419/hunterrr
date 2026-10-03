@@ -16,8 +16,6 @@ export const PUBLIC_ROUTES = [
   "/api/auth/**", // Better Auth's own endpoints
   // Legacy v1 read-only pages: public ONLY until task h2-73 removes them.
   "/",
-  "/jobs",
-  "/jobs/**",
   "/skills",
   "/trends",
   "/coverage",
@@ -26,6 +24,8 @@ export const PUBLIC_ROUTES = [
 /** Pages that require the session. Add new pages here (or to PUBLIC_ROUTES) when you create them. */
 export const PROTECTED_ROUTES = [
   "/today",
+  "/jobs",
+  "/jobs/**",
   "/tracker",
   "/inbox",
   "/companies",

@@ -64,7 +64,9 @@ describe("route classification", () => {
   });
 
   it("dynamic segments are matched by their pattern", () => {
-    expect(isPublicRoute("/jobs/123")).toBe(true);
+    expect(isPublicRoute("/demo/jobs/123")).toBe(true); // /demo/** is public
+    expect(isPublicRoute("/jobs/123")).toBe(false); // the real feed needs the session
+    expect(isPublicRoute("/jobs")).toBe(false);
     expect(isPublicRoute("/tracker")).toBe(false);
   });
 

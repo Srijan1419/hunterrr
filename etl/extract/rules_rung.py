@@ -63,6 +63,23 @@ def _comparable_pay(value: Any) -> Any:
     return value
 
 
+_LOCATION_FILLER = {"remote", "anywhere", "worldwide", "global", "globally", "work", "from", "home", "wfh", "or", "and", "-", ","}
+
+
+def _names_a_place(field: Field | None) -> bool:
+    """True when a known location says more than remote/anywhere/global."""
+    if not _is_known(field) or not isinstance(field.value, list):
+        return False
+    for loc in field.value:
+        raw = loc.get("raw") if isinstance(loc, dict) else loc
+        if not isinstance(raw, str):
+            continue
+        words = "".join(ch if ch.isalnum() else " " for ch in raw.lower()).split()
+        if any(w not in _LOCATION_FILLER for w in words):
+            return True
+    return False
+
+
 def apply_rules(
     fields: Mapping[str, Field],
     *,
@@ -127,6 +144,8 @@ def apply_rules(
             remote = out.get("remote_type")
             if scope.value == "worldwide" and remote is not None and remote.value in ("onsite", "hybrid"):
                 return  # an on-site or hybrid role is not open worldwide
+            if scope.value == "worldwide" and _names_a_place(out.get("locations")):
+                return  # "Remote, EMEA" or "Remote, San Francisco" is not open worldwide
             offer("eligible_countries", countries)
             offer("eligibility_scope", scope)
 
