@@ -49,7 +49,10 @@ _CUE_PATTERN = re.compile("|".join(_ELIGIBILITY_CUES), re.IGNORECASE)
 _WORLDWIDE_PATTERNS = re.compile(
     r"\bwe\s+(?:are\s+)?hir(?:e|ing)\s+(?:[a-z-]+\s+){0,3}(?:worldwide|globally|anywhere(?:\s+in\s+the\s+world)?)\b"
     r"|\bwork(?:ing)?\s+(?:remotely\s+)?from\s+anywhere\s+in\s+the\s+world\b"
-    r"|\bglobal\s+remote\b|\bworldwide\s+remote\b|\bremote\s+(?:[a-z-]+\s+){0,2}worldwide\b"
+    # "global remote" as a job label, not "a global remote-first company" / "global remote team".
+    r"|\bglobal\s+remote\b(?!-|\s+(?:first|company|culture|team|organi[sz]ation|workforce))"
+    r"|\bworldwide\s+remote\b(?!-|\s+(?:first|company|culture|team|organi[sz]ation|workforce))"
+    r"|\bremote\s+(?:role|position|job|opportunity)?\s*[-,(]?\s*worldwide\b"
     r"|\bopen\s+to\s+(?:candidates|applicants)\s+(?:from\s+)?(?:anywhere|worldwide|globally)\b"
     r"|\b(?:candidates|applicants)\s+(?:from|in)\s+anywhere\b",
     re.IGNORECASE,

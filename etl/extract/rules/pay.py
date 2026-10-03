@@ -34,14 +34,14 @@ _CUR = (
     r"|\bAUD\b|\bCAD\b|\bSGD\b|\bAED\b)"
 )
 _NUM = r"[0-9][0-9,]*(?:\.[0-9]+)?"
-_MAG = r"(?:crores?|\bcr\b|lakhs?|\blacs?\b|\blpa\b|[kK])"
+_MAG = r"(?:\bcrores?\b|\bcr\b|\blakhs?\b|\blacs?\b|\blpa\b|[kK]\b)"
 
 _WS = r"[\s:]{0,4}"
 
 _CANDIDATE = re.compile(
     r"(?P<pay>"
     rf"(?P<pre>\b(?:up\s*to|upto|maximum|from|starting\s+(?:at|from)|minimum|between|ctc|stipend)\b)?"
-    rf"{_WS}(?P<cur1>{_CUR})?[\s:]*"
+    rf"{_WS}(?P<cur1>{_CUR})?[\s:]{{0,4}}"
     rf"(?P<n1>{_NUM})[\s]*(?P<m1>{_MAG})?"
     rf"(?:[\s]*(?P<sep>–|—|-|to|and)[\s]*(?P<cur2>{_CUR})?[\s]*(?P<n2>{_NUM})[\s]*(?P<m2>{_MAG})?"
     rf"|\s*(?P<plus>\+))?"

@@ -58,8 +58,14 @@ def _pay_value(raw: Mapping[str, Any]) -> dict:
 
 
 def _comparable_pay(value: Any) -> Any:
+    """Compare amounts as numbers: JSON-LD gives 100000, the rule gives "100000"."""
     if isinstance(value, dict):
-        return (value.get("min"), value.get("max"), value.get("currency"), value.get("period"))
+        def number(v: Any) -> Any:
+            try:
+                return Decimal(str(v)).normalize() if v is not None else None
+            except Exception:
+                return v
+        return (number(value.get("min")), number(value.get("max")), value.get("currency"), value.get("period"))
     return value
 
 

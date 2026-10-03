@@ -59,7 +59,10 @@ def _parse_dt(raw: Any) -> datetime | None:
         return None
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=timezone.utc)
-    return dt.astimezone(timezone.utc)
+    try:
+        return dt.astimezone(timezone.utc)
+    except (OverflowError, ValueError):
+        return None  # e.g. year 1 with a positive offset: out of range, not a real date
 
 
 def _str(raw: Any) -> str | None:
@@ -351,8 +354,8 @@ def fields_from_ashby(payload: dict) -> dict[str, Field]:
     if isinstance(comp, dict):
         lo = _comp_number(comp, _COMP_MIN_KEYS)
         hi = _comp_number(comp, _COMP_MAX_KEYS)
-        if lo is not None or hi is not None:
-            period = _comp_period(comp) or "year"
+        period = _comp_period(comp)  # no stated period: leave pay unknown, never guess "year"
+        if (lo is not None or hi is not None) and period is not None:
             currency = _str(comp.get("currency") or comp.get("currencyCode"))
             set_known("pay", {
                 "min": lo, "max": hi,

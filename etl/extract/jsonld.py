@@ -29,7 +29,7 @@ _TYPE_RE = re.compile(
     re.IGNORECASE,
 )
 _MAX_PAGE_CHARS = 2_000_000
-_TRAILING_COMMA_RE = re.compile(r",\s*([}\]])")
+_TRAILING_COMMA_RE = re.compile(r"(?:,\s*)+([}\]])")
 
 
 def _script_blocks(page: str) -> list[str]:
@@ -90,10 +90,8 @@ def _strip_line_comments(text: str) -> str:
 def _strip_json_noise(text: str) -> str:
     """Remove `//` line comments and trailing commas."""
     text = _strip_line_comments(text)
-    prev = None
-    while prev != text:
-        prev = text
-        text = _TRAILING_COMMA_RE.sub(r"\1", text)
+    # One pass removes a whole run of trailing commas (",,,]"), so this is linear.
+    text = _TRAILING_COMMA_RE.sub(r"\1", text)
     text = re.sub(r",\s*$", "", text.strip())
     return text.strip()
 
@@ -286,6 +284,13 @@ def _resolve_country(name_or_code: Any) -> str | None:
     return _COUNTRY_TABLE.get(key.lower())
 
 
+def _country_name(value: Any) -> str | None:
+    """`addressCountry` may be a string or a Country object `{"@type": "Country", "name": "IN"}`."""
+    if isinstance(value, dict):
+        value = value.get("name") or value.get("@id")
+    return value.strip() if isinstance(value, str) and value.strip() else None
+
+
 def _parse_dt(raw: Any) -> datetime | None:
     if not isinstance(raw, str) or not raw.strip():
         return None
@@ -298,7 +303,10 @@ def _parse_dt(raw: Any) -> datetime | None:
         return None
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=timezone.utc)
-    return dt.astimezone(timezone.utc)
+    try:
+        return dt.astimezone(timezone.utc)
+    except (OverflowError, ValueError):
+        return None  # e.g. year 1 with a positive offset: out of range, not a real date
 
 
 def _parse_valid_through(raw: Any) -> tuple[datetime | None, str | None]:
@@ -342,10 +350,7 @@ def _pay_from_salary(salary: Any) -> tuple[dict | None, str | None]:
         return None, None
     if not isinstance(lo, (int, float)) and not isinstance(hi, (int, float)):
         return None, None
-    if lo is None:
-        lo = hi
-    if hi is None:
-        hi = lo
+    # One stated bound stays one bound: "from 100k" is not "exactly 100k".
     period_raw = str(unit or "").strip().upper()
     period = _UNIT_PERIOD.get(period_raw)
     if period is None:
@@ -404,7 +409,7 @@ def _location_entries(job_location: Any) -> list[dict] | None:
         if isinstance(addr, dict):
             city = addr.get("addressLocality") or None
             region = addr.get("addressRegion") or None
-            country = addr.get("addressCountry") or None
+            country = _country_name(addr.get("addressCountry"))
             raw = raw or ", ".join(
                 str(x) for x in (city, region, country) if x) or None
         elif isinstance(addr, str) and addr.strip():

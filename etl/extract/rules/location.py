@@ -288,6 +288,8 @@ def parse_locations(text: Any, ctx: ParseContext | None = None) -> Field:
                 city = None  # a sentence, not a place name: keep raw and country only
             if city is None and inferred_country is None and not region:
                 continue  # nothing usable in this fragment
+            if inferred_country is None and (region or "").strip().lower() not in REGIONS:
+                continue  # "Software Engineer, Backend" is a title, not a place
             locations.append({
                 "raw": raw,
                 "city": city.strip() if city else None,

@@ -208,7 +208,7 @@ class _Hits:
     def add(self, m: re.Match, kind: str) -> None:
         self.items.append((m.start(), kind, m))
         n = m.end() - m.start()
-        self._covered[m.start():m.end()] = b"" * n
+        self._covered[m.start():m.end()] = bytes([1]) * n
 
     def add_if_free(self, m: re.Match, kind: str) -> None:
         if m.end() > m.start() and all(self._covered[m.start():m.end()]):
