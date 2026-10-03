@@ -12,21 +12,9 @@ import type { JobWithSkills } from "@/lib/queries/jobs";
  *
  * These cover what is actually rendered: the honesty rule (the matching posting
  * count is visible), that extracted skills are shown with a distinguishable
- * extraction_source, and that the two WRITE affordances (save search, shortlist)
- * are absent without a session while the read-only page itself still renders.
- *
- * The mutation functions are mocked here because their own behaviour is covered
- * by tests/mutations.test.ts; this file is about what the UI offers.
+ * extraction_source, and that the pages render correctly without the v1
+ * dashboard write affordances (save search, shortlist).
  */
-vi.mock("@/lib/mutations/user-actions", () => ({
-  saveSearch: vi.fn(),
-  addToShortlist: vi.fn(),
-  removeFromShortlist: vi.fn(),
-  isShortlisted: vi.fn(),
-  getSavedSearches: vi.fn(),
-  getShortlist: vi.fn(),
-}));
-
 function makeJob(overrides: Partial<JobWithSkills> = {}): JobWithSkills {
   return {
     id: "job-1",
@@ -127,16 +115,10 @@ describe("FilterBar - the honesty rule", () => {
     }
   });
 
-  it("hides the save-search affordance for a signed-out visitor", () => {
-    render(<FilterBar {...baseProps} totalCount={5} onSaveSearch={vi.fn()} />);
+  it("does not show a save-search affordance (removed in v1 cleanup)", () => {
+    render(<FilterBar {...baseProps} totalCount={5} userSignedIn />);
 
     expect(screen.queryByRole("button", { name: /save this search/i })).not.toBeInTheDocument();
-  });
-
-  it("shows the save-search affordance for a signed-in user", () => {
-    render(<FilterBar {...baseProps} userSignedIn totalCount={5} onSaveSearch={vi.fn()} />);
-
-    expect(screen.getByRole("button", { name: /save this search/i })).toBeInTheDocument();
   });
 });
 
@@ -153,10 +135,10 @@ describe("JobCard", () => {
     expect(screen.getByText("Kubernetes")).toBeInTheDocument();
   });
 
-  it("shows the shortlist button for a signed-in user", () => {
+  it("does not show the shortlist button (removed in v1 cleanup)", () => {
     render(<JobCard job={makeJob()} userSignedIn />);
 
-    expect(screen.getByRole("button", { name: /shortlist/i })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /shortlist/i })).not.toBeInTheDocument();
   });
 
   it("does not show the shortlist button for a signed-out visitor", () => {
@@ -215,16 +197,10 @@ describe("JobDetailClient - /jobs/[id]", () => {
     expect(screen.getByRole("heading", { name: "Senior Python Engineer", level: 1 })).toBeInTheDocument();
   });
 
-  it("does not show the shortlist button for a signed-out visitor", () => {
-    render(<JobDetailClient job={makeJob()} userSignedIn={false} />);
-
-    expect(screen.queryByRole("button", { name: /shortlist/i })).not.toBeInTheDocument();
-  });
-
-  it("shows the shortlist button for a signed-in user", () => {
+  it("does not show the shortlist button (removed in v1 cleanup)", () => {
     render(<JobDetailClient job={makeJob()} userSignedIn />);
 
-    expect(screen.getByRole("button", { name: /shortlist/i })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /shortlist/i })).not.toBeInTheDocument();
   });
 });
 
@@ -254,11 +230,11 @@ describe("JobsClient - /jobs is public, writes are not", () => {
     expect(screen.queryByRole("button", { name: /shortlist/i })).not.toBeInTheDocument();
   });
 
-  it("shows both write affordances for a signed-in user", () => {
+  it("shows no write affordances for a signed-in user (v1 shortlist/save-search removed)", () => {
     render(<JobsClient {...baseProps} userSignedIn />);
 
-    expect(screen.getByRole("button", { name: /save this search/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /shortlist/i })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /save this search/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /shortlist/i })).not.toBeInTheDocument();
   });
 
   it("paginates past the first page", () => {

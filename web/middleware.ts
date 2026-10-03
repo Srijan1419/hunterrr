@@ -1,32 +1,25 @@
 import { auth } from "@/lib/auth/config";
+import { isPublicRoute } from "@/lib/auth/routes";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 /**
- * Session middleware to protect authenticated routes.
- * Redirects unauthenticated requests to /signin.
+ * Redirects signed-out visitors to /signin for every page that is not public.
+ * The public/protected decision lives in `lib/auth/routes.ts`.
  */
 export async function middleware(request: NextRequest) {
-  const session = await auth.api.getSession({
-    headers: request.headers,
-  });
+  const { pathname } = request.nextUrl;
+  if (isPublicRoute(pathname)) return NextResponse.next();
 
-  // Protected routes that require authentication
-  const protectedPaths = ["/dashboard"];
-
-  const isProtectedPath = protectedPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path)
-  );
-
-  if (isProtectedPath && !session) {
+  const session = await auth.api.getSession({ headers: request.headers });
+  if (!session) {
     const signinUrl = new URL("/signin", request.url);
-    signinUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
+    signinUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(signinUrl);
   }
-
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };

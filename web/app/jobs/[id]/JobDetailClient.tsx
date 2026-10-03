@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { SkillBadge } from "@/components/jobs/SkillBadge";
-import { ShortlistButton } from "@/components/jobs/ShortlistButton";
 import type { JobWithSkills } from "@/lib/queries/jobs";
 
 interface JobDetailClientProps {
@@ -241,9 +240,6 @@ export function JobDetailClient({ job, userSignedIn }: JobDetailClientProps) {
 
         <footer className="border-t pt-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
           <div className="flex gap-2">
-            {/* Shortlisting is a write: the affordance is hidden entirely without a
-                session, rather than shown and left to fail. */}
-            {userSignedIn && <ShortlistButton jobId={job.id} />}
             <Button asChild variant="default" size="lg">
               <a href={job.applyUrl} target="_blank" rel="noopener noreferrer">
                 Apply Now →

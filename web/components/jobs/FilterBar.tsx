@@ -14,7 +14,6 @@ interface FilterBarProps {
   sources: string[];
   currentFilters: Record<string, string | undefined>;
   totalCount: number;
-  onSaveSearch?: () => void;
   userSignedIn: boolean;
 }
 
@@ -23,7 +22,6 @@ export function FilterBar({
   sources,
   currentFilters,
   totalCount,
-  onSaveSearch,
   userSignedIn,
 }: FilterBarProps) {
   const router = useRouter();
@@ -165,14 +163,6 @@ export function FilterBar({
           </select>
         </div>
       </div>
-
-      {userSignedIn && onSaveSearch && (
-        <div className="mt-4 pt-4 border-t">
-          <Button variant="outline" onClick={onSaveSearch} className="w-full sm:w-auto">
-            Save this search
-          </Button>
-        </div>
-      )}
     </div>
   );
 }

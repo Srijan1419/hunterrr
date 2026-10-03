@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { SkillBadge } from "./SkillBadge";
-import { ShortlistButton } from "./ShortlistButton";
 import type { JobWithSkills } from "@/lib/queries/jobs";
 
 interface JobCardProps {
@@ -93,8 +92,6 @@ export function JobCard({ job, userSignedIn }: JobCardProps) {
         <div className="flex flex-col items-end gap-2 sm:ml-4">
           <p className="text-sm font-medium text-foreground">{formatSalary()}</p>
           <div className="flex gap-2">
-            {/* Shortlisting is a write: hidden entirely without a session. */}
-            {userSignedIn && <ShortlistButton jobId={job.id} />}
             <Button
               asChild
               variant="outline"

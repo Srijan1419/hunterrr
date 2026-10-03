@@ -12,7 +12,8 @@
     "test": "vitest run",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "check": "tsc --noEmit && vitest run"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

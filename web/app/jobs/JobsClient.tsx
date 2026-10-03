@@ -3,7 +3,6 @@
 import { FilterBar } from "@/components/jobs/FilterBar";
 import { JobCard } from "@/components/jobs/JobCard";
 import { Pagination } from "@/components/jobs/Pagination";
-import { SaveSearchModal } from "@/components/jobs/SaveSearchModal";
 import { useState } from "react";
 import type { JobWithSkills } from "@/lib/queries/jobs";
 
@@ -28,16 +27,6 @@ export function JobsClient({
   sources,
   userSignedIn,
 }: JobsClientProps) {
-  const [saveSearchOpen, setSaveSearchOpen] = useState(false);
-
-  const handleSaveSearch = () => {
-    setSaveSearchOpen(true);
-  };
-
-  const handleSaveSearchSuccess = () => {
-    setSaveSearchOpen(false);
-  };
-
   const hasActiveFilters = Object.values(initialFilters).some(Boolean);
 
   return (
@@ -45,8 +34,7 @@ export function JobsClient({
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight">Job Search</h1>
         <p className="text-muted-foreground mt-1">
-          Search and filter remote job postings.{" "}
-          {userSignedIn && "Save searches and shortlist favorites."}
+          Search and filter remote job postings.
         </p>
       </div>
 
@@ -55,7 +43,6 @@ export function JobsClient({
         sources={sources}
         currentFilters={initialFilters}
         totalCount={initialTotalCount}
-        onSaveSearch={handleSaveSearch}
         userSignedIn={userSignedIn}
       />
 
@@ -91,17 +78,6 @@ export function JobsClient({
           />
         )}
       </div>
-
-      {/* Saving a search is a write: the modal is not mounted at all without a
-          session. The "Save this search" button in FilterBar is gated the same way. */}
-      {userSignedIn && (
-        <SaveSearchModal
-          isOpen={saveSearchOpen}
-          onClose={() => setSaveSearchOpen(false)}
-          filters={initialFilters}
-          onSuccess={handleSaveSearchSuccess}
-        />
-      )}
     </div>
   );
 }
