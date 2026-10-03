@@ -71,6 +71,44 @@ API_KEY_ENV_VAR = "LLM_API_KEY"
 #: rather than hardcoded, so the two cannot drift: 60 / 40 = 1.5 seconds between calls.
 NVIDIA_REQUESTS_PER_MINUTE = 40
 
+#: The NVIDIA chat models worth trying, in preference order, for `discovery.py`.
+#: The catalogue is not a deployment list (a free key 404s on most of it), so discovery
+#: probes candidates in this order and the router tries the winners in this order. This
+#: is the ONE place the order lives: `LlmRouter` reads it through
+#: `nvidia_preferred_models`, never a second copy.
+NVIDIA_PREFERRED_MODELS: tuple[str, ...] = (
+    "nvidia/nemotron-3-ultra-550b-a55b",
+    "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+    "openai/gpt-oss-20b",
+    "nvidia/nemotron-3.5-lightning-30b-a3b",
+    "meta/muse-glimmer-30b",
+)
+
+#: Overrides `NVIDIA_PREFERRED_MODELS`, comma separated. Read `Settings`-style (a
+#: `Settings` attribute first, the environment second) because `etl.core.config.Settings`
+#: is outside what this task may touch, so the field cannot be added there yet.
+NVIDIA_PREFERRED_MODELS_ENV_VAR = "NVIDIA_PREFERRED_MODELS"
+
+
+def nvidia_preferred_models(settings: object | None = None) -> tuple[str, ...]:
+    """The NVIDIA preference order: an explicit setting, then the env var, then the default.
+
+    A blank override (empty string, only commas/whitespace) is not an override at all —
+    it falls back to `NVIDIA_PREFERRED_MODELS`, because "no models" would leave discovery
+    with nothing to prefer and the router with nothing to call.
+    """
+    raw = ""
+    if settings is not None:
+        value = getattr(settings, "NVIDIA_PREFERRED_MODELS", None)
+        if value is not None:
+            getter = getattr(value, "get_secret_value", None)
+            raw = getter() if callable(getter) else value
+            raw = str(raw or "")
+    if not raw.strip():
+        raw = os.environ.get(NVIDIA_PREFERRED_MODELS_ENV_VAR) or ""
+    models = tuple(part.strip() for part in str(raw).split(",") if part.strip())
+    return models if models else NVIDIA_PREFERRED_MODELS
+
 #: The 1.5 seconds ADR-004 names, as a constant so the ceiling above has one derived home.
 MIN_CALL_INTERVAL_SECONDS = 60.0 / NVIDIA_REQUESTS_PER_MINUTE
 

@@ -74,6 +74,7 @@ from .prompts import PROMPT_VERSION, OutputNotUsable, extract_json_object
 from .providers import (
     DEFAULT_PROVIDER,
     MIN_CALL_INTERVAL_SECONDS,
+    NVIDIA_PREFERRED_MODELS,
     NVIDIA_REQUESTS_PER_MINUTE,
     PROVIDERS,
     Provider,
@@ -82,6 +83,7 @@ from .providers import (
     ProviderSpec,
     get_provider,
     get_spec,
+    nvidia_preferred_models,
     provider_names,
     resolve_provider,
 )
@@ -155,6 +157,7 @@ __all__ = [
     # -- providers ------------------------------------------------------------------------------
     "DEFAULT_PROVIDER",
     "MIN_CALL_INTERVAL_SECONDS",
+    "NVIDIA_PREFERRED_MODELS",
     "NVIDIA_REQUESTS_PER_MINUTE",
     "PROVIDERS",
     "Provider",
@@ -163,6 +166,7 @@ __all__ = [
     "ProviderSpec",
     "get_provider",
     "get_spec",
+    "nvidia_preferred_models",
     "provider_names",
     "resolve_provider",
     # -- the v1 schema --------------------------------------------------------------------------

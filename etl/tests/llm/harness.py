@@ -216,3 +216,26 @@ def answered(text: str, *, echo: bool = True) -> Callable[..., dict]:
         return completion(text, model=provider.model if echo else "some/other-model")
 
     return outcome
+
+
+def is_loopback(address) -> bool:
+    """True only for a real loopback address or the literal name `localhost`.
+
+    Parsed with `ipaddress`, not a string prefix: `127.evil.com` is a hostname, not an address,
+    and must not pass (a prefix test would let it through). IPv4-mapped IPv6 such as
+    `::ffff:127.0.0.1` is unwrapped before the check, and `::ffff:8.8.8.8` is therefore refused.
+    """
+    import ipaddress
+
+    host = address[0] if isinstance(address, (tuple, list)) else address
+    host = str(host).strip("[]")
+    if host.lower() == "localhost":
+        return True
+    try:
+        ip = ipaddress.ip_address(host)
+    except ValueError:
+        return False  # a hostname other than localhost: never loopback
+    if isinstance(ip, ipaddress.IPv6Address) and ip.ipv4_mapped is not None:
+        ip = ip.ipv4_mapped
+    return ip.is_loopback
+

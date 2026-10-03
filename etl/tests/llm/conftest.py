@@ -21,7 +21,7 @@ import socket
 import pytest
 
 from etl.core.config import Settings
-from .harness import TEST_KEY
+from .harness import TEST_KEY, is_loopback
 
 #: Every provider credential the router can read. Cleared from the environment by the autouse
 #: `no_credentials` fixture, so nothing here can be inherited from the shell.
@@ -41,15 +41,39 @@ CREDENTIAL_VARS = (
 
 @pytest.fixture(autouse=True)
 def offline(monkeypatch: pytest.MonkeyPatch):
-    """Any outbound connection fails the test that attempted one."""
+    """Any outbound connection fails the test that attempted one.
 
-    def refuse(*args, **kwargs):
-        raise AssertionError("the llm router opened a network connection; the suite runs offline")
+    Loopback (`127.0.0.1`, `::1`) is *not* refused: on Windows, creating an
+    `asyncio` event loop needs a loopback `socketpair`, which is process machinery
+    rather than the network, and the discovery tests (h2-05b) run stubbed async
+    code. Anything beyond loopback still raises.
+    """
+    real_connect = socket.socket.connect
+    real_connect_ex = socket.socket.connect_ex
+    real_create_connection = socket.create_connection
 
-    monkeypatch.setattr(socket.socket, "connect", refuse)
-    monkeypatch.setattr(socket.socket, "connect_ex", refuse)
-    monkeypatch.setattr(socket, "create_connection", refuse)
-    return refuse
+    def refuse_message() -> str:
+        return "the llm router opened a network connection; the suite runs offline"
+
+    def connect(self, address, *args, **kwargs):
+        if is_loopback(address):
+            return real_connect(self, address, *args, **kwargs)
+        raise AssertionError(refuse_message())
+
+    def connect_ex(self, address, *args, **kwargs):
+        if is_loopback(address):
+            return real_connect_ex(self, address, *args, **kwargs)
+        raise AssertionError(refuse_message())
+
+    def create_connection(address, *args, **kwargs):
+        if is_loopback(address):
+            return real_create_connection(address, *args, **kwargs)
+        raise AssertionError(refuse_message())
+
+    monkeypatch.setattr(socket.socket, "connect", connect)
+    monkeypatch.setattr(socket.socket, "connect_ex", connect_ex)
+    monkeypatch.setattr(socket, "create_connection", create_connection)
+    return refuse_message
 
 
 @pytest.fixture(autouse=True)

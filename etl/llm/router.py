@@ -31,7 +31,10 @@ Those are wiring mistakes, and failing at construction is where the traceback is
 
 from __future__ import annotations
 
+import asyncio
+import json
 import logging
+import urllib.request
 from dataclasses import dataclass, field, replace
 from typing import Mapping, Type, TypeVar
 
@@ -40,6 +43,7 @@ from pydantic import BaseModel, ValidationError
 from ..core.config import Settings
 from . import prompts
 from .client import LlmTransportError, Transport, http_transport
+from .discovery import Http, discover_models
 from .limits import (
     COOLDOWN_SECONDS,
     Clock,
@@ -62,7 +66,13 @@ from .privacy import (
     assert_purpose_allowed,
     check_purpose,
 )
-from .providers import PROVIDERS, Provider, ProviderSpec, resolve_provider
+from .providers import (
+    PROVIDERS,
+    Provider,
+    ProviderSpec,
+    nvidia_preferred_models,
+    resolve_provider,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -246,6 +256,7 @@ class LlmRouter:
         day_clock: DayClock = now_utc,
         cooldown_seconds: float = COOLDOWN_SECONDS,
         timeout: float = 30.0,
+        discover: bool = False,
     ) -> None:
         self.settings = settings if settings is not None else Settings(_env_file=None)
         self.routing = routing if routing is not None else DEFAULT_ROUTING
@@ -272,6 +283,10 @@ class LlmRouter:
         }
         self._buckets: dict[tuple[str, str], TokenBucket] = {}
         self.stats = RouterStats()
+        # `discover=True` (the pipeline entry points) learns NVIDIA's working models
+        # once per run; `False` (the default, every existing test) changes nothing.
+        self.discover = discover
+        self._discovery_done = False
 
     # -- the one method a caller uses ------------------------------------------------------
 
@@ -344,6 +359,13 @@ class LlmRouter:
                     return RouterOutcome(hit, "cache", provider="cache", model=schema.__name__)
             else:
                 self.stats.cache_misses += 1
+
+        # Discovery runs on the first call that actually needs providers, not on a
+        # cache hit (which makes zero provider calls) and not in the constructor
+        # (which cannot await). Once per router, whatever it finds.
+        if self.discover and not self._discovery_done:
+            self._discovery_done = True
+            self._run_discovery()
 
         attempts = 0
         last_reason = "unconfigured"
@@ -509,6 +531,93 @@ class LlmRouter:
             self.cooldowns.trip(provider.name)
         logger.info("router parked %s for %ss after %s", provider.name,
                     int(self.cooldowns.seconds_left(provider.name)), detail)
+
+    # -- model discovery -----------------------------------------------------------------
+
+    def _run_discovery(self) -> None:
+        """Replace NVIDIA's model list with the models that answer right now, once.
+
+        Runs at most once per router (guarded by `_discovery_done` at the call site).
+        An empty result — or any failure — keeps the configured models, and the
+        existing 404/410 quarantine then does its job one model at a time, exactly as
+        it does with `discover=False`. Never raises.
+        """
+        try:
+            spec = self.specs.get("nvidia")
+            if spec is None:
+                return
+            preferred = nvidia_preferred_models(self.settings)
+            seed = spec.models[0] if spec.models else (preferred[0] if preferred else "")
+            provider = resolve_provider(spec, self.settings, model=seed)
+            if provider is None:
+                # No key (or no URL, or no model at all): discovery would just fail
+                # auth, so skip it and let the normal "unconfigured" skip happen.
+                return
+            found = asyncio.run(
+                discover_models(
+                    provider, self._discovery_http(provider), preferred=list(preferred)
+                )
+            )
+            if found:
+                self.specs["nvidia"] = replace(spec, models=tuple(found))
+                logger.info(
+                    "router discovery: nvidia will try %d model(s): %s", len(found), found
+                )
+            else:
+                logger.info(
+                    "router discovery found no working nvidia model; keeping configured models"
+                )
+        except Exception as error:  # noqa: BLE001 - discovery must never take a run down
+            logger.warning("router discovery failed; keeping configured models: %s", error)
+
+    def _discovery_http(self, provider: Provider) -> Http:
+        """The `discovery.Http` for this router: catalogue GETs over urllib, probes here.
+
+        Probes go through `self.transport` — the same seam the cassettes plug into, so a
+        stub transport answers them in tests — and each probe first takes a token from
+        the NVIDIA *job* bucket (the 28 RPM one normal `job_extract` calls spend). A
+        discovery run is at most 10 probes, so at most 10 tokens, and a probe with no
+        token left is a 429, which discovery excludes like any other non-200.
+        """
+
+        async def http(
+            method: str,
+            url: str,
+            *,
+            headers: Mapping[str, str] | None = None,
+            body: Mapping[str, object] | None = None,
+            timeout: float = 25.0,
+        ) -> tuple[int, object]:
+            if method.upper() == "GET":
+                return await asyncio.to_thread(
+                    self._discovery_get, url, dict(headers or {}), timeout
+                )
+            bucket = self._bucket_for("job_extract", provider.name, self.specs[provider.name])
+            if not bucket.take():
+                return (429, {"error": "rate limited: the nvidia job budget is spent"})
+            model = ""
+            if isinstance(body, Mapping):
+                model = str(body.get("model") or "")
+            probe_provider = replace(provider, model=model or provider.model)
+            try:
+                response = await asyncio.to_thread(
+                    self.transport, dict(body or {}), probe_provider, timeout
+                )
+            except LlmTransportError as error:
+                return (error.status or 0, {"error": str(error)})
+            except Exception as error:  # noqa: BLE001 - a transport must never take discovery down
+                return (0, {"error": f"{type(error).__name__}: {error}"})
+            return (200, response)
+
+        return http
+
+    def _discovery_get(
+        self, url: str, headers: Mapping[str, str], timeout: float
+    ) -> tuple[int, object]:
+        """One catalogue GET, sync so the caller can run it in a thread. Raises on failure."""
+        request = urllib.request.Request(url, headers=dict(headers), method="GET")
+        with urllib.request.urlopen(request, timeout=timeout) as response:
+            return (response.status, json.loads(response.read().decode("utf-8")))
 
     def _model_mismatch(self, provider: Provider, response: object) -> str:
         """`""` if the response is from a model we may accept, else why it is refused.
