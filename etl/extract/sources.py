@@ -13,6 +13,8 @@ from typing import Any, Callable
 
 from etl.core.types import Field
 from etl.extract.model import empty_fields
+import html as _html
+
 from etl.extract.text import html_to_text
 
 _EMPLOYMENT_MAP = {
@@ -137,6 +139,8 @@ def fields_from_greenhouse(payload: dict) -> dict[str, Field]:
 
     content = payload.get("content")
     if isinstance(content, str) and content.strip():
+        if "<" not in content and "&lt;" in content:
+            content = _html.unescape(content)  # Greenhouse sends its HTML entity-escaped
         text = html_to_text(content) if "<" in content else content.strip()
         if text:
             set_known("description_md", text, "content")

@@ -32,3 +32,4 @@ CLAUDE.local.md
 # Agency task files copied into worktrees (never committed)
 .agency/
 .venv/
+.cache/

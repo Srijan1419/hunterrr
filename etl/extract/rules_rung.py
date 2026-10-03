@@ -124,6 +124,9 @@ def apply_rules(
 
         def eligibility() -> None:
             countries, scope = parse_eligibility(description, ctx)
+            remote = out.get("remote_type")
+            if scope.value == "worldwide" and remote is not None and remote.value in ("onsite", "hybrid"):
+                return  # an on-site or hybrid role is not open worldwide
             offer("eligible_countries", countries)
             offer("eligibility_scope", scope)
 

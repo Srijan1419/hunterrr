@@ -115,3 +115,18 @@ def test_hostile_and_random_inputs_never_raise_and_are_fast():
 def test_deterministic():
     d = "Salary $120,000 - $150,000 per year. Fully remote. 3-5 years. Apply by 15 Oct."
     assert run(d) == run(d)
+
+
+def test_worldwide_is_dropped_for_onsite_roles():
+    f = empty_fields()
+    f["remote_type"] = Field("onsite", "source")
+    out, _ = run("We are hiring engineers anywhere in the world.", fields=f)
+    assert out["eligibility_scope"].value is None
+
+
+def test_greenhouse_escaped_html_becomes_text():
+    body = json.dumps({"id": 3, "title": "Engineer", "absolute_url": "https://x.example/3",
+                       "content": "&lt;div&gt;&lt;p&gt;Build things &amp;amp; ship.&lt;/p&gt;&lt;/div&gt;"}).encode()
+    e = extract(StoredDocument("greenhouse", "acme/3", "https://x.example/3", body, "application/json"))
+    text = e.fields["description_md"].value
+    assert "<" not in text and "&lt;" not in text and "Build things & ship." in text

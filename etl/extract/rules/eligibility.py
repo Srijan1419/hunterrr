@@ -44,10 +44,19 @@ _ELIGIBILITY_CUES = [
 _CUE_PATTERN = re.compile("|".join(_ELIGIBILITY_CUES), re.IGNORECASE)
 
 # Worldwide scope patterns
+# Worldwide needs a HIRING or WORK-LOCATION cue: company boilerplate such as "people come together
+# from anywhere in the world" or "a perk you can use anywhere in the world" must not match.
 _WORLDWIDE_PATTERNS = re.compile(
-    r"\b(?:we\s+hire\s+worldwide|work\s+from\s+anywhere\s+in\s+the\s+world|"
-    r"global\s+remote|anywhere\s+in\s+the\s+world|worldwide\s+remote|"
-    r"anywhere\s+in\s+world)\b",
+    r"\bwe\s+(?:are\s+)?hir(?:e|ing)\s+(?:[a-z-]+\s+){0,3}(?:worldwide|globally|anywhere(?:\s+in\s+the\s+world)?)\b"
+    r"|\bwork(?:ing)?\s+(?:remotely\s+)?from\s+anywhere\s+in\s+the\s+world\b"
+    r"|\bglobal\s+remote\b|\bworldwide\s+remote\b|\bremote\s+(?:[a-z-]+\s+){0,2}worldwide\b"
+    r"|\bopen\s+to\s+(?:candidates|applicants)\s+(?:from\s+)?(?:anywhere|worldwide|globally)\b"
+    r"|\b(?:candidates|applicants)\s+(?:from|in)\s+anywhere\b",
+    re.IGNORECASE,
+)
+# A bare phrase counts only when the whole text is a short location-style string.
+_WORLDWIDE_BARE = re.compile(
+    r"^\W*(?:anywhere(?:\s+in\s+(?:the\s+)?world)?|worldwide|global(?:ly)?|work\s+from\s+anywhere)\W*$",
     re.IGNORECASE,
 )
 
@@ -116,6 +125,8 @@ def parse_eligibility(text: Any, ctx: ParseContext | None = None) -> tuple[Field
 
     # Check for worldwide scope first
     worldwide_match = _WORLDWIDE_PATTERNS.search(capped)
+    if worldwide_match is None and len(capped) <= 60:
+        worldwide_match = _WORLDWIDE_BARE.match(capped.strip())
     if worldwide_match:
         evidence = worldwide_match.group(0).strip()
         if len(evidence) > MAX_EVIDENCE:
