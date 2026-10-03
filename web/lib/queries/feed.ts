@@ -104,6 +104,17 @@ function toLocations(value: unknown): FeedLocation[] {
     .filter((x) => x.raw !== "");
 }
 
+/** Only http(s) links reach an href: board data is untrusted (no javascript:, data:, etc.). */
+export function safeHttpUrl(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  try {
+    const u = new URL(value.trim());
+    return u.protocol === "https:" || u.protocol === "http:" ? u.toString() : null;
+  } catch {
+    return null;
+  }
+}
+
 function toRow(r: Record<string, unknown>): FeedRow {
   const posted = r.posted_at;
   return {
@@ -121,7 +132,7 @@ function toRow(r: Record<string, unknown>): FeedRow {
     payPeriod: (r.pay_period as FeedRow["payPeriod"]) ?? null,
     payProvenance: String(r.pay_provenance ?? "unknown"),
     postedAt: posted instanceof Date ? posted.toISOString() : typeof posted === "string" ? posted : null,
-    applyUrl: typeof r.apply_url_raw === "string" ? r.apply_url_raw : null,
+    applyUrl: safeHttpUrl(r.apply_url_raw),
     seniority: typeof r.seniority === "string" ? r.seniority : null,
   };
 }

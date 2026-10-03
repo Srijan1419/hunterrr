@@ -9,7 +9,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { PGlite } from "@electric-sql/pglite";
 import { vector } from "@electric-sql/pglite-pgvector";
 import { drizzle } from "drizzle-orm/pglite";
-import { FEED_PAGE_SIZE, filtersFromSearchParams, queryFeed } from "@/lib/queries/feed";
+import { FEED_PAGE_SIZE, filtersFromSearchParams, queryFeed, safeHttpUrl } from "@/lib/queries/feed";
 
 const DIR = path.join(__dirname, "..", "..", "drizzle-v2");
 let pg: PGlite;
@@ -115,5 +115,16 @@ describe("filtersFromSearchParams", () => {
     expect(filtersFromSearchParams({ country: "India", days: "-1", page: "0", remote: "yes" })).toEqual({
       q: undefined, remote: undefined, country: undefined, hasPay: undefined, postedWithinDays: undefined, page: undefined,
     });
+  });
+});
+
+describe("safeHttpUrl", () => {
+  it("passes http(s) and drops every other scheme or junk", () => {
+    expect(safeHttpUrl("https://boards.greenhouse.io/acme/jobs/1")).toBe("https://boards.greenhouse.io/acme/jobs/1");
+    expect(safeHttpUrl("javascript:alert(1)")).toBeNull();
+    expect(safeHttpUrl(" JaVaScRiPt:alert(1)")).toBeNull();
+    expect(safeHttpUrl("data:text/html,x")).toBeNull();
+    expect(safeHttpUrl("/relative")).toBeNull();
+    expect(safeHttpUrl(null)).toBeNull();
   });
 });
