@@ -158,8 +158,8 @@ export const companies = hunterrr.table("companies", {
   name: text("name").notNull(),
   normalizedName: text("normalized_name").notNull(),
   domain: text("domain").unique(),
-  hqCountry: text("hq_country").notNull(),
-  aliases: text("aliases").array().notNull(),
+  hqCountry: text("hq_country"),
+  aliases: text("aliases").array().notNull().default(sql`'{}'::text[]`),
   watch: companyWatchEnum("watch").notNull().default("none"),
   createdAt: timestamptz("created_at").notNull().defaultNow(),
 });
@@ -179,13 +179,13 @@ export const boards = hunterrr.table(
     ats: atsEnum("ats").notNull(),
     slug: text("slug").notNull(),
     url: text("url").notNull(),
-    status: boardStatusEnum("status").notNull(),
-    lastPolledAt: timestamptz("last_polled_at").notNull(),
-    lastOkAt: timestamptz("last_ok_at").notNull(),
-    consecutiveFailures: integer("consecutive_failures").notNull(),
-    lastPostingCount: integer("last_posting_count").notNull(),
-    etag: text("etag").notNull(),
-    pollHash: text("poll_hash").notNull(),
+    status: boardStatusEnum("status").notNull().default("active"),
+    lastPolledAt: timestamptz("last_polled_at"),
+    lastOkAt: timestamptz("last_ok_at"),
+    consecutiveFailures: integer("consecutive_failures").notNull().default(0),
+    lastPostingCount: integer("last_posting_count").notNull().default(0),
+    etag: text("etag"),
+    pollHash: text("poll_hash"),
   },
   (table) => [unique("boards_ats_slug_unique").on(table.ats, table.slug)]
 );
@@ -198,10 +198,10 @@ export const boardPollState = hunterrr.table("board_poll_state", {
     .primaryKey()
     .references(() => boards.id),
   shard: smallint("shard").notNull(),
-  lastPollAt: timestamptz("last_poll_at").notNull(),
-  lastPostingIdsHash: text("last_posting_ids_hash").notNull(),
-  lastCount: integer("last_count").notNull(),
-  suspect: boolean("suspect").notNull(),
+  lastPollAt: timestamptz("last_poll_at").notNull().default(sql`now()`),
+  lastPostingIdsHash: text("last_posting_ids_hash"),
+  lastCount: integer("last_count").notNull().default(0),
+  suspect: boolean("suspect").notNull().default(false),
 });
 
 // ---------------------------------------------------------------------------
@@ -256,74 +256,74 @@ export const postings = hunterrr.table(
     ),
     title: text("title").notNull(),
     titleNormalized: text("title_normalized").notNull(),
-    descriptionMd: text("description_md").notNull(),
-    requisitionId: text("requisition_id").notNull(),
-    applyUrlRaw: text("apply_url_raw").notNull(),
-    status: postingStatusEnum("status").notNull(),
-    firstSeenAt: timestamptz("first_seen_at").notNull(),
-    lastSeenAt: timestamptz("last_seen_at").notNull(),
+    descriptionMd: text("description_md").notNull().default(""),
+    requisitionId: text("requisition_id"),
+    applyUrlRaw: text("apply_url_raw"),
+    status: postingStatusEnum("status").notNull().default("open"),
+    firstSeenAt: timestamptz("first_seen_at").notNull().default(sql`now()`),
+    lastSeenAt: timestamptz("last_seen_at").notNull().default(sql`now()`),
     missingPolls: integer("missing_polls").notNull().default(0),
     contentHash: text("content_hash").notNull(),
-    extractionVersion: integer("extraction_version").notNull(),
+    extractionVersion: integer("extraction_version").notNull().default(0),
     // Extracted fields + provenance siblings.
-    employmentType: text("employment_type").notNull(),
+    employmentType: text("employment_type"),
     employmentTypeProvenance: provenanceEnum(
       "employment_type_provenance"
-    ).notNull(),
-    seniority: text("seniority").notNull(),
-    seniorityProvenance: provenanceEnum("seniority_provenance").notNull(),
-    experienceMinYears: integer("experience_min_years").notNull(),
+    ).notNull().default("unknown"),
+    seniority: text("seniority"),
+    seniorityProvenance: provenanceEnum("seniority_provenance").notNull().default("unknown"),
+    experienceMinYears: integer("experience_min_years"),
     experienceMinYearsProvenance: provenanceEnum(
       "experience_min_years_provenance"
-    ).notNull(),
-    experienceMaxYears: integer("experience_max_years").notNull(),
+    ).notNull().default("unknown"),
+    experienceMaxYears: integer("experience_max_years"),
     experienceMaxYearsProvenance: provenanceEnum(
       "experience_max_years_provenance"
-    ).notNull(),
-    remoteType: remoteTypeEnum("remote_type").notNull(),
+    ).notNull().default("unknown"),
+    remoteType: remoteTypeEnum("remote_type"),
     remoteTypeProvenance: provenanceEnum(
       "remote_type_provenance"
-    ).notNull(),
-    locations: jsonb("locations").notNull(),
-    locationsProvenance: provenanceEnum("locations_provenance").notNull(),
-    eligibleCountries: text("eligible_countries").array().notNull(),
+    ).notNull().default("unknown"),
+    locations: jsonb("locations"),
+    locationsProvenance: provenanceEnum("locations_provenance").notNull().default("unknown"),
+    eligibleCountries: text("eligible_countries").array(),
     eligibleCountriesProvenance: provenanceEnum(
       "eligible_countries_provenance"
-    ).notNull(),
-    eligibilityScope: eligibilityScopeEnum("eligibility_scope").notNull(),
+    ).notNull().default("unknown"),
+    eligibilityScope: eligibilityScopeEnum("eligibility_scope"),
     eligibilityScopeProvenance: provenanceEnum(
       "eligibility_scope_provenance"
-    ).notNull(),
-    timezoneWindow: jsonb("timezone_window").notNull(),
+    ).notNull().default("unknown"),
+    timezoneWindow: jsonb("timezone_window"),
     timezoneWindowProvenance: provenanceEnum(
       "timezone_window_provenance"
-    ).notNull(),
-    visaSponsorship: visaSponsorshipEnum("visa_sponsorship").notNull(),
+    ).notNull().default("unknown"),
+    visaSponsorship: visaSponsorshipEnum("visa_sponsorship"),
     visaSponsorshipProvenance: provenanceEnum(
       "visa_sponsorship_provenance"
-    ).notNull(),
-    workAuthRequired: text("work_auth_required").array().notNull(),
+    ).notNull().default("unknown"),
+    workAuthRequired: text("work_auth_required").array(),
     workAuthRequiredProvenance: provenanceEnum(
       "work_auth_required_provenance"
-    ).notNull(),
+    ).notNull().default("unknown"),
     // Pay group (single provenance for the whole group).
-    payMin: numeric("pay_min").notNull(),
-    payMax: numeric("pay_max").notNull(),
-    payCurrency: text("pay_currency").notNull(),
-    payPeriod: payPeriodEnum("pay_period").notNull(),
-    payMinInrAnnual: numeric("pay_min_inr_annual").notNull(),
-    payMaxInrAnnual: numeric("pay_max_inr_annual").notNull(),
-    payDisclosed: boolean("pay_disclosed").notNull(),
-    payFxDate: date("pay_fx_date", { mode: "date" }).notNull(),
-    payProvenance: provenanceEnum("pay_provenance").notNull(),
-    postedAt: timestamptz("posted_at").notNull(),
-    postedAtProvenance: provenanceEnum("posted_at_provenance").notNull(),
-    deadlineAt: timestamptz("deadline_at").notNull(),
+    payMin: numeric("pay_min"),
+    payMax: numeric("pay_max"),
+    payCurrency: text("pay_currency"),
+    payPeriod: payPeriodEnum("pay_period"),
+    payMinInrAnnual: numeric("pay_min_inr_annual"),
+    payMaxInrAnnual: numeric("pay_max_inr_annual"),
+    payDisclosed: boolean("pay_disclosed").notNull().default(false),
+    payFxDate: date("pay_fx_date", { mode: "date" }),
+    payProvenance: provenanceEnum("pay_provenance").notNull().default("unknown"),
+    postedAt: timestamptz("posted_at"),
+    postedAtProvenance: provenanceEnum("posted_at_provenance").notNull().default("unknown"),
+    deadlineAt: timestamptz("deadline_at"),
     deadlineAtProvenance: provenanceEnum(
       "deadline_at_provenance"
-    ).notNull(),
-    joining: jsonb("joining").notNull(),
-    joiningProvenance: provenanceEnum("joining_provenance").notNull(),
+    ).notNull().default("unknown"),
+    joining: jsonb("joining"),
+    joiningProvenance: provenanceEnum("joining_provenance").notNull().default("unknown"),
   },
   (table) => [
     unique("postings_source_source_id_unique").on(
@@ -377,17 +377,17 @@ export const jobClusters = hunterrr.table(
       .notNull()
       .references(() => companies.id),
     titleNormalized: text("title_normalized").notNull(),
-    locationBucket: text("location_bucket").notNull(),
-    applyUrl: text("apply_url").notNull(),
-    applyUrlStatus: applyUrlStatusEnum("apply_url_status").notNull(),
-    status: postingStatusEnum("status").notNull(),
+    locationBucket: text("location_bucket").notNull().default(""),
+    applyUrl: text("apply_url"),
+    applyUrlStatus: applyUrlStatusEnum("apply_url_status").notNull().default("unknown"),
+    status: postingStatusEnum("status").notNull().default("open"),
     repostedFromClusterId: bigint("reposted_from_cluster_id", {
       mode: "number",
     }).references((): AnyPgColumn => jobClusters.id),
-    firstSeenAt: timestamptz("first_seen_at").notNull(),
-    lastSeenAt: timestamptz("last_seen_at").notNull(),
+    firstSeenAt: timestamptz("first_seen_at").notNull().default(sql`now()`),
+    lastSeenAt: timestamptz("last_seen_at").notNull().default(sql`now()`),
     embedding: halfvec("embedding", { dimensions: 384 }),
-    embeddingModel: text("embedding_model").notNull(),
+    embeddingModel: text("embedding_model"),
   },
   (table) => [
     index("job_clusters_status_first_seen_idx").on(
@@ -454,7 +454,7 @@ export const profiles = hunterrr.table(
     version: integer("version").notNull().unique("profiles_version_unique"),
     data: jsonb("data").notNull(),
     embedding: halfvec("embedding", { dimensions: 384 }),
-    isActive: boolean("is_active").notNull(),
+    isActive: boolean("is_active").notNull().default(false),
     createdAt: timestamptz("created_at").notNull().defaultNow(),
   },
   (table) => [
@@ -475,10 +475,10 @@ export const matches = hunterrr.table(
       .references(() => jobClusters.id),
     profileVersion: integer("profile_version").notNull(),
     passedFilters: boolean("passed_filters").notNull(),
-    filterFailures: text("filter_failures").array().notNull(),
+    filterFailures: text("filter_failures").array().notNull().default(sql`'{}'::text[]`),
     score: integer("score").notNull(),
     breakdown: jsonb("breakdown").notNull(),
-    computedAt: timestamptz("computed_at").notNull(),
+    computedAt: timestamptz("computed_at").notNull().default(sql`now()`),
     seenAt: timestamptz("seen_at"),
     dismissed: boolean("dismissed").notNull().default(false),
   },
@@ -511,8 +511,8 @@ export const applications = hunterrr.table("applications", {
   ),
   title: text("title").notNull(),
   source: applicationSourceEnum("source").notNull(),
-  currentState: applicationStateEnum("current_state").notNull(),
-  stateChangedAt: timestamptz("state_changed_at").notNull(),
+  currentState: applicationStateEnum("current_state").notNull().default("saved"),
+  stateChangedAt: timestamptz("state_changed_at").notNull().default(sql`now()`),
   nextActionAt: timestamptz("next_action_at"),
   createdAt: timestamptz("created_at").notNull().defaultNow(),
 });
@@ -532,9 +532,9 @@ export const applicationEvents = hunterrr.table(
       .references(() => applications.id),
     type: text("type").notNull(),
     occurredAt: timestamptz("occurred_at").notNull(),
-    recordedAt: timestamptz("recorded_at").notNull(),
+    recordedAt: timestamptz("recorded_at").notNull().default(sql`now()`),
     actor: eventActorEnum("actor").notNull(),
-    payload: jsonb("payload").notNull(),
+    payload: jsonb("payload").notNull().default(sql`'{}'::jsonb`),
     payloadHash: text("payload_hash").notNull(),
     supersedesEventId: bigint("supersedes_event_id", { mode: "number" }),
   },
@@ -571,14 +571,14 @@ export const emails = hunterrr.table(
     subject: text("subject"),
     snippetClean: text("snippet_clean"),
     label: text("label").notNull(),
-    labelConfidence: real("label_confidence").notNull(),
+    labelConfidence: real("label_confidence").notNull().default(0),
     labelProvenance: emailLabelProvenanceEnum("label_provenance").notNull(),
     applicationId: bigint("application_id", { mode: "number" }).references(
       () => applications.id
     ),
-    matchScore: real("match_score").notNull(),
+    matchScore: real("match_score").notNull().default(0),
     ics: jsonb("ics"),
-    isJobRelated: boolean("is_job_related").notNull(),
+    isJobRelated: boolean("is_job_related").notNull().default(false),
   },
   (table) => [
     index("emails_received_at_idx").on(table.receivedAt.desc()),
@@ -630,12 +630,12 @@ export const runs = hunterrr.table("runs", {
     .generatedAlwaysAsIdentity(),
   workflow: text("workflow").notNull(),
   shard: smallint("shard").notNull(),
-  startedAt: timestamptz("started_at").notNull(),
-  finishedAt: timestamptz("finished_at").notNull(),
-  status: runStatusEnum("status").notNull(),
-  counts: jsonb("counts").notNull(),
-  llmShare: real("llm_share").notNull(),
-  errorSummary: text("error_summary").notNull(),
+  startedAt: timestamptz("started_at").notNull().default(sql`now()`),
+  finishedAt: timestamptz("finished_at"),
+  status: runStatusEnum("status").notNull().default("ok"),
+  counts: jsonb("counts").notNull().default(sql`'{}'::jsonb`),
+  llmShare: real("llm_share").notNull().default(0),
+  errorSummary: text("error_summary").notNull().default(""),
 });
 
 // ---------------------------------------------------------------------------
@@ -646,13 +646,13 @@ export const sourceHealth = hunterrr.table(
   {
     source: text("source").notNull(),
     date: date("date", { mode: "date" }).notNull(),
-    fetched: integer("fetched").notNull(),
-    new: integer("new").notNull(),
-    changed: integer("changed").notNull(),
-    failed: integer("failed").notNull(),
-    blocked: integer("blocked").notNull(),
-    p50Ms: integer("p50_ms").notNull(),
-    status: text("status").notNull(),
+    fetched: integer("fetched").notNull().default(0),
+    new: integer("new").notNull().default(0),
+    changed: integer("changed").notNull().default(0),
+    failed: integer("failed").notNull().default(0),
+    blocked: integer("blocked").notNull().default(0),
+    p50Ms: integer("p50_ms").notNull().default(0),
+    status: text("status").notNull().default("ok"),
   },
   (table) => [
     primaryKey({
@@ -694,10 +694,10 @@ export const llmDaily = hunterrr.table(
 // ---------------------------------------------------------------------------
 export const gmailState = hunterrr.table("gmail_state", {
   account: text("account").primaryKey(),
-  historyId: text("history_id").notNull(),
-  lastSyncAt: timestamptz("last_sync_at").notNull(),
-  tokenStatus: gmailTokenStatusEnum("token_status").notNull(),
-  backfilledUntil: timestamptz("backfilled_until").notNull(),
+  historyId: text("history_id"),
+  lastSyncAt: timestamptz("last_sync_at"),
+  tokenStatus: gmailTokenStatusEnum("token_status").notNull().default("ok"),
+  backfilledUntil: timestamptz("backfilled_until"),
 });
 
 // ---------------------------------------------------------------------------
@@ -707,11 +707,11 @@ export const errors = hunterrr.table("errors", {
   id: bigint("id", { mode: "number" })
     .primaryKey()
     .generatedAlwaysAsIdentity(),
-  at: timestamptz("at").notNull(),
+  at: timestamptz("at").notNull().default(sql`now()`),
   component: text("component").notNull(),
   kind: text("kind").notNull(),
-  ref: text("ref").notNull(),
-  messageRedacted: text("message_redacted").notNull(),
+  ref: text("ref").notNull().default(""),
+  messageRedacted: text("message_redacted").notNull().default(""),
 });
 
 // ---------------------------------------------------------------------------
