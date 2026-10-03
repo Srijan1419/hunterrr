@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Chip } from "@/components/atlas/Chip";
 import type { FeedRow } from "@/lib/queries/feed";
 import { formatEligibility, formatLocation, formatPay, formatPosted } from "@/lib/feed-format";
@@ -15,7 +16,9 @@ export function JobRow({ row, now }: { row: FeedRow; now?: Date }) {
   return (
     <li className={styles.row}>
       <div className={styles.main}>
-        <h2 className={styles.jobTitle}>{row.title}</h2>
+        <h2 className={styles.jobTitle}>
+          <Link href={`/jobs/${row.id}`} className={styles.titleLink}>{row.title}</Link>
+        </h2>
         <div className={styles.meta}>
           {row.companyName ? <span>{row.companyName}</span> : null}
           {location ? <span>{location}</span> : null}
