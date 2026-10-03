@@ -12,6 +12,9 @@ dlt>=1.27.2
 # `etl/pipeline/schema.py` to create the contract's tables and indexes.
 sqlalchemy>=2.0
 
+# h2-03b: database access with psycopg 3
+psycopg[binary]>=3.2
+
 # No libSQL client library on purpose. `etl/sync_to_turso.py` talks to Turso's HTTP API
 # (`/v2/pipeline`) with the standard library: the `libsql-client` package it first used
 # was last released in 2023 and its batch requests are now rejected by Turso's server

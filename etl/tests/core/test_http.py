@@ -9,6 +9,7 @@ import pytest
 
 from etl.core.http import (
     CONNECT_TIMEOUT,
+    MAX_RETRY_AFTER,
     READ_TIMEOUT,
     TOTAL_TIMEOUT,
     USER_AGENT,
@@ -16,6 +17,7 @@ from etl.core.http import (
     CircuitOpenError,
     HttpClient,
     HttpError,
+    TooManyRedirectsError,
     decode_content,
     parse_retry_after,
 )
@@ -83,7 +85,7 @@ async def test_redirect_loop_stops_at_5():
         return httpx.Response(302, headers={"location": str(request.url)})
 
     client, _ = make_client(handler)
-    with pytest.raises(httpx.TooManyRedirects):
+    with pytest.raises(TooManyRedirectsError):
         await client.get("https://example.com/loop")
     # initial + 5 redirects
     assert calls["n"] <= 6
@@ -227,3 +229,98 @@ async def test_concurrency_caps_present():
     assert client.max_concurrency >= 1
     assert client.max_per_host >= 1
     await client.aclose()
+
+
+async def test_retry_after_capped_at_300_seconds():
+    """Retry-After > 300s raises HttpError and opens breaker, no sleep > 300s."""
+    calls = {"n": 0}
+
+    def handler(request):
+        calls["n"] += 1
+        if calls["n"] == 1:
+            return httpx.Response(
+                429, content=b"slow", headers={"retry-after": "3600"}
+            )
+        return httpx.Response(200, content=b"ok")
+
+    client, clock = make_client(handler, base_delay=0.01, max_retries=3)
+    with pytest.raises(HttpError, match="rate limited, retry-after too long"):
+        await client.get("https://example.com/rate")
+    # No sleep should have happened (or at least not > 300)
+    assert all(d <= 300 for d in clock.slept), f"slept too long: {clock.slept}"
+    # Breaker should be open for that host
+    assert client.is_open("example.com")
+    await client.aclose()
+
+
+async def test_too_many_redirects_converted_to_error():
+    """httpx.TooManyRedirects is wrapped in TooManyRedirectsError."""
+    calls = {"n": 0}
+
+    def handler(request):
+        calls["n"] += 1
+        return httpx.Response(302, headers={"location": "https://example.com/loop"})
+
+    client, _ = make_client(handler)
+    with pytest.raises(TooManyRedirectsError):
+        await client.get("https://example.com/loop")
+    await client.aclose()
+
+
+async def test_total_timeout_per_attempt():
+    """Total timeout applies per attempt; each retry gets its own 60s window."""
+    attempts = {"n": 0}
+
+    def handler(request):
+        attempts["n"] += 1
+        raise asyncio.TimeoutError("simulated timeout")
+
+    clock = FakeClock()
+    client = HttpClient(
+        transport=httpx.MockTransport(handler),
+        clock=clock,
+        sleep=clock.sleep,
+        jitter_fn=lambda: 0.0,
+        total_timeout=0.05,  # very short for test
+        max_retries=2,
+    )
+    start = time.perf_counter()
+    with pytest.raises(HttpError):
+        await client.get("https://example.com/slow")
+    elapsed = time.perf_counter() - start
+    # Should have attempted 3 times (initial + 2 retries), each timing out
+    assert attempts["n"] == 3
+    assert elapsed < 0.5  # fake clock, so real time is fast
+    await client.aclose()
+
+
+async def test_request_post_obeys_breaker_and_body_cap():
+    """POST via request() respects circuit breaker and 5 MB body cap."""
+    # First, test breaker opens after 3 POST failures
+    calls = {"n": 0}
+
+    def fail_handler(request):
+        calls["n"] += 1
+        return httpx.Response(500, content=b"down")
+
+    client, _ = make_client(fail_handler, max_retries=0)
+    for _ in range(3):
+        with pytest.raises(HttpError):
+            await client.request("POST", "https://down.example.com/x", content=b"data")
+    assert calls["n"] == 3
+    assert client.is_open("down.example.com")
+    with pytest.raises(CircuitOpenError):
+        await client.request("POST", "https://down.example.com/x", content=b"data")
+    assert calls["n"] == 3  # fail fast: transport not hit again
+    await client.aclose()
+
+    # Second, test body cap on POST response
+    big = b"x" * (5 * 1024 * 1024 + 1)
+
+    def big_handler(request):
+        return httpx.Response(200, content=big, headers={"content-type": "application/json"})
+
+    client2, _ = make_client(big_handler)
+    with pytest.raises(BodyTooLargeError):
+        await client2.request("POST", "https://example.com/big", content=b"data")
+    await client2.aclose()

@@ -28,6 +28,7 @@ TOTAL_TIMEOUT = 60.0
 MAX_REDIRECTS = 5
 USER_AGENT = "hunterrr-etl/1.0 (+https://github.com/hunterrr-etl; python-httpx)"
 BREAKER_THRESHOLD = 3
+MAX_RETRY_AFTER = 300.0  # cap for Retry-After header (seconds)
 
 
 class HttpError(Exception):
@@ -40,6 +41,10 @@ class BodyTooLargeError(HttpError):
 
 class CircuitOpenError(HttpError):
     """Raised when a host's circuit breaker is open (fail fast)."""
+
+
+class TooManyRedirectsError(HttpError):
+    """Raised when the maximum number of redirects is exceeded."""
 
 
 @dataclass
@@ -253,18 +258,53 @@ class HttpClient:
         return b"".join(chunks)
 
     async def _single_attempt(
-        self, url: str, headers: dict[str, str] | None
+        self,
+        method: str,
+        url: str,
+        headers: dict[str, str] | None,
+        content: bytes | None = None,
     ) -> tuple[int, dict[str, str], bytes, str | None]:
-        async with self._client.stream("GET", url, headers=headers) as resp:
+        async with self._client.stream(method, url, headers=headers, content=content) as resp:
             body = await self._read_limited(resp)
             hdrs = dict(resp.headers)
             ctype = resp.headers.get("content-type", "")
             return resp.status_code, hdrs, body, ctype
 
-    async def get(
-        self, url: str, headers: dict[str, str] | None = None
+    async def request(
+        self,
+        method: str,
+        url: str,
+        *,
+        headers: dict[str, str] | None = None,
+        content: bytes | None = None,
+        json: dict | list | None = None,
     ) -> HttpResponse:
-        """GET `url`, applying rate limits, retries, breaker and body cap."""
+        """Make an HTTP request with the full policy: rate limits, retries, breaker, body cap.
+
+        Args:
+            method: HTTP method (GET, POST, PUT, etc.)
+            url: Target URL
+            headers: Optional request headers
+            content: Optional request body as bytes
+            json: Optional JSON-serializable body (mutually exclusive with content)
+
+        Returns:
+            HttpResponse with status, headers, body, and decoded text.
+
+        Raises:
+            HttpError: On network errors, non-retryable status codes, or policy violations.
+            CircuitOpenError: If the host's circuit breaker is open.
+            TooManyRedirectsError: If redirects exceed the limit.
+            BodyTooLargeError: If response body exceeds 5 MB.
+        """
+        if content is not None and json is not None:
+            raise ValueError("content and json are mutually exclusive")
+        if json is not None:
+            import json as _json
+
+            content = _json.dumps(json).encode()
+            headers = {**{"Content-Type": "application/json"}, **(headers or {})}
+
         host = _host_of(url)
         if host in self._open:
             raise CircuitOpenError(f"circuit open for host {host!r}")
@@ -278,7 +318,7 @@ class HttpClient:
                 last_status: int | None = None
                 for attempt in range(self.max_retries + 1):
                     try:
-                        coro = self._single_attempt(url, headers)
+                        coro = self._single_attempt(method, url, headers, content)
                         status, hdrs, body, ctype = await asyncio.wait_for(
                             coro, timeout=self.total_timeout
                         )
@@ -286,8 +326,11 @@ class HttpClient:
                         raise
                     except CircuitOpenError:
                         raise
-                    except httpx.TooManyRedirects:
-                        raise
+                    except httpx.TooManyRedirects as exc:
+                        self._record_failure(host)
+                        raise TooManyRedirectsError(
+                            f"too many redirects for {url}"
+                        ) from exc
                     except (httpx.TimeoutException, httpx.NetworkError, TimeoutError) as exc:
                         last_status = None
                         if attempt >= self.max_retries:
@@ -315,6 +358,12 @@ class HttpClient:
                         retry_after = parse_retry_after(raw, now=self._now_fn())
                         delay = self._backoff(attempt)
                         if retry_after is not None:
+                            if retry_after > MAX_RETRY_AFTER:
+                                # Open breaker immediately for too-long retry-after
+                                self._open.add(host)
+                                raise HttpError(
+                                    "rate limited, retry-after too long"
+                                )
                             delay = max(delay, retry_after)
                         await self._sleep(delay)
                         continue
@@ -335,6 +384,12 @@ class HttpClient:
                     )
                 self._record_failure(host)
                 raise HttpError(f"request to {url} failed (status={last_status})")
+
+    async def get(
+        self, url: str, headers: dict[str, str] | None = None
+    ) -> HttpResponse:
+        """GET `url`, applying rate limits, retries, breaker and body cap."""
+        return await self.request("GET", url, headers=headers)
 
     async def get_text(
         self, url: str, headers: dict[str, str] | None = None
@@ -358,6 +413,7 @@ __all__ = [
     "CONNECT_TIMEOUT",
     "MAX_BODY_BYTES",
     "MAX_REDIRECTS",
+    "MAX_RETRY_AFTER",
     "READ_TIMEOUT",
     "TOTAL_TIMEOUT",
     "USER_AGENT",
@@ -366,6 +422,7 @@ __all__ = [
     "HttpClient",
     "HttpError",
     "HttpResponse",
+    "TooManyRedirectsError",
     "decode_content",
     "parse_retry_after",
 ]

@@ -4,4 +4,5 @@ asyncio_mode = "auto"
 markers = [
     "live: tests requiring real network access (excluded from offline runs)",
     "pg: tests requiring a live Postgres database",
+    "pg_concurrent: tests requiring two concurrent Postgres connections (skipped unless PG_CONCURRENT_URL is set)",
 ]

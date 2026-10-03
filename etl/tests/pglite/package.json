@@ -1,0 +1,12 @@
+{
+  "name": "hunterrr-etl-pglite",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local PGlite socket server for the ETL test suite (task h2-03b). Never a real database.",
+  "dependencies": {
+    "@electric-sql/pglite": "^0.5.8",
+    "@electric-sql/pglite-pgvector": "^0.0.9",
+    "@electric-sql/pglite-socket": "^0.2.11"
+  }
+}
