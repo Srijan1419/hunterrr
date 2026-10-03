@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { DESTINATIONS } from "./destinations";
 import { CommandPalette } from "./CommandPalette";
 import { ThemeToggle } from "./ThemeToggle";
+import { authClient } from "@/lib/auth/client";
 import styles from "./shell.module.css";
 
 /** Active when the path is the tab or under it (`/jobs/123` lights up Jobs). */
@@ -77,7 +78,13 @@ export function TopBar() {
           })}
         </nav>
       </div>
-      <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
+      <CommandPalette
+        open={paletteOpen}
+        onOpenChange={setPaletteOpen}
+        onSignOut={() => {
+          void authClient.signOut().finally(() => window.location.assign("/signin"));
+        }}
+      />
     </header>
   );
 }

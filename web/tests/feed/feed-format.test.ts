@@ -8,6 +8,9 @@ describe("formatPay", () => {
   it("writes Indian yearly pay as LPA", () => {
     expect(formatPay(pay({ payMin: 1_200_000, payMax: 1_800_000, payCurrency: "INR", payPeriod: "year" }))).toBe("₹12–18 LPA");
     expect(formatPay(pay({ payMin: 1_500_000, payMax: 1_500_000, payCurrency: "INR", payPeriod: "year" }))).toBe("₹15 LPA");
+    expect(formatPay(pay({ payMin: 1_200_000, payCurrency: "INR", payPeriod: "year" }))).toBe("from ₹12 LPA");
+    expect(formatPay(pay({ payMax: 1_800_000, payCurrency: "INR", payPeriod: "year" }))).toBe("up to ₹18 LPA");
+    expect(formatPay(pay({ payMin: 999_950, payMax: 999_950, payCurrency: "USD", payPeriod: "year" }))).toBe("$1M /yr");
   });
   it("writes ranges, floors and ceilings", () => {
     expect(formatPay(pay({ payMin: 120_000, payMax: 150_000, payCurrency: "USD", payPeriod: "year" }))).toBe("$120k–150k /yr");

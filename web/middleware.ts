@@ -14,7 +14,7 @@ export async function middleware(request: NextRequest) {
   const session = await auth.api.getSession({ headers: request.headers });
   if (!session) {
     const signinUrl = new URL("/signin", request.url);
-    signinUrl.searchParams.set("callbackUrl", pathname);
+    signinUrl.searchParams.set("callbackUrl", pathname + request.nextUrl.search);
     return NextResponse.redirect(signinUrl);
   }
   return NextResponse.next();

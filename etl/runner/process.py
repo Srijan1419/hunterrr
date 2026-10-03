@@ -74,6 +74,25 @@ def split_source_id(source_key: str) -> str:
     return rest if sep and rest else (source_key or "")
 
 
+_INT4_MAX_YEARS = 60          # experience years beyond this are not a requirement
+_NUMERIC_LIMIT = Decimal(10) ** 12  # pay beyond a trillion is junk, and keeps numeric sane
+
+
+def _clean_text(value: str) -> str:
+    """Postgres rejects NUL and unpaired surrogates: drop NUL, replace the rest."""
+    return value.replace("\x00", "").encode("utf-8", "replace").decode("utf-8")
+
+
+def _clean(value: Any) -> Any:
+    if isinstance(value, str):
+        return _clean_text(value)
+    if isinstance(value, Mapping):
+        return {_clean_text(str(k)): _clean(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_clean(v) for v in value]
+    return value
+
+
 def _prov(f: Field | None) -> str:
     p = getattr(f, "provenance", None)
     return p if p in PROVENANCE else "unknown"
@@ -97,7 +116,7 @@ def _jsonable(value: Any) -> Any:
 
 def _json_text(value: Any) -> str | None:
     try:
-        return json.dumps(_jsonable(value), ensure_ascii=False)
+        return json.dumps(_clean(_jsonable(value)), ensure_ascii=False)
     except Exception:
         return None
 
@@ -118,9 +137,10 @@ def _int(f: Field | None) -> tuple[int | None, str]:
     if not _known(f) or isinstance(f.value, bool):
         return None, "unknown"
     try:
-        return int(f.value), _prov(f)
+        n = int(f.value)
     except (TypeError, ValueError, OverflowError):
         return None, "unknown"
+    return (n, _prov(f)) if 0 <= n <= _INT4_MAX_YEARS else (None, "unknown")
 
 
 def _number(value: Any) -> Decimal | None:
@@ -130,7 +150,7 @@ def _number(value: Any) -> Decimal | None:
         d = Decimal(str(value))
     except (InvalidOperation, ValueError):
         return None
-    return d if d.is_finite() else None
+    return d if d.is_finite() and abs(d) < _NUMERIC_LIMIT else None
 
 
 def _text_list(f: Field | None) -> tuple[list[str] | None, str]:
@@ -230,7 +250,9 @@ def to_posting_row(
     row["posted_at"], row["posted_at_provenance"] = _aware(fields.get("posted_at"))
     row["deadline_at"], row["deadline_at_provenance"] = _aware(fields.get("deadline_at"))
     row["joining"], row["joining_provenance"] = _json_field(fields.get("joining"))
-    return row
+    if row["pay_min"] is None and row["pay_max"] is None:
+        row.update({"pay_currency": None, "pay_period": None, "pay_disclosed": False, "pay_provenance": "unknown"})
+    return {k: _clean(v) if isinstance(v, (str, list)) else v for k, v in row.items()}
 
 
 # Every column except identity and the first-seen timestamp is rewritten on conflict.
@@ -266,6 +288,18 @@ def _decode_body(blob: Any) -> bytes:
         return data  # tolerate an uncompressed body
 
 
+def _write(conn, rows: list[dict[str, Any]], consumed: list[int]) -> None:
+    if rows:
+        batch_upsert(
+            conn, "hunterrr.postings", rows,
+            conflict_cols=["source", "source_id"], update_cols=list(UPDATE_COLUMNS),
+            # A posting is only ever replaced by data from the same or a NEWER raw document.
+            update_where='"postings"."raw_document_id" <= EXCLUDED."raw_document_id"',
+        )
+    if consumed:
+        conn.execute(_CONSUME_SQL, {"ids": consumed})
+
+
 def process(
     engine,
     *,
@@ -299,7 +333,7 @@ def process(
         result.batches += 1
 
         by_key: dict[tuple[str, str], dict[str, Any]] = {}
-        consumed: list[int] = []
+        doc_ids: dict[tuple[str, str], list[int]] = {}
         for doc in pending:
             try:
                 extracted = extract(StoredDocument(
@@ -311,21 +345,26 @@ def process(
                 result.failed += 1
                 result.failed_ids.append(doc.id)
                 continue
-            consumed.append(doc.id)
             key = (row["source"], row["source_id"])
             if key in by_key:
                 result.skipped += 1  # an older version of the same posting in this batch
             by_key[key] = row  # ids ascend, so the newest document wins
+            doc_ids.setdefault(key, []).append(doc.id)
 
-        with session_scope(engine) as conn:
-            if by_key:
-                batch_upsert(
-                    conn, "hunterrr.postings", list(by_key.values()),
-                    conflict_cols=["source", "source_id"], update_cols=list(UPDATE_COLUMNS),
-                )
-                result.written += len(by_key)
-            if consumed:
-                conn.execute(_CONSUME_SQL, {"ids": consumed})
+        try:
+            with session_scope(engine) as conn:
+                _write(conn, list(by_key.values()), [i for ids in doc_ids.values() for i in ids])
+            result.written += len(by_key)
+        except Exception:
+            # One row Postgres rejects must not block the batch forever: retry row by row.
+            for key, row in by_key.items():
+                try:
+                    with session_scope(engine) as conn:
+                        _write(conn, [row], doc_ids[key])
+                    result.written += 1
+                except Exception:
+                    result.failed += 1
+                    result.failed_ids.extend(doc_ids[key])
         if release_connections:
             engine.dispose()
     return result

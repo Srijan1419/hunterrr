@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { FilterToggle } from "@/components/atlas/FilterToggle";
 import styles from "./feed.module.css";
 
@@ -18,7 +18,13 @@ const COUNTRIES: { code: string; label: string }[] = [
 export function FeedFilters() {
   const router = useRouter();
   const params = useSearchParams();
-  const [q, setQ] = useState(params.get("q") ?? "");
+  const urlQ = params.get("q") ?? "";
+  const [q, setQ] = useState(urlQ);
+  useEffect(() => setQ(urlQ), [urlQ]); // Back/Forward and cleared filters keep the box honest
+  const country = (params.get("country") ?? "").toUpperCase();
+  const options = COUNTRIES.some((c) => c.code === country)
+    ? COUNTRIES
+    : [...COUNTRIES, { code: country, label: country }];
 
   function push(mutate: (next: URLSearchParams) => void) {
     const next = new URLSearchParams(params.toString());
@@ -54,10 +60,10 @@ export function FeedFilters() {
       <select
         className={styles.select}
         aria-label="Eligible country"
-        value={params.get("country") ?? ""}
+        value={country}
         onChange={(e) => push((n) => (e.target.value ? n.set("country", e.target.value) : n.delete("country")))}
       >
-        {COUNTRIES.map((c) => (
+        {options.map((c) => (
           <option key={c.code} value={c.code}>
             {c.label}
           </option>

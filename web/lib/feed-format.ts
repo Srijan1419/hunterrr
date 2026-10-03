@@ -6,7 +6,8 @@ const SYMBOL: Record<string, string> = {
 const PERIOD: Record<string, string> = { hour: "/hr", day: "/day", month: "/mo", year: "/yr" };
 
 function short(n: number): string {
-  if (n >= 1_000_000) return `${+(n / 1_000_000).toFixed(2)}M`;
+  // Round first, then pick the unit, so 999,950 reads "1M" (not "1000k").
+  if (Math.round(n / 1000) >= 1000) return `${+(n / 1_000_000).toFixed(2)}M`;
   if (n >= 1000) return `${+(n / 1000).toFixed(1)}k`;
   return String(+n.toFixed(2));
 }
@@ -18,8 +19,9 @@ export function formatPay(row: Pick<FeedRow, "payMin" | "payMax" | "payCurrency"
   if (cur === "INR" && period === "year") {
     const lakh = (n: number) => +(n / 100_000).toFixed(2);
     if (lo !== null && hi !== null && lo !== hi) return `₹${lakh(lo)}–${lakh(hi)} LPA`;
-    const one = lo ?? hi;
-    return one === null ? null : `₹${lakh(one)} LPA`;
+    if (lo !== null && hi === null) return `from ₹${lakh(lo)} LPA`;
+    if (lo === null && hi !== null) return `up to ₹${lakh(hi)} LPA`;
+    return lo === null ? null : `₹${lakh(lo)} LPA`;
   }
   const sym = (cur && SYMBOL[cur]) ?? (cur ? `${cur} ` : "");
   const unit = period ? ` ${PERIOD[period]}` : "";

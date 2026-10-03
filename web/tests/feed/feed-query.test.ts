@@ -96,6 +96,12 @@ describe("queryFeed", () => {
     expect((await queryFeed(db as never, {})).total).toBe(4);
   });
 
+  it("clamps a page beyond the last one to the last page", async () => {
+    const r = await queryFeed(db as never, { page: 9999 });
+    expect(r.page).toBe(r.pages);
+    expect(r.rows.length).toBeGreaterThan(0);
+  });
+
   it("paginates", async () => {
     for (let i = 10; i < 10 + FEED_PAGE_SIZE; i++) await add(i, { posted_at: "2026-08-01T00:00:00Z" });
     const p1 = await queryFeed(db as never, {});
@@ -112,6 +118,7 @@ describe("filtersFromSearchParams", () => {
     expect(filtersFromSearchParams({ q: "go", remote: "1", country: "in", pay: "1", days: "7", page: "3" })).toEqual({
       q: "go", remote: true, country: "IN", hasPay: true, postedWithinDays: 7, page: 3,
     });
+    expect(filtersFromSearchParams({ q: "a\u0000b" }).q).toBe("ab");
     expect(filtersFromSearchParams({ country: "India", days: "-1", page: "0", remote: "yes" })).toEqual({
       q: undefined, remote: undefined, country: undefined, hasPay: undefined, postedWithinDays: undefined, page: undefined,
     });

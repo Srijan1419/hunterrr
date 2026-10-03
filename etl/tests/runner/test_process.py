@@ -291,3 +291,54 @@ def test_workflow_yaml_triggers():
     assert wf["concurrency"]["group"] == "process" and wf["concurrency"]["cancel-in-progress"] is False
     assert wf["jobs"]["process"]["timeout-minutes"] == 10
     assert "pull_request" not in triggers and "pull_request_target" not in triggers
+
+
+# ---- review fixes ---------------------------------------------------------------------------
+def test_values_postgres_rejects_are_cleaned_or_dropped():
+    nul = chr(0)
+    r = row(description_md=Field("a" + nul + "b", "source"),
+            locations=Field([{"raw": "Pune" + nul, "city": chr(0xD800), "region": None, "country": "IN"}], "rule"),
+            experience_min_years=Field(10 ** 12, "rule"),
+            pay=Field({"min": "1E+999999", "max": "5", "currency": "USD", "period": "hour"}, "rule"))
+    assert nul not in r["description_md"] and r["description_md"] == "ab"
+    assert nul not in r["locations"] and "\ud800" not in r["locations"]
+    r["locations"].encode("utf-8")
+    assert r["experience_min_years"] is None and r["experience_min_years_provenance"] == "unknown"
+    assert r["pay_min"] is None and r["pay_max"] == Decimal("5")
+
+
+@pg
+def test_one_rejected_row_does_not_block_the_batch(db, monkeypatch):
+    # PGlite drops the connection on a rejected INSERT, so the rejection is simulated at _write.
+    postings = load("greenhouse", "jobs")[:3]
+    ids = seed_docs(db, "greenhouse", "acme", postings)
+    bad = str(postings[1]["id"])
+    real = P._write
+
+    def rejecting(conn, rows, consumed):
+        if any(r["source_id"] == bad for r in rows):
+            raise RuntimeError("value out of range for type integer")
+        return real(conn, rows, consumed)
+
+    monkeypatch.setattr(P, "_write", rejecting)
+    res = P.process(db, now=NOW, release_connections=False)
+    assert res.written == 2 and res.failed == 1 and res.failed_ids == [ids[1]]
+    assert scalar(db, "SELECT count(*) FROM hunterrr.postings") == 2
+    assert scalar(db, "SELECT count(*) FROM hunterrr.raw_documents WHERE clean_text_gz IS NOT NULL") == 1
+
+
+@pg
+def test_an_older_document_never_overwrites_a_newer_posting(db):
+    p = load("greenhouse", "jobs")[0]
+    old_id, new_id = seed_docs(db, "greenhouse", "acme", [dict(p, title="Old Title"), dict(p, title="New Title")])
+    with session_scope(db) as conn:  # the old document is left pending (as if its first run failed)
+        conn.execute(text("UPDATE hunterrr.raw_documents SET clean_text_gz = NULL WHERE id = :i"), {"i": old_id})
+    P.process(db, now=NOW, release_connections=False)
+    assert scalar(db, "SELECT title FROM hunterrr.postings") == "New Title"
+    body = canonical_json(dict(p, title="Old Title")).encode()
+    with session_scope(db) as conn:
+        conn.execute(text("UPDATE hunterrr.raw_documents SET clean_text_gz = :b WHERE id = :i"),
+                     {"b": gzip.compress(body), "i": old_id})
+    P.process(db, now=NOW, release_connections=False)
+    assert scalar(db, "SELECT title FROM hunterrr.postings") == "New Title"
+    assert scalar(db, "SELECT raw_document_id FROM hunterrr.postings") == new_id

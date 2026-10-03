@@ -42,7 +42,7 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
       </Suspense>
       {filters.country && result.eligibilityUnknown > 0 ? (
         <p className={styles.note}>
-          {result.eligibilityUnknown.toLocaleString("en-US")} other postings do not say who may apply and are not shown here.
+          {result.eligibilityUnknown.toLocaleString("en-US")} other postings do not say whether {filters.country} may apply and are not shown here.
         </p>
       ) : null}
 
@@ -60,23 +60,19 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
       )}
 
       <nav className={styles.pager} aria-label="Pagination">
-        <a
-          className={`${styles.pagerLink} ${result.page <= 1 ? styles.pagerOff : ""}`}
-          href={pageHref(params, result.page - 1)}
-          aria-disabled={result.page <= 1}
-        >
-          Previous
-        </a>
+        {result.page > 1 ? (
+          <a className={styles.pagerLink} href={pageHref(params, result.page - 1)}>Previous</a>
+        ) : (
+          <span className={`${styles.pagerLink} ${styles.pagerOff}`} aria-disabled="true">Previous</span>
+        )}
         <span>
           Page {result.page} of {result.pages}
         </span>
-        <a
-          className={`${styles.pagerLink} ${result.page >= result.pages ? styles.pagerOff : ""}`}
-          href={pageHref(params, result.page + 1)}
-          aria-disabled={result.page >= result.pages}
-        >
-          Next
-        </a>
+        {result.page < result.pages ? (
+          <a className={styles.pagerLink} href={pageHref(params, result.page + 1)}>Next</a>
+        ) : (
+          <span className={`${styles.pagerLink} ${styles.pagerOff}`} aria-disabled="true">Next</span>
+        )}
       </nav>
     </div>
   );

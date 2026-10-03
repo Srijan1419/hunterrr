@@ -46,7 +46,7 @@ export type FeedResult = {
   rows: FeedRow[];
   total: number;
   openTotal: number;
-  /** Remote postings that do not state who may apply (hidden by a country filter). */
+  /** Postings a country filter hides because they do not say whether that country may apply. */
   eligibilityUnknown: number;
   page: number;
   pages: number;
@@ -139,9 +139,21 @@ function toRow(r: Record<string, unknown>): FeedRow {
 
 export async function queryFeed(db: FeedDb, filters: FeedFilters = {}): Promise<FeedResult> {
   const where = sql.join(conditions(filters), sql` AND `);
-  const page = Math.max(1, Math.floor(filters.page ?? 1));
-  const offset = (page - 1) * FEED_PAGE_SIZE;
+  const requested = Math.max(1, Math.floor(filters.page ?? 1));
 
+  const counts = await db.execute(sql`
+    SELECT
+      (SELECT count(*) FROM hunterrr.postings p LEFT JOIN hunterrr.companies c ON c.id = p.company_id WHERE ${where}) AS total,
+      (SELECT count(*) FROM hunterrr.postings WHERE status = 'open') AS open_total,
+      (SELECT count(*) FROM hunterrr.postings p LEFT JOIN hunterrr.companies c ON c.id = p.company_id
+        WHERE ${sql.join(conditions({ ...filters, country: undefined }), sql` AND `)}
+          AND (p.eligibility_scope IS NULL OR p.eligibility_scope = 'regions')) AS eligibility_unknown`);
+
+  const c = counts.rows[0] ?? {};
+  const total = num(c.total) ?? 0;
+  const pages = Math.max(1, Math.ceil(total / FEED_PAGE_SIZE));
+  const page = Math.min(requested, pages); // ?page=9999 shows the last page, not an empty one
+  const offset = (page - 1) * FEED_PAGE_SIZE;
   const list = await db.execute(sql`
     SELECT p.id, p.title, c.name AS company_name, p.source, p.locations, p.remote_type,
            p.eligibility_scope, p.eligible_countries, p.pay_min, p.pay_max, p.pay_currency, p.pay_period,
@@ -152,23 +164,13 @@ export async function queryFeed(db: FeedDb, filters: FeedFilters = {}): Promise<
     ORDER BY p.posted_at DESC NULLS LAST, p.id DESC
     LIMIT ${FEED_PAGE_SIZE} OFFSET ${offset}`);
 
-  const counts = await db.execute(sql`
-    SELECT
-      (SELECT count(*) FROM hunterrr.postings p LEFT JOIN hunterrr.companies c ON c.id = p.company_id WHERE ${where}) AS total,
-      (SELECT count(*) FROM hunterrr.postings WHERE status = 'open') AS open_total,
-      (SELECT count(*) FROM hunterrr.postings p LEFT JOIN hunterrr.companies c ON c.id = p.company_id
-        WHERE ${sql.join(conditions({ ...filters, country: undefined }), sql` AND `)}
-          AND p.eligibility_scope IS NULL) AS eligibility_unknown`);
-
-  const c = counts.rows[0] ?? {};
-  const total = num(c.total) ?? 0;
   return {
     rows: list.rows.map(toRow),
     total,
     openTotal: num(c.open_total) ?? 0,
     eligibilityUnknown: filters.country ? (num(c.eligibility_unknown) ?? 0) : 0,
     page,
-    pages: Math.max(1, Math.ceil(total / FEED_PAGE_SIZE)),
+    pages,
   };
 }
 
@@ -184,7 +186,7 @@ export function filtersFromSearchParams(
   const page = Number(one("page"));
   const country = (one("country") ?? "").toUpperCase();
   return {
-    q: one("q")?.slice(0, 80) || undefined,
+    q: one("q")?.replace(/\u0000/g, "").slice(0, 80) || undefined,
     remote: one("remote") === "1" || undefined,
     country: /^[A-Z]{2}$/.test(country) ? country : undefined,
     hasPay: one("pay") === "1" || undefined,

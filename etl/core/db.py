@@ -118,6 +118,7 @@ def batch_upsert(
     rows: Iterable[dict[str, Any]],
     conflict_cols: Sequence[str],
     update_cols: Sequence[str],
+    update_where: str | None = None,
 ) -> tuple[int, int]:
     """Upsert rows with ONE multi-row INSERT ... ON CONFLICT per chunk of at most 500 rows.
 
@@ -133,6 +134,8 @@ def batch_upsert(
             order (pass JSON text for jsonb columns, Python lists for array columns).
         conflict_cols: Columns of the ON CONFLICT target (must be covered by a unique index).
         update_cols: Columns to overwrite on conflict; empty means `DO NOTHING`.
+        update_where: Optional trusted SQL condition (no user input) that must hold for the
+            conflicting row to be updated, e.g. `"t"."version" <= EXCLUDED."version"`.
 
     Returns:
         (inserted, updated) counts for this call. With `DO NOTHING`, conflicting rows are in
@@ -153,6 +156,8 @@ def batch_upsert(
     conflict_list = ", ".join('"' + c + '"' for c in conflict_cols)
     if update_cols:
         on_conflict = "DO UPDATE SET " + ", ".join(f'"{c}" = EXCLUDED."{c}"' for c in update_cols)
+        if update_where:
+            on_conflict += f" WHERE {update_where}"
     else:
         on_conflict = "DO NOTHING"
 
