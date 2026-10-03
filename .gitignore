@@ -28,3 +28,7 @@ local.db*
 
 # Personal pointer to the agency's working rules (machine-specific)
 CLAUDE.local.md
+
+# Agency task files copied into worktrees (never committed)
+.agency/
+.venv/
