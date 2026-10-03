@@ -50,12 +50,26 @@ class LlmTransportError(RuntimeError):
 
     Carries the HTTP status and the provider's own error message, never the request headers,
     because a `traceback` of this exception is exactly where a key would end up.
+
+    `model` is carried rather than parsed out of the message: `router.py` quarantines a model
+    for the rest of the run on a 404/410, and a quarantine decision must not depend on string
+    slicing of a text someone can edit.
     """
 
-    def __init__(self, message: str, *, status: int | None = None, retryable: bool = False) -> None:
+    def __init__(
+        self,
+        message: str,
+        *,
+        status: int | None = None,
+        retryable: bool = False,
+        model: str = "",
+        provider: str = "",
+    ) -> None:
         super().__init__(message)
         self.status = status
         self.retryable = retryable
+        self.model = model
+        self.provider = provider
 
     @property
     def is_rate_limit(self) -> bool:
@@ -113,16 +127,22 @@ def http_transport(
     The only place in the package that touches the network. `urllib` rather than `requests`
     because the ETL's dependency list is dlt and SQLAlchemy, and the whole reason the suite
     runs offline is that there are as few moving parts as possible (ADR-005).
+
+    **`Authorization` is added only when there is a key.** A local provider (`needs_key=False`,
+    ollama) has no credential, and `Authorization: Bearer ` with an empty token is a header some
+    gateways reject outright — so a keyless provider simply does not send one.
     """
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "User-Agent": USER_AGENT,
+    }
+    if provider.api_key:
+        headers["Authorization"] = f"Bearer {provider.api_key}"
     request = urllib.request.Request(
         provider.chat_completions_url,
         data=json.dumps(body, ensure_ascii=False).encode("utf-8"),
-        headers={
-            "Authorization": f"Bearer {provider.api_key}",
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "User-Agent": USER_AGENT,
-        },
+        headers=headers,
         method="POST",
     )
     try:
@@ -137,14 +157,21 @@ def http_transport(
             f"{provider.name} returned HTTP {error.code} for model {provider.model}: {detail}",
             status=error.code,
             retryable=error.code == 429 or 500 <= error.code < 600,
+            model=provider.model,
+            provider=provider.name,
         ) from None
     except urllib.error.URLError as error:
         raise LlmTransportError(
-            f"{provider.name} could not be reached: {error.reason}", retryable=True
+            f"{provider.name} could not be reached: {error.reason}",
+            retryable=True,
+            model=provider.model,
+            provider=provider.name,
         ) from None
     except json.JSONDecodeError as error:
         raise LlmTransportError(
-            f"{provider.name} returned a body that is not JSON: {error.msg}"
+            f"{provider.name} returned a body that is not JSON: {error.msg}",
+            model=provider.model,
+            provider=provider.name,
         ) from None
 
 

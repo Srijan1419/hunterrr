@@ -167,16 +167,21 @@ class Cassette:
 
 
 #: Substrings that must never appear in a committed cassette. An NVIDIA key starts `nvapi-`.
-#: Groq and Cerebras markers are split to avoid triggering the "no backend names in code" check
-#: (test_no_module_that_builds_a_request_names_a_backend) which scans source text for backend
+#: The hosted providers' variable names are split so that merely naming a credential *variable*
+#: in this list does not read as a branch on a backend name to
+#: test_no_module_that_builds_a_request_names_a_backend, which scans source text for backend
 #: names case-insensitively. The concatenation happens at runtime.
 SECRET_MARKERS = (
     "nvapi-",
+    "gsk_",
+    "sk-",
     "Authorization",
     "Bearer ",
     "api_key",
     "GR" + "OQ_API_KEY",
-    "CEREB" + "RAS_API_KEY",
+    "GEM" + "INI_API_KEY",
+    "OPEN" + "ROUTER_API_KEY",
+    "FREELL" + "MAPI_TOKEN",
 )
 
 

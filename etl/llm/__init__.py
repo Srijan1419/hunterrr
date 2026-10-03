@@ -1,37 +1,42 @@
-"""LLM skill/seniority extraction behind a provider abstraction, cached by content_hash.
+"""Two LLM layers: the v1 single-provider step-3 extractor, and the h2-05 provider router.
 
-Owned by task f1-08. NVIDIA is the only provisioned backend; Groq/Cerebras are config-only.
+**The router (`router.py`) is what new code should use.** One call in, a validated pydantic
+model or `None` out:
 
-This is step 3 of the ladder, and step 3 is the *last resort* (`normalization.md` §1). The
-extractor here is a plain `LlmResolver` — a callable taking one posting context and returning
-an `LlmResult | None` — so it drops into the seam `normalize.ladder` already has:
+    from etl.core.config import Settings
+    from etl.llm import LlmRouter
 
-    from etl.llm import ExtractionCache, SkillExtractor
-    from etl.normalize import normalize_rows
+    router = LlmRouter(Settings())
+    answer = router.complete_json(
+        "email_classify", system="…", user=body, schema=Classification, cache_key=message_id
+    )
 
-    result = normalize_rows(raw_rows, llm_resolve=SkillExtractor(cache=ExtractionCache()))
+It walks a chain of providers for the purpose asked, never raises for a provider problem,
+never sleeps, and never sends one purpose's text to a provider that may not see it.
 
-    print(SkillExtractor(cache=ExtractionCache()).stats.as_dict())   # what the run cost
-
-Nothing here is on the path of a run that does not ask for it. `normalize_rows` defaults
-`llm_resolve=None`, the ladder then never reaches step 3, and the whole suite is deterministic
-and offline — which is the property `normalization.md` §6 records as "the LLM step is
-unmeasured" and the property `tests/test_llm.py` then removes by pinning the numbers.
+**The v1 extractor (`resolver.py`) is still here** because `normalize.ladder` takes an
+`LlmResolver` callable and the two recorded NVIDIA cassettes pin its behaviour. It is a single
+provider, a single model, and it *does* pace its calls, which is the property the router
+deliberately dropped. Nothing new should be written against it.
 
 | Module | What it owns |
 |---|---|
-| `providers` | the registry: NVIDIA by default, Groq/Cerebras as config rows |
-| `schema` | the fixed strict-JSON schema, the prompt, and the validator |
-| `cache` | the `content_hash` cache, in a file, across restarts |
-| `client` | the POST, the 1.5-second spacing, the retry on a shared ceiling |
-| `cassette` | recording real responses once, replaying them in the suite |
-| `capture` | `python -m etl.llm.capture` — how a cassette gets recorded |
-| `resolver` | `SkillExtractor`, the `LlmResolver` itself |
+| `router` | `LlmRouter`, `Routing`, `Purpose` — the chain, the fallback, the privacy gate |
+| `privacy` | which providers may serve which purpose; how untrusted text is fenced |
+| `limits` | the in-process token buckets, daily caps, cooldowns and model quarantine |
+| `prompts` | asking for JSON, and reading JSON out of a reasoning model's answer |
+| `llmcache` | `LlmCache` + memory/file implementations; the hashed cache key |
+| `providers` | the registry: every backend, as data (no code change to add one) |
+| `client` | the POST, the v1 1.5-second spacing, the retry on a shared ceiling |
+| `schema` | the v1 strict-JSON extraction schema, its prompt and its validator |
+| `cache` | the v1 `content_hash` extraction cache, in SQLite |
+| `cassette` / `capture` | record a real response once, replay it in the suite |
 
-**The key is read from the environment and goes nowhere else.** `NVIDIA_API_KEY` is the only
-credential this package uses, it is resolved in `providers.get_provider`, it is handed to
-`urllib` in one header, and it is never written to a file, a cassette, a log line or an
-exception message.
+**The key is read from the environment or from `Settings` and goes nowhere else.** It is
+resolved in `providers.get_provider` / `providers.resolve_provider`, handed to `urllib` in one
+header, and never written to a file, a cassette, a log line or an exception message. The router
+takes its configuration *only* from `etl.core.config.Settings` and skips any provider whose key
+or base URL is unset, without a word.
 """
 
 from __future__ import annotations
@@ -48,6 +53,24 @@ from .cassette import (
     new_cassette,
 )
 from .client import LlmClient, LlmTransportError, RateLimiter, http_transport
+from .limits import (
+    COOLDOWN_SECONDS,
+    Cooldowns,
+    DailyCap,
+    Quarantine,
+    TokenBucket,
+    is_model_gone,
+)
+from .llmcache import FileCache, InMemoryCache, LlmCache, router_cache_key
+from .privacy import (
+    ALLOWED_PROVIDERS,
+    DEFAULT_CHAINS,
+    PURPOSES,
+    PrivacyViolation,
+    Purpose,
+    wrap_untrusted,
+)
+from .prompts import PROMPT_VERSION, OutputNotUsable, extract_json_object
 from .providers import (
     DEFAULT_PROVIDER,
     MIN_CALL_INTERVAL_SECONDS,
@@ -60,6 +83,7 @@ from .providers import (
     get_provider,
     get_spec,
     provider_names,
+    resolve_provider,
 )
 from .resolver import (
     SUPPORTED_FIELDS,
@@ -68,6 +92,15 @@ from .resolver import (
     cache_key,
     eligible_fields,
     make_resolver,
+)
+from .router import (
+    DEFAULT_ROUTING,
+    PROVIDER_RATE_OVERRIDES,
+    LlmRouter,
+    Routing,
+    RoutingError,
+    RouterOutcome,
+    RouterStats,
 )
 from .schema import (
     SCHEMA_NAME,
@@ -82,14 +115,44 @@ from .schema import (
 )
 
 __all__ = [
-    # -- the resolver, and the one call a pipeline makes -----------------------------------
+    # -- the router: the one call new code makes -------------------------------------------
+    "LlmRouter",
+    "Routing",
+    "RoutingError",
+    "RouterStats",
+    "RouterOutcome",
+    "DEFAULT_ROUTING",
+    "PROVIDER_RATE_OVERRIDES",
+    # -- privacy ----------------------------------------------------------------------------
+    "Purpose",
+    "PURPOSES",
+    "ALLOWED_PROVIDERS",
+    "DEFAULT_CHAINS",
+    "PrivacyViolation",
+    "wrap_untrusted",
+    # -- the ceilings -------------------------------------------------------------------------
+    "TokenBucket",
+    "DailyCap",
+    "Cooldowns",
+    "Quarantine",
+    "COOLDOWN_SECONDS",
+    "is_model_gone",
+    # -- prompts and the router's cache --------------------------------------------------------
+    "PROMPT_VERSION",
+    "OutputNotUsable",
+    "extract_json_object",
+    "LlmCache",
+    "InMemoryCache",
+    "FileCache",
+    "router_cache_key",
+    # -- the v1 resolver, and the one call it needs ---------------------------------------------
     "SkillExtractor",
     "ResolverStats",
     "SUPPORTED_FIELDS",
     "cache_key",
     "eligible_fields",
     "make_resolver",
-    # -- providers ------------------------------------------------------------------------
+    # -- providers ------------------------------------------------------------------------------
     "DEFAULT_PROVIDER",
     "MIN_CALL_INTERVAL_SECONDS",
     "NVIDIA_REQUESTS_PER_MINUTE",
@@ -101,7 +164,8 @@ __all__ = [
     "get_provider",
     "get_spec",
     "provider_names",
-    # -- schema ---------------------------------------------------------------------------
+    "resolve_provider",
+    # -- the v1 schema --------------------------------------------------------------------------
     "SCHEMA_NAME",
     "SCHEMA_VERSION",
     "ParsedExtraction",
@@ -111,7 +175,7 @@ __all__ = [
     "extraction_schema",
     "parse_extraction",
     "response_format",
-    # -- cache, client, cassettes ---------------------------------------------------------
+    # -- cache, client, cassettes -----------------------------------------------------------------
     "CachedExtraction",
     "ExtractionCache",
     "get_cache_path",

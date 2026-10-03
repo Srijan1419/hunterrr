@@ -56,7 +56,9 @@ from etl.llm import (
     ExtractionCache,
     LlmClient,
     LlmTransportError,
+    Provider,
     ProviderNotConfigured,
+    ProviderSpec,
     RateLimiter,
     ReplayTransport,
     ResolverStats,
@@ -125,11 +127,13 @@ def no_api_key(monkeypatch: pytest.MonkeyPatch):
 
     This is the "no API key is required to run the test suite" criterion enforced rather than
     asserted: a resolver that read `NVIDIA_API_KEY` on the cassette path would fail every
-    replay test here.
+    replay test here. `CEREBRAS_API_KEY` became the other four credential names when h2-05
+    replaced that row in the registry — the property is the same one, over a longer list.
     """
     for variable in (
-        "NVIDIA_API_KEY", "LLM_API_KEY", "GROQ_API_KEY", "CEREBRAS_API_KEY",
-        "LLM_PROVIDER", "LLM_MODEL", "LLM_CACHE_PATH",
+        "NVIDIA_API_KEY", "LLM_API_KEY", "GROQ_API_KEY", "GEMINI_API_KEY",
+        "OPENROUTER_API_KEY", "FREELLMAPI_URL", "FREELLMAPI_TOKEN",
+        "LLM_PROVIDER", "LLM_MODEL", "LLM_CACHE_PATH", "LLM_ROUTER_CACHE_PATH",
     ):
         monkeypatch.delenv(variable, raising=False)
 
@@ -1048,15 +1052,31 @@ class TestTheSpacing:
 
 # ================================================================== the provider abstraction
 class TestTheProviderAbstraction:
-    def test_nvidia_is_the_default_and_the_registry_holds_all_three(self):
+    #: The rows h2-05 ships. `cerebras` was removed by that task and `gemini`, `openrouter`,
+    #: `freellmapi` and `ollama` were added; the property under test is unchanged, which is
+    #: what makes the tuple worth pinning.
+    NAMES = ("freellmapi", "gemini", "groq", "nvidia", "ollama", "openrouter")
+
+    def test_nvidia_is_the_default_and_the_registry_holds_all_six(self):
         assert PROVIDERS["nvidia"].name == "nvidia"
-        assert provider_names() == ("cerebras", "groq", "nvidia")
+        assert provider_names() == self.NAMES
         assert get_spec().name == "nvidia"  # nothing passed, nothing set
         for name in provider_names():
             spec = PROVIDERS[name]
-            assert spec.base_url.startswith("https://")
-            assert spec.default_model
-            assert spec.api_key_env_var.endswith("_API_KEY")
+            # A gateway's address is the operator's to choose, so the row may name the settings
+            # field it comes from instead of carrying a literal (freellmapi is that row).
+            assert spec.base_url.startswith("http") or spec.base_url_setting, name
+            assert spec.api_key_env_var is None or spec.api_key_env_var.endswith(
+                ("_API_KEY", "_TOKEN")
+            ), name
+            # Ollama is local: the only row that needs no credential, and the only reason
+            # `get_provider` below does not raise for it.
+            assert spec.needs_key == (name != "ollama"), name
+
+    def test_cerebras_is_gone_from_the_registry_and_from_the_package(self):
+        """h2-05 removed the row. A lingering reference would be a backend that can still be named."""
+        assert "cerebras" not in provider_names()
+        assert "CEREBRAS_API_KEY" not in str(SECRET_MARKERS)
 
     def test_the_backend_can_be_switched_by_environment(self, monkeypatch):
         monkeypatch.setenv("LLM_PROVIDER", "groq")
@@ -1081,7 +1101,9 @@ class TestTheProviderAbstraction:
         for backend, variable in (
             ("nvidia", "NVIDIA_API_KEY"),
             ("groq", "GROQ_API_KEY"),
-            ("cerebras", "CEREBRAS_API_KEY"),
+            ("gemini", "GEMINI_API_KEY"),
+            ("openrouter", "OPENROUTER_API_KEY"),
+            ("freellmapi", "FREELLMAPI_TOKEN"),
         ):
             with pytest.raises(ProviderNotConfigured) as raised:
                 get_provider(backend)
@@ -1089,6 +1111,18 @@ class TestTheProviderAbstraction:
             assert variable in message
             assert "nvapi-" not in message
             assert len(message) < 400
+
+    def test_the_one_local_backend_needs_no_credential(self):
+        """Ollama is the third choice for `email_classify` and has nothing to configure.
+
+        `needs_key=False` is what lets that be true: `get_provider` would otherwise raise for
+        every caller who has not set up a local model server, and a chain that raises is not a
+        chain.
+        """
+        provider = get_provider("ollama")
+        assert provider.name == "ollama"
+        assert provider.api_key == ""
+        assert provider.model == PROVIDERS["ollama"].default_model
 
     def test_the_key_is_never_printed(self):
         provider = get_provider("nvidia", api_key=TEST_KEY)
@@ -1123,7 +1157,7 @@ class TestTheProviderAbstraction:
             for name in provider_names()
         }
         core = ("messages", "temperature", "max_tokens", "response_format", "model", "user")
-        reference = bodies["cerebras"]
+        reference = bodies["ollama"]
         for name, body in bodies.items():
             assert set(body) - set(PROVIDERS[name].request_options) == set(core)
             assert {key: body[key] for key in core} == {key: reference[key] for key in core}
@@ -1134,12 +1168,17 @@ class TestTheProviderAbstraction:
         """The seam is the registry, so the request path must not know a provider's name.
 
         Checked mechanically over the source rather than trusted: outside `providers.py` no
-        *code* says "nvidia", "groq" or "cerebras", which is what makes a fourth backend a dict
-        entry. Comments and docstrings are stripped before the check — prose may explain why a
-        knob exists (`cassette.py` guards against the providers' key prefixes), but a branch on
-        a backend's name is the thing that would make adding one a code change.
-        `capture.py` and `__init__.py` are excluded: a CLI has to name a backend, and the
-        package docstring is prose.
+        *code* says "nvidia", "groq", "gemini", "openrouter", "freellmapi", "ollama" or
+        "cerebras", which is what makes a seventh backend a dict entry. Comments and docstrings
+        are stripped before the check — prose may explain why a knob exists (`cassette.py` guards
+        against the providers' key prefixes) — but a branch on a backend's name is the thing that
+        would make adding one a code change.
+
+        `capture.py` and `__init__.py` are excluded: a CLI has to name a backend, and the package
+        docstring is prose. **`router.py` and `privacy.py` are excluded for a different and
+        deliberate reason** — `privacy.ALLOWED_PROVIDERS` is a table of which operator may see
+        which purpose, so naming providers there is the design rather than a violation of it. The
+        other four h2-05 modules are included, because none of them has that excuse.
         """
         import ast
         import etl.llm
@@ -1164,16 +1203,34 @@ class TestTheProviderAbstraction:
             ).casefold()
 
         package = Path(etl.llm.__file__).parent
-        for filename in ("resolver.py", "client.py", "schema.py", "cache.py", "cassette.py"):
+        checked = (
+            "resolver.py", "client.py", "schema.py", "cache.py", "cassette.py",
+            "limits.py", "prompts.py", "llmcache.py",
+        )
+        backends = provider_names() + ("cerebras",)
+        for filename in checked:
             source = code_only(package / filename)
-            for backend in provider_names():
+            for backend in backends:
                 assert backend not in source, f"{filename} names {backend!r}"
 
     def test_an_unmeasured_ceiling_is_paced_at_the_measured_one(self):
-        """Groq and Cerebras have no measured limit here, so they get NVIDIA's spacing."""
-        for name in ("groq", "cerebras"):
-            assert PROVIDERS[name].requests_per_minute is None
-            assert get_provider(name, api_key=TEST_KEY).min_call_interval == 1.5
+        """Every row's spacing is derived from its own ceiling; an unknown one stays conservative.
+
+        h2-05 gave every shipped row a measured number (groq 24 RPM, so 2.5s rather than the
+        1.5s NVIDIA pace), so the unmeasured case is built here rather than waited for: a limit
+        nobody has measured is not a licence to ignore the one that was.
+        """
+        assert get_provider("nvidia", api_key=TEST_KEY).min_call_interval == 1.5
+        assert get_provider("groq", api_key=TEST_KEY).min_call_interval == 2.5
+
+        unmeasured = ProviderSpec(
+            name="unmeasured",
+            base_url="https://example.invalid/v1",
+            models=("m",),
+            api_key_env_var="UNMEASURED_API_KEY",
+        )
+        assert unmeasured.requests_per_minute is None
+        assert Provider(spec=unmeasured, model="m", api_key="k").min_call_interval == 1.5
 
 
 # =============================================================================== the cassettes
