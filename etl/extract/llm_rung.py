@@ -88,6 +88,16 @@ _REGION_WORDS = ("emea", "apac", "latam", "europe", "european", "eu ", "asia", "
                  "africa", "middle east", "oceania")
 
 
+# An eligibility quote must say WHO MAY APPLY, not merely mention a country (pay-transparency
+# boilerplate such as "salary ranges for all US-based postings" is not an eligibility statement).
+_ELIGIBILITY_CUE = re.compile(
+    r"(?:must|need to|have to|required to|should)\s+(?:be|reside|live|work|have)"
+    r"|only|open to|eligible|eligibility|residents?|citizens?|authori[sz]ed|work authori[sz]ation"
+    r"|located in|located within|based (?:\w+ )?(?:in|within)\b|hiring in|candidates in|applicants in"
+    r"|reside|right to work|work (?:from|in|within)",
+)
+
+
 def _country_named(code: str, quote_norm: str) -> bool:
     if re.search(rf"\b{code.lower()}\b", quote_norm):
         return True
@@ -121,7 +131,7 @@ def validate(answer: LlmExtraction, text: str, wanted: set[str]) -> Validated:
 
     if wanted & {"eligibility_scope", "eligible_countries"} and answer.eligibility_scope != "unknown":
         q = _norm(answer.eligibility_quote)
-        ok = _quote_ok(answer.eligibility_quote, hay)
+        ok = _quote_ok(answer.eligibility_quote, hay) and bool(_ELIGIBILITY_CUE.search(q))
         if ok and answer.eligibility_scope == "countries":
             codes = [c.upper() for c in answer.eligible_countries if isinstance(c, str)]
             codes = [c for c in dict.fromkeys(codes) if len(c) == 2 and resolve_country(c) == c]

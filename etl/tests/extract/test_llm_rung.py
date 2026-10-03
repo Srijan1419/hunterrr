@@ -136,3 +136,19 @@ def test_validate_drops_unquoted_answers_individually():
     verdict = validate(good(visa_quote=""), TEXT, {"remote_type", "visa_sponsorship"})
     assert "remote_type" in verdict.fields and "visa_sponsorship" not in verdict.fields
     assert "visa_sponsorship" in verdict.rejected
+
+
+def test_a_country_mentioned_in_pay_boilerplate_is_not_an_eligibility_statement():
+    text = TEXT + " We share base salary ranges for all US-based job postings regardless of state."
+    out, _, _ = run(good(eligible_countries=["US"],
+                         eligibility_quote="We share base salary ranges for all US-based job postings regardless of state."),
+                    text=text)
+    assert out["eligibility_scope"].value is None and out["eligible_countries"].value is None
+
+
+def test_based_anywhere_in_a_country_is_an_eligibility_statement():
+    text = TEXT + " This role will be fully remote, based anywhere in the United States."
+    out, _, _ = run(good(eligible_countries=["US"],
+                         eligibility_quote="This role will be fully remote, based anywhere in the United States."),
+                    text=text)
+    assert out["eligible_countries"].value == ["US"]

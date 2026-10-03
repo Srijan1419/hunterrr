@@ -99,7 +99,7 @@ async def collect(shard_spec: str) -> int:
         engine.dispose()
 
 
-async def process_cmd(batch_size: int, limit: int | None) -> int:
+async def process_cmd(batch_size: int, limit: int | None, llm_budget: int = 0) -> int:
     settings = Settings()
     db_url = _secret(settings.DATABASE_URL) or os.environ.get("DATABASE_URL")
     if not db_url:
@@ -111,7 +111,14 @@ async def process_cmd(batch_size: int, limit: int | None) -> int:
     result = ProcessResult()
     try:
         try:
-            result = await asyncio.to_thread(run_process, engine, batch_size=batch_size, limit=limit)
+            router = None
+            if llm_budget > 0:
+                from etl.llm.router import LlmRouter  # imported only when the AI rung is on
+
+                router = LlmRouter(settings, discover=True)
+            result = await asyncio.to_thread(
+                run_process, engine, batch_size=batch_size, limit=limit,
+                llm_router=router, llm_budget=llm_budget)
             status = "degraded" if result.failed else "ok"
             error = f"{result.failed} documents failed" if result.failed else ""
         except Exception as exc:
@@ -123,7 +130,7 @@ async def process_cmd(batch_size: int, limit: int | None) -> int:
         print(
             f"process status={status} seen={result.seen} written={result.written} "
             f"skipped={result.skipped} failed={result.failed} conflicts={result.conflicts} "
-            f"batches={result.batches}"
+            f"batches={result.batches} llm_calls={result.llm_calls} llm_filled={result.llm_filled}"
         )
         hc_url = _secret(settings.HC_PROCESS_URL) or os.environ.get("HC_PROCESS_URL")
         await _ping(http, hc_url, ok=status != "failed")
@@ -141,11 +148,12 @@ def main(argv: list[str] | None = None) -> int:
         parser = argparse.ArgumentParser(prog="etl.run process")
         parser.add_argument("--batch-size", type=int, default=200)
         parser.add_argument("--limit", type=int, default=None)
+        parser.add_argument("--llm-budget", type=int, default=0, help="max AI-rung model calls this run (0 = off)")
         try:
             args = parser.parse_args(argv[1:])
         except SystemExit:
             return 2
-        return asyncio.run(process_cmd(max(1, args.batch_size), args.limit))
+        return asyncio.run(process_cmd(max(1, args.batch_size), args.limit, max(0, args.llm_budget)))
     print("Usage: python -m etl.run collect --shard i/N | process [--batch-size N] [--limit N]", file=sys.stderr)
     return 2
 

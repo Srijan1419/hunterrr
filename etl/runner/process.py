@@ -10,9 +10,11 @@ Logs and output carry counts and ids only (the Actions logs of this repository a
 """
 from __future__ import annotations
 
+import dataclasses
 import gzip
 import json
 import re
+import time
 from dataclasses import dataclass, field
 from datetime import date, datetime, timezone
 from decimal import Decimal, InvalidOperation
@@ -23,6 +25,7 @@ from sqlalchemy import bindparam, text
 from etl.core.db import batch_upsert, session_scope
 from etl.core.types import Field
 from etl.extract.ladder import StoredDocument, extract
+from etl.extract.llm_rung import apply_llm
 from etl.extract.model import FIELD_KEYS, Extracted
 
 EXTRACTION_VERSION = 1
@@ -59,6 +62,8 @@ class ProcessResult:
     failed: int = 0
     conflicts: int = 0
     batches: int = 0
+    llm_calls: int = 0
+    llm_filled: int = 0
     failed_ids: list[int] = field(default_factory=list)
 
 
@@ -288,6 +293,20 @@ def _decode_body(blob: Any) -> bytes:
         return data  # tolerate an uncompressed body
 
 
+def _with_llm(router: Any, extracted: Extracted, doc: PendingDoc, result: ProcessResult, pace: float) -> Extracted:
+    """Rung 4: one paced model call for a posting whose rules left target fields unknown."""
+    description = extracted.fields.get("description_md")
+    text = description.value if description is not None and isinstance(description.value, str) else ""
+    new_fields, calls = apply_llm(
+        router, extracted.fields, title=extracted.title, description=text, content_hash=doc.content_hash)
+    if calls:
+        result.llm_calls += calls
+        result.llm_filled += sum(
+            1 for k, f in new_fields.items() if f.provenance == "llm" and extracted.fields[k].value is None)
+        time.sleep(pace)  # the router never sleeps; the caller paces to the free-tier rate
+    return dataclasses.replace(extracted, fields=new_fields, llm_calls=extracted.llm_calls + calls)
+
+
 def _write(conn, rows: list[dict[str, Any]], consumed: list[int]) -> None:
     if rows:
         batch_upsert(
@@ -307,6 +326,9 @@ def process(
     limit: int | None = None,
     now: datetime | None = None,
     release_connections: bool = True,
+    llm_router: Any = None,
+    llm_budget: int = 0,
+    llm_pace_seconds: float = 2.5,
 ) -> ProcessResult:
     """Extract pending raw documents and upsert their postings. Idempotent."""
     result = ProcessResult()
@@ -341,6 +363,10 @@ def process(
                 row = to_posting_row(
                     doc, extracted, board_id=doc.board_id, company_id=doc.company_id, now=stamp)
                 result.conflicts += len(extracted.conflicts)
+                if llm_router is not None and result.llm_calls < llm_budget:
+                    extracted = _with_llm(llm_router, extracted, doc, result, llm_pace_seconds)
+                    row = to_posting_row(
+                        doc, extracted, board_id=doc.board_id, company_id=doc.company_id, now=stamp)
             except Exception:
                 result.failed += 1
                 result.failed_ids.append(doc.id)
@@ -375,6 +401,7 @@ def record_run(engine, result: ProcessResult, *, started_at: datetime, status: s
     counts = {
         "seen": result.seen, "written": result.written, "skipped": result.skipped,
         "failed": result.failed, "conflicts": result.conflicts, "batches": result.batches,
+        "llm_calls": result.llm_calls, "llm_filled": result.llm_filled,
     }
     with session_scope(engine) as conn:
         conn.execute(

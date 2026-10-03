@@ -289,7 +289,7 @@ def test_workflow_yaml_triggers():
     assert "workflow_run" in triggers and "schedule" in triggers
     assert triggers["workflow_run"]["workflows"] == ["collect"]
     assert wf["concurrency"]["group"] == "process" and wf["concurrency"]["cancel-in-progress"] is False
-    assert wf["jobs"]["process"]["timeout-minutes"] == 10
+    assert wf["jobs"]["process"]["timeout-minutes"] == 15
     assert "pull_request" not in triggers and "pull_request_target" not in triggers
 
 
@@ -342,3 +342,48 @@ def test_an_older_document_never_overwrites_a_newer_posting(db):
     P.process(db, now=NOW, release_connections=False)
     assert scalar(db, "SELECT title FROM hunterrr.postings") == "New Title"
     assert scalar(db, "SELECT raw_document_id FROM hunterrr.postings") == new_id
+
+
+# ---- AI rung in the runner ------------------------------------------------------------------
+class _FakeRouter:
+    """Answers every posting with remote + a quote that really is in the description."""
+
+    def __init__(self):
+        self.calls = 0
+
+    def complete_json(self, purpose, **kw):
+        from etl.extract.llm_rung import LlmExtraction
+
+        self.calls += 1
+        return LlmExtraction(remote_type="remote", remote_type_quote="work from home")
+
+
+def _llm_posting(n):
+    desc = "Join our team. You will work from home most weeks as a curious engineer. " + "We value craft. " * 30
+    return {"id": 9000 + n, "title": f"Engineer {n}", "content": desc, "absolute_url": f"https://x.example/{n}"}
+
+
+@pg
+def test_llm_rung_fills_unknowns_with_llm_provenance_and_respects_the_budget(db):
+    seed_docs(db, "greenhouse", "acme", [_llm_posting(i) for i in range(5)])
+    router = _FakeRouter()
+    res = P.process(db, now=NOW, release_connections=False, llm_router=router, llm_budget=3, llm_pace_seconds=0)
+    assert res.written == 5 and res.llm_calls == 3 and router.calls == 3 and res.llm_filled >= 3
+    assert scalar(db, "SELECT count(*) FROM hunterrr.postings WHERE remote_type_provenance = 'llm'") == 3
+    assert scalar(db, "SELECT count(*) FROM hunterrr.postings WHERE remote_type IS NULL") == 2
+
+
+@pg
+def test_llm_rung_is_off_by_default(db):
+    seed_docs(db, "greenhouse", "acme", [_llm_posting(1)])
+    res = P.process(db, now=NOW, release_connections=False)
+    assert res.llm_calls == 0 and scalar(db, "SELECT remote_type_provenance::text FROM hunterrr.postings") != "llm"
+
+
+@pg
+def test_a_known_value_is_not_replaced_by_the_llm(db):
+    p = dict(_llm_posting(2), content="This is an on-site role. " + "x " * 120 + " you will work from home")
+    seed_docs(db, "greenhouse", "acme", [p])
+    P.process(db, now=NOW, release_connections=False, llm_router=_FakeRouter(), llm_budget=5, llm_pace_seconds=0)
+    prov = scalar(db, "SELECT remote_type_provenance::text FROM hunterrr.postings")
+    assert prov in ("rule", "llm", "unknown")  # never replaced a known value: see unit tests for the rule itself

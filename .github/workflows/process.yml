@@ -22,11 +22,15 @@ jobs:
     # A cancelled collect has nothing new for us; every other outcome may have stored documents.
     if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion != 'cancelled' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       HC_PROCESS_URL: ${{ secrets.HC_PROCESS_URL }}
+      # The AI rung (rung 4) reads job text only; emails never come near this workflow.
+      NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
 
     steps:
       - name: Checkout
@@ -43,4 +47,4 @@ jobs:
         run: pip install -r etl/requirements.txt
 
       - name: Run process
-        run: python -m etl.run process
+        run: python -m etl.run process --llm-budget 80
