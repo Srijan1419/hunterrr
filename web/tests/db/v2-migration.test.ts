@@ -21,9 +21,10 @@ function loadMigrationStatements(): string[] {
     .readdirSync(MIGRATION_DIR)
     .filter((f) => /^\d+_.*\.sql$/.test(f))
     .sort();
-  expect(files.length).toBe(1);
-  const sql = fs.readFileSync(path.join(MIGRATION_DIR, files[0]), "utf8");
-  const stmts = sql
+  // Now there are 2 migrations: 0000 and 0001
+  expect(files.length).toBe(2);
+  const allSql = files.map((f) => fs.readFileSync(path.join(MIGRATION_DIR, f), "utf8")).join("\n");
+  const stmts = allSql
     .split("--> statement-breakpoint")
     .map((s) => s.trim())
     .filter(Boolean);
@@ -31,9 +32,9 @@ function loadMigrationStatements(): string[] {
   return stmts;
 }
 
-// 23 tables per the Worker-notes spec (no llm_budget, no crawl_tasks,
-// no procrastinate tables).
+// 27 tables: 23 from h2-01 + 4 Better Auth tables (user, session, account, verification)
 const EXPECTED_TABLES = [
+  "account",
   "application_events",
   "applications",
   "board_poll_state",
@@ -56,7 +57,10 @@ const EXPECTED_TABLES = [
   "raw_documents",
   "review_queue",
   "runs",
+  "session",
   "source_health",
+  "user",
+  "verification",
 ].sort();
 
 const REQUIRED_INDEXES = [
