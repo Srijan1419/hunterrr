@@ -3,7 +3,7 @@
 `extract` turns one raw posting (bytes plus a little metadata) into an
 `Extracted`, saying for EVERY field where the value came from. Rung 1 is the
 posting's own `schema.org/JobPosting` JSON-LD; rung 2 is the job board's own
-structured fields. Merge rule per field: a JSON-LD value wins over a board
+structured fields; rung 3 (rules_rung) fills what is still unknown with the fixed rules. Merge rule per field: a JSON-LD value wins over a board
 value; when both exist and DIFFER the winner is JSON-LD and the loser is
 listed in `conflicts`.
 
@@ -24,6 +24,7 @@ from etl.extract.jsonld import (
     posting_title,
 )
 from etl.extract.model import FIELD_KEYS, Extracted, empty_fields
+from etl.extract.rules_rung import apply_rules
 from etl.extract.sources import (
     board_title,
     fields_from_ashby,
@@ -194,6 +195,17 @@ def _extract(doc: Document) -> Extracted:
     else:
         title = source_key
         conflicts.append("title: missing")
+
+    # Rung 3: fixed rules fill what is still unknown (never override a known value).
+    description = merged["description_md"].value
+    posted = merged["posted_at"].value
+    merged, rule_conflicts = apply_rules(
+        merged,
+        title=title,
+        description=description if isinstance(description, str) else "",
+        posted_at=posted if hasattr(posted, "tzinfo") else None,
+    )
+    conflicts.extend(rule_conflicts)
 
     return Extracted(
         title=title,
