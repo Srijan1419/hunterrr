@@ -1,9 +1,10 @@
-"""Registry of sources for the collect runner.
+"""Registry of sources for the collect runner."""
 
-Empty list for now; later tasks add adapters.
-"""
+from etl.sources.ats.ashby import AshbySource
+from etl.sources.ats.greenhouse import GreenhouseSource
+from etl.sources.ats.lever import LeverSource
 
 
 def get_sources() -> list:
     """Return the list of registered sources."""
-    return []
+    return [GreenhouseSource(), LeverSource(), AshbySource()]

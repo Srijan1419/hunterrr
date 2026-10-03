@@ -1,0 +1,275 @@
+{
+ "board_slug": "gopuff",
+ "url": "https://api.lever.co/v0/postings/gopuff?mode=json",
+ "cases_not_found": [],
+ "rows": [
+  {
+   "slug": "gopuff",
+   "url": "https://api.lever.co/v0/postings/gopuff?mode=json",
+   "case": "created_at_is_epoch_milliseconds",
+   "row": {
+    "additionalPlain": "At Gopuff, we know that life can be unpredictable. Sometimes you forget the milk at the store, run out of pet food for Fido, or just really need ice cream at 11 pm. We get it—stuff happens. But that’s where we come in, delivering all your wants and needs in just minutes.\n \nAnd now, we’re assembling a team of motivated people to help us drive forward that vision to bring a new age of convenience and predictability to an unpredictable world.\n \nLike what you’re hearing? Then join us on Team Blue.\n \n#LI-GOPUFF\n \nGopuff is an equal employment opportunity employer, committed to an inclusive workplace where we do not discriminate on the basis of race, sex, gender, national origin, religion, sexual orientation, gender identity, marital or familial status, age, ancestry, disability, genetic information, or any other characteristic protected by applicable laws. We believe in diversity and encourage any qualified individual to apply. \n",
+    "additional": "<div><strong>At Gopuff, we know that life can be unpredictable.</strong> Sometimes you forget the milk at the store, run out of pet food for Fido, or just really need ice cream at 11 pm. We get it—stuff happens. But that’s where we come in, delivering all your wants and needs in just minutes.</div>\n<div>&nbsp;</div>\n<div>And now, we’re assembling a team of motivated people to help us drive forward that vision to bring a new age of convenience and predictability to an unpredictable world.</div>\n<div>&nbsp;</div>\n<div>Like what you’re hearing? Then join us on Team Blue.</div>\n<div>&nbsp;</div>\n<div><span style=\"font-size: 10px;\">#LI-GOPUFF</span></div>\n<div>&nbsp;</div>\n<div><em>Gopuff is an equal employment opportunity employer, committed to an inclusive workplace where we do not discriminate on the basis of race, sex, gender, national origin, religion, sexual orientation, gender identity, marital or familial status, age, ancestry, disability, genetic information, or any other characteristic protected by applicable laws. We believe in diversity and encourage any qualified individual to apply. </em></div>",
+    "categories": {
+     "commitment": "Full Time",
+     "department": "Tech, Product, & Design",
+     "location": "Philadelphia, PA",
+     "team": "Data & Analytics",
+     "allLocations": [
+      "Philadelphia, PA",
+      "Miami, FL"
+     ]
+    },
+    "createdAt": 1789052684716,
+    "descriptionPlain": "Gopuff's engineering team is building solutions to dramatically change the way people purchase their daily goods. We provide the modern-day solution to meet customers' immediate everyday needs with products ranging from snacks and ice cream to household goods and beer, at the click of a button.\nAs an Analytics Engineer at Gopuff, you'll build and maintain the bridge between our data and the rest of the organization. This role sits on the Analytics Engineering team and is dedicated to our Supply Chain and Merchandising partners, with a secondary focus on marketing and CRM analytics. You'll own the models that our planning, allocation, and merch teams use to decide what we buy, where we place it, and how we promote it, and you'll be accountable for the integrity, reliability, and usability of that data.\n",
+    "description": "<div>\n<p>Gopuff's engineering team is building solutions to dramatically change the way people purchase their daily goods. We provide the modern-day solution to meet customers' immediate everyday needs with products ranging from snacks and ice cream to household goods and beer, at the click of a button.</p>\n<p>As an Analytics Engineer at Gopuff, you'll build and maintain the bridge between our data and the rest of the organization. This role sits on the Analytics Engineering team and is dedicated to our Supply Chain and Merchandising partners, with a secondary focus on marketing and CRM analytics. You'll own the models that our planning, allocation, and merch teams use to decide what we buy, where we place it, and how we promote it, and you'll be accountable for the integrity, reliability, and usability of that data.</p>\n</div>",
+    "id": "bfa7bc15-793e-486c-a3f5-b27d84c53025",
+    "lists": [
+     {
+      "text": "What We Offer",
+      "content": "\n<li>Medical/Dental/Vision Insurance&nbsp;</li>\n<li>401(k) Retirement Savings Plan</li>\n<li>HSA or FSA eligibility</li>\n<li>Long and Short-Term Disability Insurance</li>\n<li>Fitness Reimbursement Program</li>\n<li>25% employee discount &amp; FAM Membership</li>\n<li>Flexible PTO</li>\n<li>Group Life Insurance</li>\n<li>EAP through AllOne Health (formerly Carebridge)</li>\n"
+     },
+     {
+      "text": "Compensation",
+      "content": "<div>\n<ul style=\"list-style-type: disc;\">\n<li>Gopuff pays employees based on market pricing and pay may vary depending on your location. The salary range below reflects what we’d reasonably expect to pay candidates. A candidate’s starting pay will be determined based on job-related skills, experience, qualifications, interview performance, and market conditions. These ranges may be modified in the future. Exceptions may be made for exceptional individuals. For additional information on this role’s compensation package, please reach out to the designated recruiter for this role.</li>\n<li>This role is eligible for a discretionary annual cash bonus and participation in Gopuff’s equity incentive plan.</li>\n<li><strong>Base Salary Range</strong>: $100,000 - $125,000</li>\n\n</ul></div>"
+     },
+     {
+      "text": "Responsibilities",
+      "content": "<div>\n\n<li>\n<p>Design, build, and maintain the production data models that power supply chain and merchandising decisions: sales and demand, inventory position and in-stock, damage and expiration, turn, vendor fill rate, purchase orders, and allocation.</p>\n</li>\n<li>\n<p>Be the go-to data expert for these domains, with a deep understanding of our data warehouse and the processing layers feeding it.</p>\n</li>\n<li>\n<p>Partner with Supply Chain divisional teams, Merchandising, Marketing, CRM, product managers, and engineers to translate business questions into durable models and self-serve tooling rather than one-off pulls.</p>\n</li>\n<li>\n<p>Own data integrity, availability, transformation logic, and efficient data access for the domains you support.</p>\n</li>\n<li>\n<p>Build and maintain reporting and dashboards in Looker that planners and merchants use daily, and retire the manual reporting they replace.</p>\n</li>\n<li>\n<p>Support marketing and CRM analytics alongside the supply chain work: campaign and promotion performance, channel reporting.</p>\n</li>\n<li>\n<p>Identify gaps in existing data, write data product specs, and work with engineering teams to get the right tracking in place.</p>\n</li>\n<li>\n<p>Automate wherever possible, and build testing and monitoring so data quality problems surface before stakeholders find them.</p>\n</li>\n<li>\n<p>Document your models so every stakeholder can find, understand, and trust the data without asking you first.</p>\n</li>\n\n</div>"
+     },
+     {
+      "text": "Preferred Qualifications",
+      "content": "<div>\n\n<li>\n<p>Experience with ETL/ELT tooling (bonus points for dbt).</p>\n</li>\n<li>\n<p>Strong knowledge of data warehousing concepts, big data technologies, and analytics platforms. Snowflake, Redshift, and/or Azure experience strongly preferred.</p>\n</li>\n<li>\n<p>Exposure to supply chain, inventory, merchandise planning, or allocation data. You don't need years of planning experience, but familiarity with concepts like model stock, lead time, replenishment cycles, sell-through, and turn will get you productive faster.</p>\n</li>\n<li>\n<p>Experience with marketing or CRM analytics: campaign performance, promotion lift, channel attribution, or customer segmentation.</p>\n</li>\n<li>\n<p>Experience with demand planning or ERP systems such as JustEnough or Kinaxis.</p>\n</li>\n<li>\n<p>Comfort working with AI-assisted development tools. We use assistants like Claude in our day-to-day analytics engineering work, and we value engineers who use them well: accelerating model development, SQL review, testing, and documentation while independently verifying outputs and knowing when the tool is the wrong answer.</p>\n</li>\n<li>\n<p>Alcohol beverage or CPG category experience is a plus.</p>\n</li>\n\n</div>"
+     },
+     {
+      "text": "Minimum Qualifications",
+      "content": "<div>\n\n<li>\n<p>Bachelor's in Engineering, Computer Science, Information Systems, Business, or another quantitative discipline.</p>\n</li>\n<li>\n<p>3+ years of experience building data models that integrate complex and disparate data sources, using tools such as dbt.</p>\n</li>\n<li>\n<p>Expert in SQL and database table design, able to write structured and efficient queries against large datasets. Advanced Excel skills for partner collaboration.</p>\n</li>\n<li>\n<p>1+ years building and maintaining reporting and dashboards in Looker or a comparable BI tool.</p>\n</li>\n<li>\n<p>Strong analytical judgment: able to move from raw data to a clear recommendation, and to explain the 'so what' to business partners who will act on it.</p>\n</li>\n<li>\n<p>Excellent communication skills, with the ability to translate business needs into tractable work items and to explain technical trade-offs to non-technical partners.</p>\n</li>\n<li>\n<p>Top-notch organizational skills and the ability to manage multiple projects in a fast-paced environment.</p>\n</li>\n<li>\n<p>Move fast, be a team player, always be learning, and give back.</p>\n</li>\n\n</div>"
+     }
+    ],
+    "text": "Analytics Engineer",
+    "country": "US",
+    "workplaceType": "hybrid",
+    "opening": "",
+    "openingPlain": "",
+    "descriptionBody": "<div>\n<p>Gopuff's engineering team is building solutions to dramatically change the way people purchase their daily goods. We provide the modern-day solution to meet customers' immediate everyday needs with products ranging from snacks and ice cream to household goods and beer, at the click of a button.</p>\n<p>As an Analytics Engineer at Gopuff, you'll build and maintain the bridge between our data and the rest of the organization. This role sits on the Analytics Engineering team and is dedicated to our Supply Chain and Merchandising partners, with a secondary focus on marketing and CRM analytics. You'll own the models that our planning, allocation, and merch teams use to decide what we buy, where we place it, and how we promote it, and you'll be accountable for the integrity, reliability, and usability of that data.</p>\n</div>",
+    "descriptionBodyPlain": "Gopuff's engineering team is building solutions to dramatically change the way people purchase their daily goods. We provide the modern-day solution to meet customers' immediate everyday needs with products ranging from snacks and ice cream to household goods and beer, at the click of a button.\nAs an Analytics Engineer at Gopuff, you'll build and maintain the bridge between our data and the rest of the organization. This role sits on the Analytics Engineering team and is dedicated to our Supply Chain and Merchandising partners, with a secondary focus on marketing and CRM analytics. You'll own the models that our planning, allocation, and merch teams use to decide what we buy, where we place it, and how we promote it, and you'll be accountable for the integrity, reliability, and usability of that data.\n",
+    "hostedUrl": "https://jobs.lever.co/gopuff/bfa7bc15-793e-486c-a3f5-b27d84c53025",
+    "applyUrl": "https://jobs.lever.co/gopuff/bfa7bc15-793e-486c-a3f5-b27d84c53025/apply",
+    "_fixture_case": "created_at_is_epoch_milliseconds"
+   }
+  },
+  {
+   "slug": "gopuff",
+   "url": "https://api.lever.co/v0/postings/gopuff?mode=json",
+   "case": "salary_range_present",
+   "row": {
+    "additionalPlain": "At Gopuff, we know that life can be unpredictable. Sometimes you forget the milk at the store, run out of pet food for Fido, or just really need ice cream at 11 pm. We get it—stuff happens. But that’s where we come in, delivering all your wants and needs in just minutes.\n\nAnd now, we’re assembling a team of motivated people to help us drive forward that vision to bring a new age of convenience and predictability to an unpredictable world.\n\nLike what you’re hearing? Then join us on Team Blue.\n\nGopuff is an equal employment opportunity employer, committed to an inclusive workplace where we do not discriminate on the basis of race, sex, gender, national origin, religion, sexual orientation, gender identity, marital or familial status, age, ancestry, disability, genetic information, or any other characteristic protected by applicable laws. We believe in diversity and encourage any qualified individual to apply. \n",
+    "additional": "<div><b>At Gopuff, we know that life can be unpredictable.</b> Sometimes you forget the milk at the store, run out of pet food for Fido, or just really need ice cream at 11 pm. We get it—stuff happens. But that’s where we come in, delivering all your wants and needs in just minutes.</div><div><br></div><div>And now, we’re assembling a team of motivated people to help us drive forward that vision to bring a new age of convenience and predictability to an unpredictable world.</div><div><br></div><div>Like what you’re hearing? Then join us on Team Blue.</div><div><br></div><div><i>Gopuff is an equal employment opportunity employer, committed to an inclusive workplace where we do not discriminate on the basis of race, sex, gender, national origin, religion, sexual orientation, gender identity, marital or familial status, age, ancestry, disability, genetic information, or any other characteristic protected by applicable laws. We believe in diversity and encourage any qualified individual to apply. </i></div>",
+    "categories": {
+     "commitment": "Full Time",
+     "department": "BevMo!",
+     "location": "La Cienega, CA",
+     "team": "Leadership",
+     "allLocations": [
+      "La Cienega, CA"
+     ]
+    },
+    "createdAt": 1749766597462,
+    "descriptionPlain": "The Store Manager motivates and inspires the team to achieve store productivity goals. They will do this by analyzing business and market trends as well as historical data to create strategies to drive top line sales. They will lead a team including Assistant Manager, Head Clerks, Receiving Manager, and Sales employees; as well as manage payroll budgets and store controlled expenses to ensure the store's contribution is on target.\n",
+    "description": "<div><span style=\"font-size: 13.3333px;\">The Store Manager motivates and inspires the team to achieve store productivity goals. They will do this by analyzing business and market trends as well as historical data to create strategies to drive top line sales. They will lead a team including Assistant Manager, Head Clerks, Receiving Manager, and Sales employees; as well as manage payroll budgets and store controlled expenses to ensure the store's contribution is on target.</span></div>",
+    "id": "a54471c9-2b48-484e-8fec-a3fa3737b416",
+    "lists": [
+     {
+      "text": "What We Offer",
+      "content": "<li>Medical/Dental/Vision Insurance (for full-time employees)</li><li>401(k) Retirement Savings Plan</li><li>25% employee discount &amp; FAM Membership</li><li>Vacation and Sick Time for eligible employees</li><li>EAP through AllOne Health (formerly Carebridge)</li>"
+     },
+     {
+      "text": "Key Roles and Responsibilities:",
+      "content": "\n<li>Assumes overall responsibility for the store</li>\n<li>Consistently creates a welcoming environment for the customer by greeting and assisting and well as quickly responding to customer inquiries and needs</li>\n<li>Demonstrates desired behaviors for staff including driving sales, handling difficult and/or complicated sales, cash management, inventory, and follow-up with customers</li>\n<li>Maintains a strong leadership presence in store, while ensuring that all customers receive exceptional service</li>\n<li>Ensures company standards are met for store and associate appearance at all times</li>\n<li>Prioritizes, plans, and adjusts schedules as necessary to maximize sales</li>\n<li>Consistently reviews payroll, ensuring appropriate staff levels at all times</li>\n<li>Plans, coordinates, and executes all merchandising direction, campaigns, and sales promotions in a timely manner</li>\n<li>Coaches team in the moment, providing consistent and constructive feedback</li>\n<li>Utilizes company tools to diagnose opportunities and develops action plans to improve performance</li>\n<li>Ensures staff is trained and knowledgeable in customer service, merchandise and operations</li>\n<li>Manages and assesses staff performance through consistent feedback, coaching, developmental plans, and performance appraisals</li>\n<li>Forecasts/reforecast business, focusing on productivity to meet sales goals</li>\n<li>Enforce all company policies and procedures, including health, safety, and security</li>\n<li>Manages store controlled expenses to budget, identifying opportunities to increase contribution</li>\n<li>Manages and controls shrink</li>\n<li>Regularly communicates with District Manager to discuss strengths, opportunities, and trends in business</li>\n<li>Identifies opportunities to drive traffic into the store through community events (weddings, parties, etc.)</li>\n<li>Partner with corporate office personnel to increase sales, drive/promote merchandise categories, and expand markets</li>\n<li>Creates customer loyalty and creates relationships within local community</li>\n<li>Ensures all pricing, signage, and displays are correct at all times</li>\n<li>Receives regular vendor deliveries and stock sales floor in a timely manner</li>\n<li>Responsible for monitoring inventory stock levels</li>\n"
+     },
+     {
+      "text": "Skills Required:",
+      "content": "\n<li>Financial and Business Acumen:&nbsp;Ability to evaluate financial and business indicators and translate data into actionable information to drive results</li>\n<li>Problem Solving &amp; Decision Quality:&nbsp;Able to use rigorous logic and methods to solve problems with effective solutions</li>\n<li>Relationship Management:&nbsp;Able to build constructive and effective relationships</li>\n<li>Ability to influence at all levels, as well as a demonstrated ability to work effectively within a team and be assertive in driving successful management strategies</li>\n<li>Influencing and Negotiation:&nbsp;Can present ideas and directions that lead others to action</li>\n<li>Planning and Priority Setting:&nbsp;Demonstrate an ability to set objectives and goals and organize work appropriately to meet and exceed goals. Possess strong organizational and time management skills</li>\n<li>Demonstrates strong listening, written and oral communication skills</li>\n"
+     },
+     {
+      "text": "Education & Experience:",
+      "content": "\n<li>3-5 years experience in retail store management</li>\n<li>Strong verbal and written communications skills</li>\n<li>Must be an excellent organizer and problem solver with strong project management skills</li>\n<li>Possess strong interpersonal skills to communicate with confidence to both internal and external customers</li>\n"
+     }
+    ],
+    "salaryRange": {
+     "min": 75600,
+     "max": 103950,
+     "currency": "USD",
+     "interval": "per-year-salary"
+    },
+    "salaryDescription": "<div>\n<ul>\n<li><strong>Gopuff/Bevmo! </strong>pays employees based on market pricing and pay may vary depending on your location. Compensation for U.S. locations is based on a cost of labor index for that geographic area.</li>\n<li><strong>La Cienega, CA: $75,600.00- $103,950.00</strong></li>\n<li>The salary range above reflects what we’d reasonably expect to pay candidates. A candidate’s starting pay will be determined based on job-related skills, experience, qualifications, work location, and market conditions. These ranges may be modified in the future. For additional information on this role’s compensation package, please reach out to the designated recruiter for this role.</li>\n</ul>\n</div>",
+    "salaryDescriptionPlain": "Gopuff/Bevmo! pays employees based on market pricing and pay may vary depending on your location. Compensation for U.S. locations is based on a cost of labor index for that geographic area.\nLa Cienega, CA: $75,600.00- $103,950.00\nThe salary range above reflects what we’d reasonably expect to pay candidates. A candidate’s starting pay will be determined based on job-related skills, experience, qualifications, work location, and market conditions. These ranges may be modified in the future. For additional information on this role’s compensation package, please reach out to the designated recruiter for this role.\n",
+    "text": "Retail Store Manager II, La Cienega, #786",
+    "country": "US",
+    "workplaceType": "onsite",
+    "opening": "",
+    "openingPlain": "",
+    "descriptionBody": "<div><span style=\"font-size: 13.3333px;\">The Store Manager motivates and inspires the team to achieve store productivity goals. They will do this by analyzing business and market trends as well as historical data to create strategies to drive top line sales. They will lead a team including Assistant Manager, Head Clerks, Receiving Manager, and Sales employees; as well as manage payroll budgets and store controlled expenses to ensure the store's contribution is on target.</span></div>",
+    "descriptionBodyPlain": "The Store Manager motivates and inspires the team to achieve store productivity goals. They will do this by analyzing business and market trends as well as historical data to create strategies to drive top line sales. They will lead a team including Assistant Manager, Head Clerks, Receiving Manager, and Sales employees; as well as manage payroll budgets and store controlled expenses to ensure the store's contribution is on target.\n",
+    "hostedUrl": "https://jobs.lever.co/gopuff/a54471c9-2b48-484e-8fec-a3fa3737b416",
+    "applyUrl": "https://jobs.lever.co/gopuff/a54471c9-2b48-484e-8fec-a3fa3737b416/apply",
+    "_fixture_case": "salary_range_present"
+   }
+  },
+  {
+   "slug": "gopuff",
+   "url": "https://api.lever.co/v0/postings/gopuff?mode=json",
+   "case": "workplace_type_remote",
+   "row": {
+    "additionalPlain": "The only predictable thing about life is that it’s wildly unpredictable. That’s where we come in. When life does what it does best, customers turn to Gopuff to deliver their everyday essentials, and to get through their day & night, work day and weekend. We’re assembling a team of thinkers, dreamers & risk-takers...the kind of people who know the value of peace of mind in an unpredictable world. (And people who love snacks.)\n \nLike what you’re hearing? Welcome to Gopuff.\n \n#LI-GOPUFF\n \nThe Gopuff Fam is committed to an inclusive workplace where we do not discriminate on the basis of race, sex, gender, national origin, religion, sexual orientation, gender identity, marital or familial status, age, ancestry, disability, genetic information, or any other characteristic protected by applicable laws. We believe in diversity and encourage any qualified individual to apply. We are an equal employment opportunity employer.\n",
+    "additional": "<div><strong style=\"font-size: 11pt;\">The only predictable thing about life is that it’s wildly unpredictable.</strong><span style=\"font-size: 11pt;\"> That’s where we come in.&nbsp;When life does what it does best, customers turn to Gopuff to deliver their everyday essentials, and to get through their day &amp; night, work day and weekend.&nbsp;We’re assembling a team of thinkers, dreamers &amp; risk-takers...the kind of people who know the value of peace of mind in an unpredictable world. (And people who love snacks.)</span></div>\n<div>&nbsp;</div>\n<div><span style=\"font-size: 11pt;\">Like what you’re hearing? Welcome to Gopuff.</span></div>\n<div>&nbsp;</div>\n<div><span style=\"font-size: 10px;\">#LI-GOPUFF</span></div>\n<div>&nbsp;</div>\n<div><span style=\"font-size: 11pt;\">The Gopuff Fam is committed to an inclusive workplace where we do not discriminate on the basis of race, sex, gender, national origin, religion, sexual orientation, gender identity, marital or familial status, age, ancestry, disability, genetic information, or any other characteristic protected by applicable laws. We believe in diversity and encourage any qualified individual to apply. We are an equal employment opportunity employer.</span></div>",
+    "categories": {
+     "commitment": "Full Time",
+     "department": "Tech, Product, & Design",
+     "location": "United States",
+     "team": "Data & Analytics",
+     "allLocations": [
+      "United States"
+     ]
+    },
+    "createdAt": 1773949421097,
+    "descriptionPlain": "At Gopuff, data sits at the heart of our strategy. We are reimagining how people purchase everyday essentials, from snacks to household goods to alcohol, all delivered in minutes. To fuel this mission, we are seeking a Data Engineer to design, build, and scale the data systems that power insights, experimentation, and operational excellence across the company.\n \nAs a Data Engineer, you will play a critical role in shaping Gopuff’s modern data platform. You’ll architect reliable pipelines, create insights ready data products, and collaborate closely with analytics, product, and engineering teams to ensure data is trustworthy, discoverable, and ready for action. This is a highly technical, hands-on role for an engineer who wants to solve complex data problems at scale and directly influence business outcomes.\n",
+    "description": "<div><span style=\"font-size: 16px;\">At Gopuff, data sits at the heart of our strategy. We are reimagining how people purchase everyday essentials, from snacks to household goods to alcohol, all delivered in minutes. To fuel this mission, we are seeking a</span><strong style=\"font-size: 18px;\">&nbsp;Data Engineer</strong><span style=\"font-size: 16px;\"> to design, build, and scale the data systems that power insights, experimentation, and operational excellence across the company.</span></div>\n<div>&nbsp;</div>\n<div><span style=\"font-size: 16px;\">As a Data Engineer, you will play a critical role in shaping Gopuff’s modern data platform. You’ll architect reliable pipelines, create insights ready data products, and collaborate closely with analytics, product, and engineering teams to ensure data is trustworthy, discoverable, and ready for action. This is a highly technical, hands-on role for an engineer who wants to solve complex data problems at scale and directly influence business outcomes.</span></div>",
+    "id": "fece6961-007a-455f-b002-6da8a590ba0f",
+    "lists": [
+     {
+      "text": "Responsibilities",
+      "content": "\n<li>Design, build, and maintain scalable batch and real-time data pipelines that power analytics, experimentation, and machine learning</li>\n<li>Contribute to the architecture and maintenance of the Data Platform, ensuring systems are performant, cost-efficient and scalable</li>\n<li>Partner cross-functionally with analytics, product, engineering and operations to deliver high-quality data solutions that drive measurable business impact</li>\n<li>Develop and maintain curated, well-modeled datasets that serve as trusted sources of truth across the organization</li>\n<li>Champion data quality, reliability, and observability by implementing best practices in testing, monitoring, lineage, and incident response</li>\n<li>Contribute to team standards, patterns, and best practices</li>\n<li>Drive improvements to infrastructure, developer workflows, CI/CD, and data platform tooling</li>\n"
+     },
+     {
+      "text": "Preferred Qualifications",
+      "content": "\n<li>3-5 years of experience in data engineering or software engineering with a strong focus on data platform development</li>\n<li>Proven experience building and scaling modern data platforms and delivering high-impact data solutions</li>\n<li>Strong communication skills and the ability to work closely with technical and non-technical partners</li>\n<li>Passion for building reliable, accessible, and high-quality data products</li>\n"
+     },
+     {
+      "text": "Technical Expertise",
+      "content": "\n<li>Strong proficiency in Python and SQL</li>\n<li>Experience with modern cloud data warehouses and lakes (e.g., Snowflake, BigQuery, Databricks)</li>\n<li>Experience building batch pipelines using DAG-based orchestrators (e.g., Dagster, Airflow)</li>\n<li>Experience with event-driven architectures using Kafka, Kinesis, or Event Hubs</li>\n<li>Experience developing real-time or streaming pipelines using Apache Beam, Flink, or Spark Streaming</li>\n<li>Experience deploying applications and services to Kubernetes and using tools such as ArgoCD, Helm or Istio</li>\n<li>Experience implementing DevOps concepts within data workflows (CI/CD, observability, monitoring, lineage)</li>\n<li>Experience with Infrastructure-as-Code (e.g., Terraform)</li>\n"
+     },
+     {
+      "text": "Compensation",
+      "content": "\n<li>Gopuff pays employees based on market pricing and pay may vary depending on your location. The salary range below reflects what we’d reasonably expect to pay candidates. A candidate’s starting pay will be determined based on job-related skills, experience, qualifications, interview performance, and market conditions. These ranges may be modified in the future. Exceptions may be made for exceptional individuals. For additional information on this role’s compensation package, please reach out to the designated recruiter for this role.</li>\n<li>This role is eligible for a discretionary annual cash bonus and participation in Gopuff’s equity incentive plan.</li>\n<li><strong>Remote Base Salary Range</strong>: $118,000 - $148,000</li>\n"
+     },
+     {
+      "text": "Benefits Overview",
+      "content": "\n<li>Medical/Dental/Vision Insurance&nbsp;</li>\n<li>401(k) Retirement Savings Plan</li>\n<li>HSA or FSA eligibility</li>\n<li>Long and Short-Term Disability Insurance</li>\n<li>Mental Health Benefits</li>\n<li>Fitness Reimbursement Program</li>\n<li>25% employee discount &amp; FAM Membership</li>\n<li>Flexible PTO</li>\n<li>Group Life Insurance</li>\n<li>EAP through AllOne Health (formerly Carebridge)</li>\n"
+     }
+    ],
+    "text": "Data Engineer",
+    "country": "US",
+    "workplaceType": "remote",
+    "opening": "",
+    "openingPlain": "",
+    "descriptionBody": "<div><span style=\"font-size: 16px;\">At Gopuff, data sits at the heart of our strategy. We are reimagining how people purchase everyday essentials, from snacks to household goods to alcohol, all delivered in minutes. To fuel this mission, we are seeking a</span><strong style=\"font-size: 18px;\">&nbsp;Data Engineer</strong><span style=\"font-size: 16px;\"> to design, build, and scale the data systems that power insights, experimentation, and operational excellence across the company.</span></div>\n<div>&nbsp;</div>\n<div><span style=\"font-size: 16px;\">As a Data Engineer, you will play a critical role in shaping Gopuff&rsquo;s modern data platform. You&rsquo;ll architect reliable pipelines, create insights ready data products, and collaborate closely with analytics, product, and engineering teams to ensure data is trustworthy, discoverable, and ready for action. This is a highly technical, hands-on role for an engineer who wants to solve complex data problems at scale and directly influence business outcomes.</span></div>",
+    "descriptionBodyPlain": "At Gopuff, data sits at the heart of our strategy. We are reimagining how people purchase everyday essentials, from snacks to household goods to alcohol, all delivered in minutes. To fuel this mission, we are seeking a Data Engineer to design, build, and scale the data systems that power insights, experimentation, and operational excellence across the company.\n \nAs a Data Engineer, you will play a critical role in shaping Gopuff’s modern data platform. You’ll architect reliable pipelines, create insights ready data products, and collaborate closely with analytics, product, and engineering teams to ensure data is trustworthy, discoverable, and ready for action. This is a highly technical, hands-on role for an engineer who wants to solve complex data problems at scale and directly influence business outcomes.\n",
+    "hostedUrl": "https://jobs.lever.co/gopuff/fece6961-007a-455f-b002-6da8a590ba0f",
+    "applyUrl": "https://jobs.lever.co/gopuff/fece6961-007a-455f-b002-6da8a590ba0f/apply",
+    "_fixture_case": "workplace_type_remote"
+   }
+  },
+  {
+   "slug": "gopuff",
+   "url": "https://api.lever.co/v0/postings/gopuff?mode=json",
+   "case": "country_not_us",
+   "row": {
+    "additionalPlain": "#LI-DNP\n\nAt Gopuff, we know that life can be unpredictable. Sometimes you forget the milk at the store, run out of pet food for Fido, or just really need ice cream at 11 pm. We get it—stuff happens. But that’s where we come in, delivering all your wants and needs in just minutes.\n\nAnd now, we’re assembling a team of motivated people to help us drive forward that vision to bring a new age of convenience and predictability to an unpredictable world.\n\nLike what you’re hearing? Then join us on Team Blue.\n\nGopuff is an equal employment opportunity employer, committed to an inclusive workplace where we do not discriminate on the basis of race, sex, gender, national origin, religion, sexual orientation, gender identity, marital or familial status, age, ancestry, disability, genetic information, or any other characteristic protected by applicable laws. We believe in diversity and encourage any qualified individual to apply.",
+    "additional": "<div><span style=\"font-size: 10px;\">#LI-DNP</span></div><div><br></div><div><b style=\"font-size: 11pt;\">At Gopuff, we know that life can be unpredictable.</b><span style=\"font-size: 11pt;\"> Sometimes you forget the milk at the store, run out of pet food for Fido, or just really need ice cream at 11 pm. We get it—stuff happens. But that’s where we come in, delivering all your wants and needs in just minutes.</span></div><div><br></div><div><span style=\"font-size: 11pt;\">And now, we’re assembling a team of motivated people to help us drive forward that vision to bring a new age of convenience and predictability to an unpredictable world.</span></div><div><br></div><div><span style=\"font-size: 11pt;\">Like what you’re hearing? Then join us on Team Blue.</span></div><div><br></div><div><i style=\"font-size: 11pt;\">Gopuff is an equal employment opportunity employer, committed to an inclusive workplace where we do not discriminate on the basis of race, sex, gender, national origin, religion, sexual orientation, gender identity, marital or familial status, age, ancestry, disability, genetic information, or any other characteristic protected by applicable laws. We believe in diversity and encourage any qualified individual to apply. </i></div>",
+    "categories": {
+     "commitment": "Full Time/Part Time",
+     "department": "Gopuff EU - Field Operations",
+     "location": "Salford, England",
+     "team": "Hourly",
+     "allLocations": [
+      "Salford, England"
+     ]
+    },
+    "createdAt": 1770807359170,
+    "descriptionPlain": "Overview: Gopuff is looking for a Junior Operations Supervisor to join the Operations team. Directly reporting to a Site Leader, JOS' play an essential role at Gopuff that requires drive, perseverance, positivity, and enthusiasm for the challenge. The Junior Operations Supervisor role is a core part of the Site leadership team with responsibility to ensure high operational standards at our MFCs to deliver timely and accurately for our customers. \n \nCustomers turn to Gopuff to provide their everyday essentials - day and night, rain or shine. We're assembling a team of thinkers, dreamers and risk takers who are ready to help us reshape the world of retail faster than ever before. And it doesn't hurt if you like snacks.\n",
+    "description": "<div><strong style=\"font-size: 16px;\">Overview: </strong><span style=\"font-size: 16px;\">Gopuff is looking for a <strong>Junior</strong></span><strong style=\"font-size: 16px;\"> Operations Supervisor</strong><span style=\"font-size: 16px;\"> to join the Operations team. Directly reporting to a Site Leader, JOS' play an essential role at Gopuff that requires drive, perseverance, positivity, and enthusiasm for the challenge. The Junior Operations Supervisor role is a core part of the Site leadership team with responsibility to ensure high operational standards at our MFCs to deliver timely and accurately for our customers. </span></div>\n<div>&nbsp;</div>\n<div><span style=\"font-size: 16px;\">Customers turn to Gopuff to provide their everyday essentials - day and night, rain or shine. We're assembling a team of thinkers, dreamers and risk takers who are ready to help us reshape the world of retail faster than ever before. And it doesn't hurt if you like snacks.</span></div>",
+    "id": "144ba9c0-661d-40c6-9682-8d24133b3347",
+    "lists": [
+     {
+      "text": "You will be responsible for leading the team during your shift:",
+      "content": "\n<li><strong>Leading: </strong>&nbsp;showing the warehouse team how it’s done, leading by example and being responsible for the management of Staff on shift. Training new team members and being confident on process and product</li>\n<li><strong>Picking and packing: </strong>accurately pick and pack items on a per order basis for dispatch to customers</li>\n<li><strong>Delivery Partners:</strong> Support with managing the Delivery Partners to ensure a slick delivery experience</li>\n<li><strong>Issue resolution:</strong> Contacting customers for substituted or out-of-stock items&nbsp;</li>\n<li><strong>Goods Inbound: </strong>Receive product from vendors, ensuring physical count matches purchase order/invoice, and resolving discrepancies</li>\n<li><strong>Stock management:</strong> Put away products to inventory locations and conduct cycle counts to minimise out-of-stock products. Manage waste and compliance and our partnership with TooGoodToGo</li>\n<li><strong>Warehouse management: </strong>keep the warehouse compliant, clean, organised and aligned with Operating Standards</li>\n<li><strong>Health and Safety</strong>: Supporting Onsite Health &amp; Safety compliance and testing</li>\n"
+     },
+     {
+      "text": "About You:",
+      "content": "\n<li>You have experience working in a restaurant, retail or warehouse environment</li>\n<li>General working knowledge of basic web-based software applications (e.g. Microsoft Office, Google Workspace)</li>\n<li>Strong work ethic, punctual, responsible and honest</li>\n<li>Effective communication skills</li>\n<li>Organised, team-oriented, positive attitude and helpful</li>\n<li>Flexible and available to cover shifts during operational hours (7am - 3am)</li>\n"
+     },
+     {
+      "text": "Benefits: ",
+      "content": "\n<li>Holiday &amp; Sick Pay</li>\n<li>Weekly pay cycle (Get paid weekly!)</li>\n<li>Career growth opportunities</li>\n"
+     }
+    ],
+    "text": "Junior Operations Supervisor",
+    "country": "GB",
+    "workplaceType": "onsite",
+    "opening": "",
+    "openingPlain": "",
+    "descriptionBody": "<div><strong style=\"font-size: 16px;\">Overview: </strong><span style=\"font-size: 16px;\">Gopuff is looking for a <strong>Junior</strong></span><strong style=\"font-size: 16px;\"> Operations Supervisor</strong><span style=\"font-size: 16px;\"> to join the Operations team. Directly reporting to a Site Leader, JOS' play an essential role at Gopuff that requires drive, perseverance, positivity, and enthusiasm for the challenge. The Junior Operations Supervisor role is a core part of the Site leadership team with responsibility to ensure high operational standards at our MFCs to deliver timely and accurately for our customers. </span></div>\n<div>&nbsp;</div>\n<div><span style=\"font-size: 16px;\">Customers turn to Gopuff to provide their everyday essentials - day and night, rain or shine. We're assembling a team of thinkers, dreamers and risk takers who are ready to help us reshape the world of retail faster than ever before. And it doesn't hurt if you like snacks.</span></div>",
+    "descriptionBodyPlain": "Overview: Gopuff is looking for a Junior Operations Supervisor to join the Operations team. Directly reporting to a Site Leader, JOS' play an essential role at Gopuff that requires drive, perseverance, positivity, and enthusiasm for the challenge. The Junior Operations Supervisor role is a core part of the Site leadership team with responsibility to ensure high operational standards at our MFCs to deliver timely and accurately for our customers. \n \nCustomers turn to Gopuff to provide their everyday essentials - day and night, rain or shine. We're assembling a team of thinkers, dreamers and risk takers who are ready to help us reshape the world of retail faster than ever before. And it doesn't hurt if you like snacks.\n",
+    "hostedUrl": "https://jobs.lever.co/gopuff/144ba9c0-661d-40c6-9682-8d24133b3347",
+    "applyUrl": "https://jobs.lever.co/gopuff/144ba9c0-661d-40c6-9682-8d24133b3347/apply",
+    "_fixture_case": "country_not_us"
+   }
+  },
+  {
+   "slug": "gopuff",
+   "url": "https://api.lever.co/v0/postings/gopuff?mode=json",
+   "case": "no_company_name",
+   "row": {
+    "additionalPlain": "At Gopuff, we know that life can be unpredictable. Sometimes you forget the milk at the store, run out of pet food for Fido, or just really need ice cream at 11 pm. We get it—stuff happens. But that’s where we come in, delivering all your wants and needs in just minutes.\n \nAnd now, we’re assembling a team of motivated people to help us drive forward that vision to bring a new age of convenience and predictability to an unpredictable world.\n \nLike what you’re hearing? Then join us on Team Blue.\n \n#LI-GOPUFF\n \nGopuff is an equal employment opportunity employer, committed to an inclusive workplace where we do not discriminate on the basis of race, sex, gender, national origin, religion, sexual orientation, gender identity, marital or familial status, age, ancestry, disability, genetic information, or any other characteristic protected by applicable laws. We believe in diversity and encourage any qualified individual to apply. \n",
+    "additional": "<div><strong>At Gopuff, we know that life can be unpredictable.</strong> Sometimes you forget the milk at the store, run out of pet food for Fido, or just really need ice cream at 11 pm. We get it—stuff happens. But that’s where we come in, delivering all your wants and needs in just minutes.</div>\n<div>&nbsp;</div>\n<div>And now, we’re assembling a team of motivated people to help us drive forward that vision to bring a new age of convenience and predictability to an unpredictable world.</div>\n<div>&nbsp;</div>\n<div>Like what you’re hearing? Then join us on Team Blue.</div>\n<div>&nbsp;</div>\n<div><span style=\"font-size: 10px;\">#LI-GOPUFF</span></div>\n<div>&nbsp;</div>\n<div><em>Gopuff is an equal employment opportunity employer, committed to an inclusive workplace where we do not discriminate on the basis of race, sex, gender, national origin, religion, sexual orientation, gender identity, marital or familial status, age, ancestry, disability, genetic information, or any other characteristic protected by applicable laws. We believe in diversity and encourage any qualified individual to apply. </em></div>",
+    "categories": {
+     "commitment": "Full Time",
+     "department": "Tech, Product, & Design",
+     "location": "Philadelphia, PA",
+     "team": "Data & Analytics",
+     "allLocations": [
+      "Philadelphia, PA",
+      "Miami, FL"
+     ]
+    },
+    "createdAt": 1789052684716,
+    "descriptionPlain": "Gopuff's engineering team is building solutions to dramatically change the way people purchase their daily goods. We provide the modern-day solution to meet customers' immediate everyday needs with products ranging from snacks and ice cream to household goods and beer, at the click of a button.\nAs an Analytics Engineer at Gopuff, you'll build and maintain the bridge between our data and the rest of the organization. This role sits on the Analytics Engineering team and is dedicated to our Supply Chain and Merchandising partners, with a secondary focus on marketing and CRM analytics. You'll own the models that our planning, allocation, and merch teams use to decide what we buy, where we place it, and how we promote it, and you'll be accountable for the integrity, reliability, and usability of that data.\n",
+    "description": "<div>\n<p>Gopuff's engineering team is building solutions to dramatically change the way people purchase their daily goods. We provide the modern-day solution to meet customers' immediate everyday needs with products ranging from snacks and ice cream to household goods and beer, at the click of a button.</p>\n<p>As an Analytics Engineer at Gopuff, you'll build and maintain the bridge between our data and the rest of the organization. This role sits on the Analytics Engineering team and is dedicated to our Supply Chain and Merchandising partners, with a secondary focus on marketing and CRM analytics. You'll own the models that our planning, allocation, and merch teams use to decide what we buy, where we place it, and how we promote it, and you'll be accountable for the integrity, reliability, and usability of that data.</p>\n</div>",
+    "id": "bfa7bc15-793e-486c-a3f5-b27d84c53025",
+    "lists": [
+     {
+      "text": "What We Offer",
+      "content": "\n<li>Medical/Dental/Vision Insurance&nbsp;</li>\n<li>401(k) Retirement Savings Plan</li>\n<li>HSA or FSA eligibility</li>\n<li>Long and Short-Term Disability Insurance</li>\n<li>Fitness Reimbursement Program</li>\n<li>25% employee discount &amp; FAM Membership</li>\n<li>Flexible PTO</li>\n<li>Group Life Insurance</li>\n<li>EAP through AllOne Health (formerly Carebridge)</li>\n"
+     },
+     {
+      "text": "Compensation",
+      "content": "<div>\n<ul style=\"list-style-type: disc;\">\n<li>Gopuff pays employees based on market pricing and pay may vary depending on your location. The salary range below reflects what we’d reasonably expect to pay candidates. A candidate’s starting pay will be determined based on job-related skills, experience, qualifications, interview performance, and market conditions. These ranges may be modified in the future. Exceptions may be made for exceptional individuals. For additional information on this role’s compensation package, please reach out to the designated recruiter for this role.</li>\n<li>This role is eligible for a discretionary annual cash bonus and participation in Gopuff’s equity incentive plan.</li>\n<li><strong>Base Salary Range</strong>: $100,000 - $125,000</li>\n\n</ul></div>"
+     },
+     {
+      "text": "Responsibilities",
+      "content": "<div>\n\n<li>\n<p>Design, build, and maintain the production data models that power supply chain and merchandising decisions: sales and demand, inventory position and in-stock, damage and expiration, turn, vendor fill rate, purchase orders, and allocation.</p>\n</li>\n<li>\n<p>Be the go-to data expert for these domains, with a deep understanding of our data warehouse and the processing layers feeding it.</p>\n</li>\n<li>\n<p>Partner with Supply Chain divisional teams, Merchandising, Marketing, CRM, product managers, and engineers to translate business questions into durable models and self-serve tooling rather than one-off pulls.</p>\n</li>\n<li>\n<p>Own data integrity, availability, transformation logic, and efficient data access for the domains you support.</p>\n</li>\n<li>\n<p>Build and maintain reporting and dashboards in Looker that planners and merchants use daily, and retire the manual reporting they replace.</p>\n</li>\n<li>\n<p>Support marketing and CRM analytics alongside the supply chain work: campaign and promotion performance, channel reporting.</p>\n</li>\n<li>\n<p>Identify gaps in existing data, write data product specs, and work with engineering teams to get the right tracking in place.</p>\n</li>\n<li>\n<p>Automate wherever possible, and build testing and monitoring so data quality problems surface before stakeholders find them.</p>\n</li>\n<li>\n<p>Document your models so every stakeholder can find, understand, and trust the data without asking you first.</p>\n</li>\n\n</div>"
+     },
+     {
+      "text": "Preferred Qualifications",
+      "content": "<div>\n\n<li>\n<p>Experience with ETL/ELT tooling (bonus points for dbt).</p>\n</li>\n<li>\n<p>Strong knowledge of data warehousing concepts, big data technologies, and analytics platforms. Snowflake, Redshift, and/or Azure experience strongly preferred.</p>\n</li>\n<li>\n<p>Exposure to supply chain, inventory, merchandise planning, or allocation data. You don't need years of planning experience, but familiarity with concepts like model stock, lead time, replenishment cycles, sell-through, and turn will get you productive faster.</p>\n</li>\n<li>\n<p>Experience with marketing or CRM analytics: campaign performance, promotion lift, channel attribution, or customer segmentation.</p>\n</li>\n<li>\n<p>Experience with demand planning or ERP systems such as JustEnough or Kinaxis.</p>\n</li>\n<li>\n<p>Comfort working with AI-assisted development tools. We use assistants like Claude in our day-to-day analytics engineering work, and we value engineers who use them well: accelerating model development, SQL review, testing, and documentation while independently verifying outputs and knowing when the tool is the wrong answer.</p>\n</li>\n<li>\n<p>Alcohol beverage or CPG category experience is a plus.</p>\n</li>\n\n</div>"
+     },
+     {
+      "text": "Minimum Qualifications",
+      "content": "<div>\n\n<li>\n<p>Bachelor's in Engineering, Computer Science, Information Systems, Business, or another quantitative discipline.</p>\n</li>\n<li>\n<p>3+ years of experience building data models that integrate complex and disparate data sources, using tools such as dbt.</p>\n</li>\n<li>\n<p>Expert in SQL and database table design, able to write structured and efficient queries against large datasets. Advanced Excel skills for partner collaboration.</p>\n</li>\n<li>\n<p>1+ years building and maintaining reporting and dashboards in Looker or a comparable BI tool.</p>\n</li>\n<li>\n<p>Strong analytical judgment: able to move from raw data to a clear recommendation, and to explain the 'so what' to business partners who will act on it.</p>\n</li>\n<li>\n<p>Excellent communication skills, with the ability to translate business needs into tractable work items and to explain technical trade-offs to non-technical partners.</p>\n</li>\n<li>\n<p>Top-notch organizational skills and the ability to manage multiple projects in a fast-paced environment.</p>\n</li>\n<li>\n<p>Move fast, be a team player, always be learning, and give back.</p>\n</li>\n\n</div>"
+     }
+    ],
+    "text": "Analytics Engineer",
+    "country": "US",
+    "workplaceType": "hybrid",
+    "opening": "",
+    "openingPlain": "",
+    "descriptionBody": "<div>\n<p>Gopuff's engineering team is building solutions to dramatically change the way people purchase their daily goods. We provide the modern-day solution to meet customers' immediate everyday needs with products ranging from snacks and ice cream to household goods and beer, at the click of a button.</p>\n<p>As an Analytics Engineer at Gopuff, you'll build and maintain the bridge between our data and the rest of the organization. This role sits on the Analytics Engineering team and is dedicated to our Supply Chain and Merchandising partners, with a secondary focus on marketing and CRM analytics. You'll own the models that our planning, allocation, and merch teams use to decide what we buy, where we place it, and how we promote it, and you'll be accountable for the integrity, reliability, and usability of that data.</p>\n</div>",
+    "descriptionBodyPlain": "Gopuff's engineering team is building solutions to dramatically change the way people purchase their daily goods. We provide the modern-day solution to meet customers' immediate everyday needs with products ranging from snacks and ice cream to household goods and beer, at the click of a button.\nAs an Analytics Engineer at Gopuff, you'll build and maintain the bridge between our data and the rest of the organization. This role sits on the Analytics Engineering team and is dedicated to our Supply Chain and Merchandising partners, with a secondary focus on marketing and CRM analytics. You'll own the models that our planning, allocation, and merch teams use to decide what we buy, where we place it, and how we promote it, and you'll be accountable for the integrity, reliability, and usability of that data.\n",
+    "hostedUrl": "https://jobs.lever.co/gopuff/bfa7bc15-793e-486c-a3f5-b27d84c53025",
+    "applyUrl": "https://jobs.lever.co/gopuff/bfa7bc15-793e-486c-a3f5-b27d84c53025/apply",
+    "_fixture_case": "no_company_name"
+   }
+  }
+ ]
+}

@@ -1,0 +1,897 @@
+{
+ "jobs": [
+  {
+   "absolute_url": "https://jobs.dropbox.com/listing/8159652?gh_jid=8159652",
+   "data_compliance": [
+    {
+     "type": "gdpr",
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "demographic_data_consent_applies": false
+    }
+   ],
+   "education": "education_required",
+   "employment": "employment_required",
+   "internal_job_id": 3531514,
+   "location": {
+    "name": "Remote - US: Select locations"
+   },
+   "metadata": [
+    {
+     "id": 397108,
+     "name": "Recruiting Team Responsible",
+     "value": "GCO Recruiting",
+     "value_type": "single_select"
+    },
+    {
+     "id": 1993612,
+     "name": "Weighted Value",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 397072,
+     "name": "Parent Job ID",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 397073,
+     "name": "Active Until Date",
+     "value": "",
+     "value_type": "date"
+    },
+    {
+     "id": 31703,
+     "name": "Employment Type",
+     "value": "Regular",
+     "value_type": "single_select"
+    },
+    {
+     "id": 29942941,
+     "name": "Time Type",
+     "value": "Full Time",
+     "value_type": "single_select"
+    },
+    {
+     "id": 3465818,
+     "name": "Location Cost Tier",
+     "value": "Mid",
+     "value_type": "single_select"
+    },
+    {
+     "id": 696737,
+     "name": "Skillset",
+     "value": "Core Sales",
+     "value_type": "single_select"
+    },
+    {
+     "id": 113830,
+     "name": "Dropboxer Level",
+     "value": "IC3",
+     "value_type": "single_select"
+    },
+    {
+     "id": 54678,
+     "name": "Career Page Allocation",
+     "value": "Sales",
+     "value_type": "single_select"
+    }
+   ],
+   "id": 8159652,
+   "updated_at": "2026-09-08T11:46:44-04:00",
+   "requisition_id": "R11689",
+   "title": "Account Executive",
+   "company_name": "Dropbox",
+   "first_published": "2026-09-01T09:20:17-04:00",
+   "language": "en",
+   "application_deadline": null
+  },
+  {
+   "absolute_url": "https://jobs.dropbox.com/listing/8048847?gh_jid=8048847",
+   "data_compliance": [
+    {
+     "type": "gdpr",
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "demographic_data_consent_applies": false
+    }
+   ],
+   "education": "education_required",
+   "employment": "employment_required",
+   "internal_job_id": 3488515,
+   "location": {
+    "name": "Remote - US: Select locations"
+   },
+   "metadata": [
+    {
+     "id": 397108,
+     "name": "Recruiting Team Responsible",
+     "value": "GCO Recruiting",
+     "value_type": "single_select"
+    },
+    {
+     "id": 1993612,
+     "name": "Weighted Value",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 397072,
+     "name": "Parent Job ID",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 397073,
+     "name": "Active Until Date",
+     "value": "",
+     "value_type": "date"
+    },
+    {
+     "id": 31703,
+     "name": "Employment Type",
+     "value": "Regular",
+     "value_type": "single_select"
+    },
+    {
+     "id": 29942941,
+     "name": "Time Type",
+     "value": "Full Time",
+     "value_type": "single_select"
+    },
+    {
+     "id": 3465818,
+     "name": "Location Cost Tier",
+     "value": "Mid",
+     "value_type": "single_select"
+    },
+    {
+     "id": 696737,
+     "name": "Skillset",
+     "value": "Business Development Manager",
+     "value_type": "single_select"
+    },
+    {
+     "id": 113830,
+     "name": "Dropboxer Level",
+     "value": "IC4",
+     "value_type": "single_select"
+    },
+    {
+     "id": 54678,
+     "name": "Career Page Allocation",
+     "value": "Business Development",
+     "value_type": "single_select"
+    }
+   ],
+   "id": 8048847,
+   "updated_at": "2026-09-03T09:40:01-04:00",
+   "requisition_id": "R11638",
+   "title": "Business Development Manager, Strategic Partnerships",
+   "company_name": "Dropbox",
+   "first_published": "2026-07-22T13:53:11-04:00",
+   "language": "en",
+   "application_deadline": null
+  },
+  {
+   "absolute_url": "https://jobs.dropbox.com/listing/8048848?gh_jid=8048848",
+   "data_compliance": [
+    {
+     "type": "gdpr",
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "demographic_data_consent_applies": false
+    }
+   ],
+   "education": "education_required",
+   "employment": "employment_required",
+   "internal_job_id": 3488515,
+   "location": {
+    "name": "Remote - Canada: Select locations"
+   },
+   "metadata": [
+    {
+     "id": 397108,
+     "name": "Recruiting Team Responsible",
+     "value": "GCO Recruiting",
+     "value_type": "single_select"
+    },
+    {
+     "id": 1993612,
+     "name": "Weighted Value",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 397072,
+     "name": "Parent Job ID",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 397073,
+     "name": "Active Until Date",
+     "value": "",
+     "value_type": "date"
+    },
+    {
+     "id": 31703,
+     "name": "Employment Type",
+     "value": "Regular",
+     "value_type": "single_select"
+    },
+    {
+     "id": 29942941,
+     "name": "Time Type",
+     "value": "Full Time",
+     "value_type": "single_select"
+    },
+    {
+     "id": 3465818,
+     "name": "Location Cost Tier",
+     "value": "Mid",
+     "value_type": "single_select"
+    },
+    {
+     "id": 696737,
+     "name": "Skillset",
+     "value": "Business Development Manager",
+     "value_type": "single_select"
+    },
+    {
+     "id": 113830,
+     "name": "Dropboxer Level",
+     "value": "IC4",
+     "value_type": "single_select"
+    },
+    {
+     "id": 54678,
+     "name": "Career Page Allocation",
+     "value": "Business Development",
+     "value_type": "single_select"
+    }
+   ],
+   "id": 8048848,
+   "updated_at": "2026-09-03T09:40:01-04:00",
+   "requisition_id": "R11638",
+   "title": "Business Development Manager, Strategic Partnerships",
+   "company_name": "Dropbox",
+   "first_published": "2026-07-22T13:53:12-04:00",
+   "language": "en",
+   "application_deadline": null
+  },
+  {
+   "absolute_url": "https://jobs.dropbox.com/listing/8130079?gh_jid=8130079",
+   "data_compliance": [
+    {
+     "type": "gdpr",
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "demographic_data_consent_applies": false
+    }
+   ],
+   "education": "education_optional",
+   "employment": "employment_optional",
+   "internal_job_id": 3520505,
+   "location": {
+    "name": "Remote - Japan"
+   },
+   "metadata": [
+    {
+     "id": 397108,
+     "name": "Recruiting Team Responsible",
+     "value": "GCO Recruiting",
+     "value_type": "single_select"
+    },
+    {
+     "id": 1993612,
+     "name": "Weighted Value",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 397072,
+     "name": "Parent Job ID",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 397073,
+     "name": "Active Until Date",
+     "value": "",
+     "value_type": "date"
+    },
+    {
+     "id": 31703,
+     "name": "Employment Type",
+     "value": "Regular",
+     "value_type": "single_select"
+    },
+    {
+     "id": 29942941,
+     "name": "Time Type",
+     "value": "Full Time",
+     "value_type": "single_select"
+    },
+    {
+     "id": 3465818,
+     "name": "Location Cost Tier",
+     "value": "Mid",
+     "value_type": "single_select"
+    },
+    {
+     "id": 696737,
+     "name": "Skillset",
+     "value": "Core Sales",
+     "value_type": "single_select"
+    },
+    {
+     "id": 113830,
+     "name": "Dropboxer Level",
+     "value": "IC3",
+     "value_type": "single_select"
+    },
+    {
+     "id": 54678,
+     "name": "Career Page Allocation",
+     "value": "Business Development",
+     "value_type": "single_select"
+    }
+   ],
+   "id": 8130079,
+   "updated_at": "2026-09-04T04:32:31-04:00",
+   "requisition_id": "R11679",
+   "title": "Business Development Representative - Japan (Remote)",
+   "company_name": "Dropbox",
+   "first_published": "2026-09-01T10:23:03-04:00",
+   "language": "en",
+   "application_deadline": null
+  },
+  {
+   "absolute_url": "https://jobs.dropbox.com/listing/8137896?gh_jid=8137896",
+   "data_compliance": [
+    {
+     "type": "gdpr",
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "demographic_data_consent_applies": false
+    }
+   ],
+   "education": "education_required",
+   "employment": "employment_required",
+   "internal_job_id": 3522085,
+   "location": {
+    "name": "Remote - Canada: Select locations"
+   },
+   "metadata": [
+    {
+     "id": 397108,
+     "name": "Recruiting Team Responsible",
+     "value": "GCO Recruiting",
+     "value_type": "single_select"
+    },
+    {
+     "id": 1993612,
+     "name": "Weighted Value",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 397072,
+     "name": "Parent Job ID",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 397073,
+     "name": "Active Until Date",
+     "value": "",
+     "value_type": "date"
+    },
+    {
+     "id": 31703,
+     "name": "Employment Type",
+     "value": "Regular",
+     "value_type": "single_select"
+    },
+    {
+     "id": 29942941,
+     "name": "Time Type",
+     "value": "Full Time",
+     "value_type": "single_select"
+    },
+    {
+     "id": 3465818,
+     "name": "Location Cost Tier",
+     "value": "Mid",
+     "value_type": "single_select"
+    },
+    {
+     "id": 696737,
+     "name": "Skillset",
+     "value": "Marketing, Niche",
+     "value_type": "single_select"
+    },
+    {
+     "id": 113830,
+     "name": "Dropboxer Level",
+     "value": "IC4",
+     "value_type": "single_select"
+    },
+    {
+     "id": 54678,
+     "name": "Career Page Allocation",
+     "value": "Marketing",
+     "value_type": "single_select"
+    }
+   ],
+   "id": 8137896,
+   "updated_at": "2026-09-14T12:07:08-04:00",
+   "requisition_id": "R11680",
+   "title": "Customer Evidence Manager",
+   "company_name": "Dropbox",
+   "first_published": "2026-09-14T12:07:08-04:00",
+   "language": "en",
+   "application_deadline": null
+  },
+  {
+   "absolute_url": "https://jobs.dropbox.com/listing/8137895?gh_jid=8137895",
+   "data_compliance": [
+    {
+     "type": "gdpr",
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "demographic_data_consent_applies": false
+    }
+   ],
+   "education": "education_required",
+   "employment": "employment_required",
+   "internal_job_id": 3522085,
+   "location": {
+    "name": "Remote - US: Select locations"
+   },
+   "metadata": [
+    {
+     "id": 397108,
+     "name": "Recruiting Team Responsible",
+     "value": "GCO Recruiting",
+     "value_type": "single_select"
+    },
+    {
+     "id": 1993612,
+     "name": "Weighted Value",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 397072,
+     "name": "Parent Job ID",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 397073,
+     "name": "Active Until Date",
+     "value": "",
+     "value_type": "date"
+    },
+    {
+     "id": 31703,
+     "name": "Employment Type",
+     "value": "Regular",
+     "value_type": "single_select"
+    },
+    {
+     "id": 29942941,
+     "name": "Time Type",
+     "value": "Full Time",
+     "value_type": "single_select"
+    },
+    {
+     "id": 3465818,
+     "name": "Location Cost Tier",
+     "value": "Mid",
+     "value_type": "single_select"
+    },
+    {
+     "id": 696737,
+     "name": "Skillset",
+     "value": "Marketing, Niche",
+     "value_type": "single_select"
+    },
+    {
+     "id": 113830,
+     "name": "Dropboxer Level",
+     "value": "IC4",
+     "value_type": "single_select"
+    },
+    {
+     "id": 54678,
+     "name": "Career Page Allocation",
+     "value": "Marketing",
+     "value_type": "single_select"
+    }
+   ],
+   "id": 8137895,
+   "updated_at": "2026-09-14T12:07:06-04:00",
+   "requisition_id": "R11680",
+   "title": "Customer Evidence Manager",
+   "company_name": "Dropbox",
+   "first_published": "2026-09-14T12:07:06-04:00",
+   "language": "en",
+   "application_deadline": null
+  },
+  {
+   "absolute_url": "https://jobs.dropbox.com/listing/8186675?gh_jid=8186675",
+   "data_compliance": [
+    {
+     "type": "gdpr",
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "demographic_data_consent_applies": false
+    }
+   ],
+   "education": "education_required",
+   "employment": "employment_required",
+   "internal_job_id": 3542656,
+   "location": {
+    "name": "Remote - US: Select locations"
+   },
+   "metadata": [
+    {
+     "id": 397108,
+     "name": "Recruiting Team Responsible",
+     "value": "GCO Recruiting",
+     "value_type": "single_select"
+    },
+    {
+     "id": 1993612,
+     "name": "Weighted Value",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 397072,
+     "name": "Parent Job ID",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 397073,
+     "name": "Active Until Date",
+     "value": "",
+     "value_type": "date"
+    },
+    {
+     "id": 31703,
+     "name": "Employment Type",
+     "value": "Regular",
+     "value_type": "single_select"
+    },
+    {
+     "id": 29942941,
+     "name": "Time Type",
+     "value": "Full Time",
+     "value_type": "single_select"
+    },
+    {
+     "id": 3465818,
+     "name": "Location Cost Tier",
+     "value": "Mid",
+     "value_type": "single_select"
+    },
+    {
+     "id": 696737,
+     "name": "Skillset",
+     "value": "CX, Niche",
+     "value_type": "single_select"
+    },
+    {
+     "id": 113830,
+     "name": "Dropboxer Level",
+     "value": "IC3",
+     "value_type": "single_select"
+    },
+    {
+     "id": 54678,
+     "name": "Career Page Allocation",
+     "value": "Customer Experience and Success",
+     "value_type": "single_select"
+    }
+   ],
+   "id": 8186675,
+   "updated_at": "2026-09-15T14:58:59-04:00",
+   "requisition_id": "R11702",
+   "title": "Customer Success Manager",
+   "company_name": "Dropbox",
+   "first_published": "2026-09-15T14:58:59-04:00",
+   "language": "en",
+   "application_deadline": null
+  },
+  {
+   "absolute_url": "https://jobs.dropbox.com/listing/8186676?gh_jid=8186676",
+   "data_compliance": [
+    {
+     "type": "gdpr",
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "demographic_data_consent_applies": false
+    }
+   ],
+   "education": "education_required",
+   "employment": "employment_required",
+   "internal_job_id": 3542656,
+   "location": {
+    "name": "Remote - Canada: Select locations"
+   },
+   "metadata": [
+    {
+     "id": 397108,
+     "name": "Recruiting Team Responsible",
+     "value": "GCO Recruiting",
+     "value_type": "single_select"
+    },
+    {
+     "id": 1993612,
+     "name": "Weighted Value",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 397072,
+     "name": "Parent Job ID",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 397073,
+     "name": "Active Until Date",
+     "value": "",
+     "value_type": "date"
+    },
+    {
+     "id": 31703,
+     "name": "Employment Type",
+     "value": "Regular",
+     "value_type": "single_select"
+    },
+    {
+     "id": 29942941,
+     "name": "Time Type",
+     "value": "Full Time",
+     "value_type": "single_select"
+    },
+    {
+     "id": 3465818,
+     "name": "Location Cost Tier",
+     "value": "Mid",
+     "value_type": "single_select"
+    },
+    {
+     "id": 696737,
+     "name": "Skillset",
+     "value": "CX, Niche",
+     "value_type": "single_select"
+    },
+    {
+     "id": 113830,
+     "name": "Dropboxer Level",
+     "value": "IC3",
+     "value_type": "single_select"
+    },
+    {
+     "id": 54678,
+     "name": "Career Page Allocation",
+     "value": "Customer Experience and Success",
+     "value_type": "single_select"
+    }
+   ],
+   "id": 8186676,
+   "updated_at": "2026-09-15T14:59:04-04:00",
+   "requisition_id": "R11702",
+   "title": "Customer Success Manager",
+   "company_name": "Dropbox",
+   "first_published": "2026-09-15T14:59:04-04:00",
+   "language": "en",
+   "application_deadline": null
+  },
+  {
+   "absolute_url": "https://jobs.dropbox.com/listing/8096461?gh_jid=8096461",
+   "data_compliance": [
+    {
+     "type": "gdpr",
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "demographic_data_consent_applies": false
+    }
+   ],
+   "education": "education_required",
+   "employment": "employment_required",
+   "internal_job_id": 3507520,
+   "location": {
+    "name": "Remote - US: Select locations"
+   },
+   "metadata": [
+    {
+     "id": 397108,
+     "name": "Recruiting Team Responsible",
+     "value": "NAMER - Executive Recruiting",
+     "value_type": "single_select"
+    },
+    {
+     "id": 1993612,
+     "name": "Weighted Value",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 397072,
+     "name": "Parent Job ID",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 397073,
+     "name": "Active Until Date",
+     "value": "",
+     "value_type": "date"
+    },
+    {
+     "id": 31703,
+     "name": "Employment Type",
+     "value": "Regular",
+     "value_type": "single_select"
+    },
+    {
+     "id": 29942941,
+     "name": "Time Type",
+     "value": "Full Time",
+     "value_type": "single_select"
+    },
+    {
+     "id": 3465818,
+     "name": "Location Cost Tier",
+     "value": "Mid",
+     "value_type": "single_select"
+    },
+    {
+     "id": 696737,
+     "name": "Skillset",
+     "value": "Marketing, Niche",
+     "value_type": "single_select"
+    },
+    {
+     "id": 113830,
+     "name": "Dropboxer Level",
+     "value": "MGR6",
+     "value_type": "single_select"
+    },
+    {
+     "id": 54678,
+     "name": "Career Page Allocation",
+     "value": "Marketing",
+     "value_type": "single_select"
+    }
+   ],
+   "id": 8096461,
+   "updated_at": "2026-09-25T14:16:18-04:00",
+   "requisition_id": "R11663",
+   "title": "Director of Media Strategy & Activation (Paid Media)",
+   "company_name": "Dropbox",
+   "first_published": "2026-08-10T15:53:49-04:00",
+   "language": "en",
+   "application_deadline": null
+  },
+  {
+   "absolute_url": "https://jobs.dropbox.com/listing/8036650?gh_jid=8036650",
+   "data_compliance": [
+    {
+     "type": "gdpr",
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "demographic_data_consent_applies": false
+    }
+   ],
+   "education": "education_required",
+   "employment": "employment_required",
+   "internal_job_id": 3483687,
+   "location": {
+    "name": "Remote - Canada: Select locations"
+   },
+   "metadata": [
+    {
+     "id": 397108,
+     "name": "Recruiting Team Responsible",
+     "value": "G&A Recruiting",
+     "value_type": "single_select"
+    },
+    {
+     "id": 1993612,
+     "name": "Weighted Value",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 397072,
+     "name": "Parent Job ID",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 397073,
+     "name": "Active Until Date",
+     "value": "",
+     "value_type": "date"
+    },
+    {
+     "id": 31703,
+     "name": "Employment Type",
+     "value": "Regular",
+     "value_type": "single_select"
+    },
+    {
+     "id": 29942941,
+     "name": "Time Type",
+     "value": "Full Time",
+     "value_type": "single_select"
+    },
+    {
+     "id": 3465818,
+     "name": "Location Cost Tier",
+     "value": "Mid",
+     "value_type": "single_select"
+    },
+    {
+     "id": 696737,
+     "name": "Skillset",
+     "value": "People, Niche",
+     "value_type": "single_select"
+    },
+    {
+     "id": 113830,
+     "name": "Dropboxer Level",
+     "value": "IC4",
+     "value_type": "single_select"
+    },
+    {
+     "id": 54678,
+     "name": "Career Page Allocation",
+     "value": "People",
+     "value_type": "single_select"
+    }
+   ],
+   "id": 8036650,
+   "updated_at": "2026-09-15T14:43:03-04:00",
+   "requisition_id": "R11634",
+   "title": "Enterprise Context Architect",
+   "company_name": "Dropbox",
+   "first_published": "2026-08-03T11:24:36-04:00",
+   "language": "en",
+   "application_deadline": null
+  }
+ ],
+ "meta": {
+  "total": 44
+ }
+}
