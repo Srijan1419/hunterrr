@@ -25,8 +25,13 @@ export const PUBLIC_ROUTES = [
 
 /** Pages that require the session. Add new pages here (or to PUBLIC_ROUTES) when you create them. */
 export const PROTECTED_ROUTES = [
-  // none yet: the v1 dashboard was removed in h2-02b; the tracker, inbox and profile arrive with the UI tasks
-] as readonly string[];
+  "/today",
+  "/tracker",
+  "/inbox",
+  "/companies",
+  "/sources",
+  "/profile",
+] as const;
 
 export function matchesRoute(pathname: string, pattern: string): boolean {
   if (pattern.endsWith("/**")) {

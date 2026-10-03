@@ -53,7 +53,14 @@ describe("route classification", () => {
   });
 
   it("an unclassified page would be caught (the check really can fail)", () => {
-    expect(classify("/tracker")).toBe("none");
+    expect(classify("/definitely-not-a-page")).toBe("none");
+  });
+
+  it("the six signed-in pages are protected", () => {
+    for (const route of ["/today", "/tracker", "/inbox", "/companies", "/sources", "/profile"]) {
+      expect(classify(route)).toBe("protected");
+      expect(isPublicRoute(route)).toBe(false);
+    }
   });
 
   it("dynamic segments are matched by their pattern", () => {
