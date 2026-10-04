@@ -3,7 +3,6 @@ import { render, screen } from "@testing-library/react";
 import TodayPage from "@/app/(app)/today/page";
 import InboxPage from "@/app/(app)/inbox/page";
 import CompaniesPage from "@/app/(app)/companies/page";
-import SourcesPage from "@/app/(app)/sources/page";
 import ProfilePage from "@/app/(app)/profile/page";
 
 const PAGES: Array<{
@@ -27,11 +26,6 @@ const PAGES: Array<{
     name: "Companies",
     Page: CompaniesPage,
     sentence: "Companies you watch or ignore will appear here. Boards are discovered automatically.",
-  },
-  {
-    name: "Sources",
-    Page: SourcesPage,
-    sentence: "Where each job feed stands will appear here: last run, how many jobs, and what failed.",
   },
   {
     name: "Profile",
