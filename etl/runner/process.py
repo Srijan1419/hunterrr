@@ -329,12 +329,21 @@ def process(
     llm_router: Any = None,
     llm_budget: int = 0,
     llm_pace_seconds: float = 2.5,
+    max_seconds: float | None = None,
 ) -> ProcessResult:
-    """Extract pending raw documents and upsert their postings. Idempotent."""
+    """Extract pending raw documents and upsert their postings. Idempotent.
+
+    `max_seconds` is a wall-clock budget: no new batch starts after it, and the AI rung stops
+    asking models after 60% of it, so a run always finishes (and writes) before the workflow's
+    own timeout kills it. Anything not reached stays pending for the next run.
+    """
+    started = time.monotonic()
     result = ProcessResult()
     stamp = now or datetime.now(timezone.utc)
     after = 0
     while limit is None or result.seen < limit:
+        if max_seconds is not None and time.monotonic() - started >= max_seconds:
+            break
         n = batch_size if limit is None else min(batch_size, limit - result.seen)
         with session_scope(engine) as conn:
             rows = conn.execute(_PENDING_SQL, {"after": after, "n": n}).fetchall()
@@ -363,7 +372,8 @@ def process(
                 row = to_posting_row(
                     doc, extracted, board_id=doc.board_id, company_id=doc.company_id, now=stamp)
                 result.conflicts += len(extracted.conflicts)
-                if llm_router is not None and result.llm_calls < llm_budget:
+                llm_open = max_seconds is None or time.monotonic() - started < max_seconds * 0.6
+                if llm_router is not None and llm_open and result.llm_calls < llm_budget:
                     extracted = _with_llm(llm_router, extracted, doc, result, llm_pace_seconds)
                     row = to_posting_row(
                         doc, extracted, board_id=doc.board_id, company_id=doc.company_id, now=stamp)

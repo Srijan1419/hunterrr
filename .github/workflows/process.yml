@@ -47,4 +47,4 @@ jobs:
         run: pip install -r etl/requirements.txt
 
       - name: Run process
-        run: python -m etl.run process --llm-budget 80
+        run: python -m etl.run process --batch-size 100 --llm-budget 40 --max-seconds 600

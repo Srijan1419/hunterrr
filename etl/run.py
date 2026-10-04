@@ -99,7 +99,7 @@ async def collect(shard_spec: str) -> int:
         engine.dispose()
 
 
-async def process_cmd(batch_size: int, limit: int | None, llm_budget: int = 0) -> int:
+async def process_cmd(batch_size: int, limit: int | None, llm_budget: int = 0, max_seconds: float | None = None) -> int:
     settings = Settings()
     db_url = _secret(settings.DATABASE_URL) or os.environ.get("DATABASE_URL")
     if not db_url:
@@ -118,7 +118,7 @@ async def process_cmd(batch_size: int, limit: int | None, llm_budget: int = 0) -
                 router = LlmRouter(settings, discover=True)
             result = await asyncio.to_thread(
                 run_process, engine, batch_size=batch_size, limit=limit,
-                llm_router=router, llm_budget=llm_budget)
+                llm_router=router, llm_budget=llm_budget, max_seconds=max_seconds)
             status = "degraded" if result.failed else "ok"
             error = f"{result.failed} documents failed" if result.failed else ""
         except Exception as exc:
@@ -148,12 +148,13 @@ def main(argv: list[str] | None = None) -> int:
         parser = argparse.ArgumentParser(prog="etl.run process")
         parser.add_argument("--batch-size", type=int, default=200)
         parser.add_argument("--limit", type=int, default=None)
+        parser.add_argument("--max-seconds", type=float, default=None, help="wall-clock budget for the whole run")
         parser.add_argument("--llm-budget", type=int, default=0, help="max AI-rung model calls this run (0 = off)")
         try:
             args = parser.parse_args(argv[1:])
         except SystemExit:
             return 2
-        return asyncio.run(process_cmd(max(1, args.batch_size), args.limit, max(0, args.llm_budget)))
+        return asyncio.run(process_cmd(max(1, args.batch_size), args.limit, max(0, args.llm_budget), args.max_seconds))
     print("Usage: python -m etl.run collect --shard i/N | process [--batch-size N] [--limit N]", file=sys.stderr)
     return 2
 

@@ -387,3 +387,32 @@ def test_a_known_value_is_not_replaced_by_the_llm(db):
     P.process(db, now=NOW, release_connections=False, llm_router=_FakeRouter(), llm_budget=5, llm_pace_seconds=0)
     prov = scalar(db, "SELECT remote_type_provenance::text FROM hunterrr.postings")
     assert prov in ("rule", "llm", "unknown")  # never replaced a known value: see unit tests for the rule itself
+
+
+@pg
+def test_the_time_budget_stops_new_batches_and_leaves_the_rest_pending(db):
+    seed_docs(db, "greenhouse", "acme", load("greenhouse", "jobs"))
+    res = P.process(db, batch_size=3, now=NOW, release_connections=False, max_seconds=0.0)
+    assert res.seen == 0 and res.written == 0 and res.batches == 0
+    assert scalar(db, "SELECT count(*) FROM hunterrr.raw_documents WHERE clean_text_gz IS NOT NULL") == 10
+    rest = P.process(db, now=NOW, release_connections=False, max_seconds=600)  # a later run picks everything up
+    assert rest.written == 10
+
+
+@pg
+def test_the_ai_rung_stops_asking_once_most_of_the_time_budget_is_spent(db, monkeypatch):
+    seed_docs(db, "greenhouse", "acme", [_llm_posting(i) for i in range(4)])
+    clock = {"t": 0.0}
+    monkeypatch.setattr(P.time, "monotonic", lambda: clock["t"])
+    router = _FakeRouter()
+    real_with_llm = P._with_llm
+
+    def ticking(*a, **k):
+        out = real_with_llm(*a, **k)
+        clock["t"] += 40.0  # each model call "takes" 40 s of a 100 s budget
+        return out
+
+    monkeypatch.setattr(P, "_with_llm", ticking)
+    res = P.process(db, now=NOW, release_connections=False, llm_router=router, llm_budget=10,
+                    llm_pace_seconds=0, max_seconds=100)
+    assert res.written == 4 and router.calls == 2  # 0 s and 40 s are inside 60% of 100; 80 s is not
