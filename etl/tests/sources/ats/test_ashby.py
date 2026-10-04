@@ -71,7 +71,7 @@ async def test_403_and_429_are_blocked(status):
 
 async def test_circuit_open_is_blocked():
     class Tripped:
-        async def get(self, url):
+        async def get(self, url, **kwargs):
             raise CircuitOpenError("circuit open for host 'api.ashbyhq.com'")
 
     result = await SOURCE.fetch(task_for(SOURCE, SLUG), Tripped())

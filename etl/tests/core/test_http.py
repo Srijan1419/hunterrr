@@ -77,6 +77,22 @@ async def test_body_larger_than_5mb_aborted():
     await client.aclose()
 
 
+async def test_a_per_request_cap_can_allow_a_bigger_body_or_enforce_a_smaller_one():
+    body = b"x" * (6 * 1024 * 1024)
+
+    def handler(request):
+        return httpx.Response(200, content=body, headers={"content-type": "text/plain"})
+
+    client, _ = make_client(handler)
+    with pytest.raises(BodyTooLargeError):  # the default 5 MB cap still applies
+        await client.get("https://example.com/big")
+    response = await client.get("https://example.com/big", max_body_bytes=8 * 1024 * 1024)
+    assert len(response.body) == len(body)
+    with pytest.raises(BodyTooLargeError):  # and a request can ask for a smaller one
+        await client.get("https://example.com/big", max_body_bytes=1024)
+    await client.aclose()
+
+
 async def test_redirect_loop_stops_at_5():
     calls = {"n": 0}
 

@@ -245,15 +245,14 @@ class HttpClient:
         if count >= BREAKER_THRESHOLD:
             self._open.add(host)
 
-    async def _read_limited(self, response: httpx.Response) -> bytes:
+    async def _read_limited(self, response: httpx.Response, limit: int | None = None) -> bytes:
+        cap = self.max_body_bytes if limit is None else limit
         total = 0
         chunks: list[bytes] = []
         async for chunk in response.aiter_bytes(chunk_size=64 * 1024):
             total += len(chunk)
-            if total > self.max_body_bytes:
-                raise BodyTooLargeError(
-                    f"response body exceeds {self.max_body_bytes} bytes"
-                )
+            if total > cap:
+                raise BodyTooLargeError(f"response body exceeds {cap} bytes")
             chunks.append(chunk)
         return b"".join(chunks)
 
@@ -263,9 +262,10 @@ class HttpClient:
         url: str,
         headers: dict[str, str] | None,
         content: bytes | None = None,
+        max_body_bytes: int | None = None,
     ) -> tuple[int, dict[str, str], bytes, str | None]:
         async with self._client.stream(method, url, headers=headers, content=content) as resp:
-            body = await self._read_limited(resp)
+            body = await self._read_limited(resp, max_body_bytes)
             hdrs = dict(resp.headers)
             ctype = resp.headers.get("content-type", "")
             return resp.status_code, hdrs, body, ctype
@@ -278,6 +278,7 @@ class HttpClient:
         headers: dict[str, str] | None = None,
         content: bytes | None = None,
         json: dict | list | None = None,
+        max_body_bytes: int | None = None,
     ) -> HttpResponse:
         """Make an HTTP request with the full policy: rate limits, retries, breaker, body cap.
 
@@ -318,7 +319,7 @@ class HttpClient:
                 last_status: int | None = None
                 for attempt in range(self.max_retries + 1):
                     try:
-                        coro = self._single_attempt(method, url, headers, content)
+                        coro = self._single_attempt(method, url, headers, content, max_body_bytes)
                         status, hdrs, body, ctype = await asyncio.wait_for(
                             coro, timeout=self.total_timeout
                         )
@@ -386,10 +387,14 @@ class HttpClient:
                 raise HttpError(f"request to {url} failed (status={last_status})")
 
     async def get(
-        self, url: str, headers: dict[str, str] | None = None
+        self, url: str, headers: dict[str, str] | None = None, *, max_body_bytes: int | None = None
     ) -> HttpResponse:
-        """GET `url`, applying rate limits, retries, breaker and body cap."""
-        return await self.request("GET", url, headers=headers)
+        """GET `url`, applying rate limits, retries, breaker and body cap.
+
+        `max_body_bytes` raises (or lowers) the cap for this one request: a big employer's whole job
+        board is 5 to 10 MB of JSON, far over the 5 MB default that protects every other call.
+        """
+        return await self.request("GET", url, headers=headers, max_body_bytes=max_body_bytes)
 
     async def get_text(
         self, url: str, headers: dict[str, str] | None = None

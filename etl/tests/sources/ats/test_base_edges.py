@@ -1,3 +1,5 @@
+import asyncio
+from etl.core.types import FetchTask
 """Edge cases of the shared source logic found in CTO review of h2-10."""
 import json
 
@@ -44,9 +46,27 @@ async def test_a_server_demanding_a_very_long_wait_is_blocked_not_degraded():
 
 async def test_a_wrapped_rate_limit_message_maps_to_blocked():
     class Boom:
-        async def get(self, url):
+        async def get(self, url, **kwargs):
             raise HttpError("rate limited, retry-after too long")
 
     src = GreenhouseSource()
     result = await src.fetch(task_for(src, "acme"), Boom())
     assert result.status == "blocked"
+
+
+def test_the_board_fetch_asks_for_the_large_body_cap():
+    """Stripe's board is 5.5 MB and Anthropic's 9.2 MB: the default 5 MB cap made them 'degraded'."""
+    from etl.core.ids import ATS_MAX_BODY_BYTES, MAX_BODY_BYTES
+    from etl.sources.ats.greenhouse import GreenhouseSource
+
+    seen = {}
+
+    class Http:
+        async def get(self, url, **kwargs):
+            seen.update(kwargs)
+            raise RuntimeError("stop here")
+
+    task = FetchTask("greenhouse", "stripe", "https://boards-api.greenhouse.io/v1/boards/stripe/jobs?content=true", board_id="1")
+    asyncio.run(GreenhouseSource().fetch(task, Http()))
+    assert seen == {"max_body_bytes": ATS_MAX_BODY_BYTES}
+    assert ATS_MAX_BODY_BYTES >= 10 * 1024 * 1024 > MAX_BODY_BYTES

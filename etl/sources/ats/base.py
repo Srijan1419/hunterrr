@@ -21,7 +21,7 @@ from typing import Any
 from sqlalchemy import text
 
 from etl.core.http import CircuitOpenError, HttpError
-from etl.core.ids import canonical_json
+from etl.core.ids import ATS_MAX_BODY_BYTES, canonical_json
 from etl.core.types import FetchResult, FetchTask, RawDocument
 from etl.runner.source import Shard
 
@@ -109,7 +109,7 @@ class AtsSource:
     async def fetch(self, task: FetchTask, http) -> FetchResult:
         """One GET; never raises for the statuses the runner maps (only on cancel)."""
         try:
-            response = await http.get(task.url)
+            response = await http.get(task.url, max_body_bytes=ATS_MAX_BODY_BYTES)
         except asyncio.CancelledError:
             raise
         except CircuitOpenError:
