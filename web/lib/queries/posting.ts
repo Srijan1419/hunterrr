@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import { safeHttpUrl, type FeedDb, type FeedLocation } from "@/lib/queries/feed";
+import { toIso } from "@/lib/queries/time";
 
 /** Everything the detail page shows, each stated fact with where it came from. */
 export type PostingDetail = {
@@ -46,8 +47,7 @@ const num = (v: unknown): number | null => {
   const n = Number(v);
   return Number.isFinite(n) ? n : null;
 };
-const iso = (v: unknown): string | null =>
-  v instanceof Date ? v.toISOString() : typeof v === "string" && v !== "" ? v : null;
+const iso = toIso;
 const prov = (v: unknown): string => (typeof v === "string" && v !== "" ? v : "unknown");
 const list = (v: unknown): string[] => (Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : []);
 

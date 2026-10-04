@@ -4,7 +4,9 @@ import { notFound } from "next/navigation";
 import { PostingFacts } from "@/components/feed/PostingFacts";
 import styles from "@/components/feed/detail.module.css";
 import { db } from "@/lib/db/client.v2";
+import { SaveButton } from "@/components/tracker/SaveButton";
 import { queryPosting } from "@/lib/queries/posting";
+import { savedPostingIds } from "@/lib/queries/tracker";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +24,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 export default async function JobDetailPage({ params }: { params: Params }) {
   const posting = await queryPosting(db as never, parseId((await params).id));
   if (!posting) notFound();
+  const saved = (await savedPostingIds(db as never, [posting.id])).has(posting.id);
 
   return (
     <article className={styles.page}>
@@ -39,6 +42,7 @@ export default async function JobDetailPage({ params }: { params: Params }) {
           ) : (
             <span className={styles.noApply}>No apply link was found for this posting.</span>
           )}
+          <SaveButton postingId={posting.id} saved={saved} />
           {posting.status !== "open" ? <span className={styles.closed}>No longer listed</span> : null}
         </div>
       </header>

@@ -5,6 +5,7 @@ import { JobRow } from "@/components/feed/JobRow";
 import styles from "@/components/feed/feed.module.css";
 import { db } from "@/lib/db/client.v2";
 import { FEED_PAGE_SIZE, filtersFromSearchParams, queryFeed } from "@/lib/queries/feed";
+import { savedPostingIds } from "@/lib/queries/tracker";
 
 export const metadata: Metadata = { title: "Jobs | hunterrr" };
 export const dynamic = "force-dynamic";
@@ -26,6 +27,7 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
   const params = await searchParams;
   const filters = filtersFromSearchParams(params);
   const result = await queryFeed(db as never, filters);
+  const saved = await savedPostingIds(db as never, result.rows.map((r) => r.id));
   const from = result.total === 0 ? 0 : (result.page - 1) * FEED_PAGE_SIZE + 1;
   const to = Math.min(result.total, result.page * FEED_PAGE_SIZE);
 
@@ -54,7 +56,7 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
       ) : (
         <ul className={styles.list}>
           {result.rows.map((row) => (
-            <JobRow key={row.id} row={row} />
+            <JobRow key={row.id} row={row} saved={saved.has(row.id)} />
           ))}
         </ul>
       )}

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Chip } from "@/components/atlas/Chip";
+import { SaveButton } from "@/components/tracker/SaveButton";
 import type { FeedRow } from "@/lib/queries/feed";
 import { formatEligibility, formatLocation, formatPay, formatPosted } from "@/lib/feed-format";
 import styles from "./feed.module.css";
@@ -7,7 +8,7 @@ import styles from "./feed.module.css";
 const REMOTE_LABEL = { remote: "Remote", hybrid: "Hybrid", onsite: "On-site" } as const;
 
 /** One posting in the feed. Chips only appear for facts the posting states; nothing is guessed. */
-export function JobRow({ row, now }: { row: FeedRow; now?: Date }) {
+export function JobRow({ row, now, saved = false }: { row: FeedRow; now?: Date; saved?: boolean }) {
   const pay = formatPay(row);
   const eligibility = formatEligibility(row);
   const location = formatLocation(row);
@@ -47,6 +48,7 @@ export function JobRow({ row, now }: { row: FeedRow; now?: Date }) {
         ) : (
           <span className={styles.noApply}>No apply link</span>
         )}
+        <SaveButton postingId={row.id} saved={saved} />
       </div>
     </li>
   );

@@ -515,6 +515,9 @@ export const applications = hunterrr.table("applications", {
   stateChangedAt: timestamptz("state_changed_at").notNull().default(sql`now()`),
   nextActionAt: timestamptz("next_action_at"),
   createdAt: timestamptz("created_at").notNull().defaultNow(),
+  // Added in 0003: the posting the application came from (one application per posting) and notes.
+  postingId: bigint("posting_id", { mode: "number" }).references(() => postings.id),
+  notes: text("notes").notNull().default(""),
 });
 
 // ---------------------------------------------------------------------------

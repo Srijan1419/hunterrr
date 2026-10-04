@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import TodayPage from "@/app/(app)/today/page";
-import TrackerPage from "@/app/(app)/tracker/page";
 import InboxPage from "@/app/(app)/inbox/page";
 import CompaniesPage from "@/app/(app)/companies/page";
 import SourcesPage from "@/app/(app)/sources/page";
@@ -17,12 +16,6 @@ const PAGES: Array<{
     Page: TodayPage,
     sentence:
       "Your matches, replies and follow-ups will appear here once the first collection has run.",
-  },
-  {
-    name: "Tracker",
-    Page: TrackerPage,
-    sentence:
-      "Applications you save or mark as applied will appear here, and replies from your inbox will move them along.",
   },
   {
     name: "Inbox",

@@ -21,8 +21,8 @@ function loadMigrationStatements(): string[] {
     .readdirSync(MIGRATION_DIR)
     .filter((f) => /^\d+_.*\.sql$/.test(f))
     .sort();
-  // 0000 schema, 0001 auth tables and grants, 0002 relaxed nullability
-  expect(files.length).toBe(3);
+  // 0000 schema, 0001 auth tables and grants, 0002 relaxed nullability, 0003 application posting link
+  expect(files.length).toBe(4);
   const allSql = files.map((f) => fs.readFileSync(path.join(MIGRATION_DIR, f), "utf8")).join("\n");
   const stmts = allSql
     .split("--> statement-breakpoint")

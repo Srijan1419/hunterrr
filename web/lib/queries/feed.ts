@@ -1,4 +1,5 @@
 import { sql, type SQL } from "drizzle-orm";
+import { toIso } from "@/lib/queries/time";
 
 /**
  * The Jobs feed: open postings from the v2 database, newest first.
@@ -131,7 +132,7 @@ function toRow(r: Record<string, unknown>): FeedRow {
     payCurrency: typeof r.pay_currency === "string" ? r.pay_currency : null,
     payPeriod: (r.pay_period as FeedRow["payPeriod"]) ?? null,
     payProvenance: String(r.pay_provenance ?? "unknown"),
-    postedAt: posted instanceof Date ? posted.toISOString() : typeof posted === "string" ? posted : null,
+    postedAt: toIso(posted),
     applyUrl: safeHttpUrl(r.apply_url_raw),
     seniority: typeof r.seniority === "string" ? r.seniority : null,
   };
