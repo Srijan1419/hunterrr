@@ -76,4 +76,5 @@ jobs:
           for f in web/drizzle-v2/*.sql; do
             psql "postgresql://postgres:postgres@localhost:5432/hunterrr" -v ON_ERROR_STOP=1 -f "$f"
           done
-      - run: python -m pytest etl/tests -q -m pg_concurrent
+      # pytest exits 5 when no test carries the marker (none exist yet); that is not a failure.
+      - run: python -m pytest etl/tests -q -m pg_concurrent || test $? -eq 5

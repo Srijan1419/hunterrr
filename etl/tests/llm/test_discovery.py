@@ -341,8 +341,10 @@ def test_probes_spend_the_nvidia_job_bucket(settings, monkeypatch):
     transport = ScriptedTransport(default=valid_answer)
     router = LlmRouter(settings, transport=transport, discover=True)
     outcome = router.run("job_extract", system="s", user="u", schema=Extraction)
-    assert outcome.ok and outcome.model == ids[0]
-    assert transport.routes[0] == f"nvidia/{ids[0]}"
+    # Unranked models are ordered by how fast their probe answered, which is a race: any of the three
+    # may come first. What this test pins is the bucket accounting below.
+    assert outcome.ok and outcome.model in ids
+    assert transport.routes[0] in {f"nvidia/{i}" for i in ids}
     bucket = router._buckets[("job_extract", "nvidia")]
     assert bucket.taken == len(ids) + 1
     probe_calls = [call for call in transport.calls if len(call.body.get("messages", [])) == 1]
