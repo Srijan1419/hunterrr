@@ -1,9 +1,8 @@
 name: Pipeline Cron
 
 on:
-  schedule:
-    # Every 6 hours: 00:00, 06:00, 12:00, 18:00 UTC
-    - cron: '0 */6 * * *'
+  # v1 pipeline (legacy aggregators into Turso). Its schedule is switched off: v2 collects with
+  # collect.yml and process.yml. It is removed entirely in task h2-73.
   workflow_dispatch: {}  # Manual trigger only
 
 # Prevent concurrent runs - cancel in-progress runs on new trigger
