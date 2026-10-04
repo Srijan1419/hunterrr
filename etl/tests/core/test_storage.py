@@ -312,3 +312,38 @@ async def test_refs_look_like_tag_slash_asset_hash_line():
         assert "shard-3.jsonl.gz#" in ref, f"ref {ref} missing asset and line"
         assert ref.endswith(f"#{i}"), f"ref {ref} has wrong line number"
     await http.aclose()
+
+async def test_asset_uploads_go_to_the_uploads_host_and_everything_else_to_the_api_host():
+    seen = []
+
+    def handler(request):
+        seen.append((request.method, request.url.host, request.url.path))
+        if request.url.path.endswith("/releases/tags/raw-today"):
+            return httpx.Response(404)
+        if request.method == "POST" and request.url.path.endswith("/releases"):
+            return httpx.Response(201, json={"id": 77})
+        if request.url.path.endswith("/releases/77/assets"):
+            return httpx.Response(201, json={"id": 1})
+        return httpx.Response(500)
+
+    from datetime import date as real_date
+    import etl.core.storage as storage
+
+    class FakeDate(real_date):
+        @classmethod
+        def today(cls):
+            return cls(2026, 1, 1)
+
+    original = storage.date
+    storage.date = FakeDate
+    try:
+        client, _ = make_http_client(handler)
+        archive = GithubReleaseArchive("owner/repo", "tok", client)
+        archive._release_cache["raw-2026-01-01"] = 77  # the release already exists
+        refs = await archive.put("shard-0", [b"{}"])
+        await client.aclose()
+    finally:
+        storage.date = original
+    assert refs
+    posts = [s for s in seen if s[0] == "POST"]
+    assert posts and all(host == "uploads.github.com" for _, host, _ in posts)

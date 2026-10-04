@@ -89,6 +89,9 @@ class GithubReleaseArchive:
     """
 
     GITHUB_API = "https://api.github.com"
+    # Release assets are uploaded to a different host; api.github.com refuses them (found on the first
+    # real Actions run: the release was created but every file upload failed).
+    GITHUB_UPLOADS = "https://uploads.github.com"
 
     def __init__(self, repo: str, token: str, http: HttpClient) -> None:
         """
@@ -178,7 +181,7 @@ class GithubReleaseArchive:
 
         for attempt in range(max_retries):
             upload_url = (
-                f"{self.GITHUB_API}/repos/{self.repo}/releases/{release_id}/assets"
+                f"{self.GITHUB_UPLOADS}/repos/{self.repo}/releases/{release_id}/assets"
                 f"?name={asset_name}"
             )
             try:
