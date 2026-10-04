@@ -50,7 +50,7 @@ describe("TrackerView", () => {
     const board = emptyBoard();
     board.applied = [app({ id: 1, nextActionAt: "2026-10-02T09:00:00Z" }), app({ id: 2, title: "Other", nextActionAt: "2026-10-09T09:00:00Z" })];
     render(<TrackerView board={board} now={NOW} />);
-    expect(screen.getByText("Follow up overdue")).toBeInTheDocument();
+    expect(screen.getByText("Follow up overdue (2026-10-02)")).toBeInTheDocument();
     expect(screen.getByText("Follow up 2026-10-09")).toBeInTheDocument();
   });
 

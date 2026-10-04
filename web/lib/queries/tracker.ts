@@ -47,6 +47,11 @@ export type ApplicationEvent = {
 
 const iso = toIso;
 
+/** A usable row id: a positive safe integer (anything larger would overflow the database's bigint). */
+function validId(id: unknown): id is number {
+  return typeof id === "number" && Number.isSafeInteger(id) && id > 0;
+}
+
 export function isApplicationState(value: unknown): value is ApplicationState {
   return typeof value === "string" && (APPLICATION_STATES as readonly string[]).includes(value);
 }
@@ -96,7 +101,7 @@ const SELECT = sql`
   LEFT JOIN hunterrr.postings p ON p.id = a.posting_id`;
 
 export async function getApplication(db: TrackerTx, id: number): Promise<TrackedApplication | null> {
-  if (!Number.isInteger(id) || id < 1) return null;
+  if (!validId(id)) return null;
   const res = await db.execute(sql`${SELECT} WHERE a.id = ${id}`);
   return res.rows[0] ? toApplication(res.rows[0]) : null;
 }
@@ -105,26 +110,21 @@ export async function getApplication(db: TrackerTx, id: number): Promise<Tracked
 export async function saveApplication(
   db: TrackerDb, postingId: number, now: Date = new Date(),
 ): Promise<{ application: TrackedApplication; created: boolean } | null> {
-  if (!Number.isInteger(postingId) || postingId < 1 || postingId > 2_147_483_647) return null;
+  if (!validId(postingId) || postingId > 2_147_483_647) return null;
   return db.transaction(async (tx) => {
     const posting = await tx.execute(sql`SELECT id, title, company_id FROM hunterrr.postings WHERE id = ${postingId}`);
     const p = posting.rows[0];
     if (!p) return null;
-    const inserted = await tx.execute(sql`
+    // An upsert (not DO NOTHING + SELECT): a concurrent save waits for the first one and then returns
+    // its row, instead of seeing nothing. `xmax = 0` is true only for the row this statement inserted.
+    const upserted = await tx.execute(sql`
       INSERT INTO hunterrr.applications (posting_id, company_id, title, source, current_state, state_changed_at)
       VALUES (${postingId}, ${p.company_id ?? null}, ${String(p.title)}, 'ui', 'saved', ${now.toISOString()})
-      ON CONFLICT (posting_id) WHERE posting_id IS NOT NULL DO NOTHING
-      RETURNING id`);
-    let id: number;
-    let created = false;
-    if (inserted.rows[0]) {
-      id = Number(inserted.rows[0].id);
-      created = true;
-      await addEvent(tx, id, "saved", "user", { postingId }, now);
-    } else {
-      const existing = await tx.execute(sql`SELECT id FROM hunterrr.applications WHERE posting_id = ${postingId}`);
-      id = Number(existing.rows[0].id);
-    }
+      ON CONFLICT (posting_id) WHERE posting_id IS NOT NULL DO UPDATE SET posting_id = EXCLUDED.posting_id
+      RETURNING id, (xmax = 0) AS inserted`);
+    const id = Number(upserted.rows[0].id);
+    const created = upserted.rows[0].inserted === true;
+    if (created) await addEvent(tx, id, "saved", "user", { postingId }, now);
     const application = await getApplication(tx, id);
     return application ? { application, created } : null;
   });
@@ -138,14 +138,19 @@ export async function saveApplication(
 export async function changeState(
   db: TrackerDb, id: number, to: unknown, opts: { actor?: "machine" | "user"; now?: Date; occurredAt?: Date } = {},
 ): Promise<TrackedApplication | null> {
-  if (!isApplicationState(to) || !Number.isInteger(id) || id < 1) return null;
+  if (!isApplicationState(to) || !validId(id)) return null;
   const now = opts.now ?? new Date();
   const occurredAt = opts.occurredAt ?? now;
   return db.transaction(async (tx) => {
+    // Lock the row first: two simultaneous moves queue up, so each sees the other's result and the
+    // state always equals the last state_changed event.
+    await tx.execute(sql`SELECT id FROM hunterrr.applications WHERE id = ${id} FOR UPDATE`);
     const current = await getApplication(tx, id);
     if (!current) return null;
     if (current.state === to) return current;
-    await addEvent(tx, id, "state_changed", opts.actor ?? "user", { from: current.state, to }, occurredAt);
+    // `since` makes every move a distinct event, so the dedupe constraint can never swallow a real change
+    // (A to B, B to A, A to B inside one millisecond).
+    await addEvent(tx, id, "state_changed", opts.actor ?? "user", { from: current.state, to, since: current.stateChangedAt }, occurredAt);
     await tx.execute(sql`
       UPDATE hunterrr.applications
       SET current_state = ${to}::hunterrr.application_state, state_changed_at = ${occurredAt.toISOString()}
@@ -155,7 +160,7 @@ export async function changeState(
 }
 
 export async function setNextAction(db: TrackerDb, id: number, when: Date | null, now: Date = new Date()): Promise<TrackedApplication | null> {
-  if (!Number.isInteger(id) || id < 1) return null;
+  if (!validId(id)) return null;
   if (when !== null && Number.isNaN(when.getTime())) return null;
   return db.transaction(async (tx) => {
     if (!(await getApplication(tx, id))) return null;
@@ -166,7 +171,7 @@ export async function setNextAction(db: TrackerDb, id: number, when: Date | null
 }
 
 export async function setNotes(db: TrackerDb, id: number, notes: string, now: Date = new Date()): Promise<TrackedApplication | null> {
-  if (!Number.isInteger(id) || id < 1) return null;
+  if (!validId(id)) return null;
   const clean = notes.replace(/\u0000/g, "").slice(0, 5000);
   return db.transaction(async (tx) => {
     if (!(await getApplication(tx, id))) return null;
@@ -188,7 +193,7 @@ export async function listApplications(db: TrackerTx): Promise<Record<Applicatio
 }
 
 export async function applicationHistory(db: TrackerTx, id: number): Promise<ApplicationEvent[]> {
-  if (!Number.isInteger(id) || id < 1) return [];
+  if (!validId(id)) return [];
   const res = await db.execute(sql`
     SELECT id, type, occurred_at, actor, payload FROM hunterrr.application_events
     WHERE application_id = ${id} ORDER BY occurred_at ASC, id ASC`);

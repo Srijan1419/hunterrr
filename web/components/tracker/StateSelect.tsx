@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { moveApplication, scheduleNextAction } from "@/app/(app)/tracker/actions";
 import { APPLICATION_STATES, type ApplicationState } from "@/lib/queries/tracker";
 import styles from "./tracker.module.css";
@@ -18,6 +18,9 @@ export function StateSelect({
   const [date, setDate] = useState(nextActionDate);
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
+  // Follow the server: another tab or the email worker may have moved the card.
+  useEffect(() => setCurrent(state), [state]);
+  useEffect(() => setDate(nextActionDate), [nextActionDate]);
 
   return (
     <div className={styles.controls}>
@@ -55,11 +58,15 @@ export function StateSelect({
           disabled={pending}
           onChange={(e) => {
             const next = e.target.value;
+            const before = date;
             setDate(next);
             start(async () => {
               setError(null);
               const result = await scheduleNextAction(applicationId, next);
-              if (!result.ok) setError(result.error);
+              if (!result.ok) {
+                setDate(before);
+                setError(result.error);
+              }
             });
           }}
         />

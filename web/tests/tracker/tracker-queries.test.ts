@@ -68,6 +68,13 @@ describe("saveApplication", () => {
     expect(history.map((e) => [e.type, e.actor])).toEqual([["saved", "user"]]);
   });
 
+  it("two saves at once give one application and one saved event", async () => {
+    const [a, b] = await Promise.all([saveApplication(db as never, p1, T0), saveApplication(db as never, p1, T0)]);
+    expect(a!.application.id).toBe(b!.application.id);
+    expect([a!.created, b!.created].filter(Boolean).length).toBe(1);
+    expect((await applicationHistory(db as never, a!.application.id)).length).toBe(1);
+  });
+
   it("saving the same posting twice returns the same application and writes one event", async () => {
     const a = await saveApplication(db as never, p1, T0);
     const b = await saveApplication(db as never, p1, minutes(5));
@@ -89,7 +96,7 @@ describe("changeState", () => {
     expect(moved!.stateChangedAt).toBe(minutes(10).toISOString());
     const history = await applicationHistory(db as never, application.id);
     expect(history.map((e) => e.type)).toEqual(["saved", "state_changed"]);
-    expect(history[1].payload).toEqual({ from: "saved", to: "applied" });
+    expect(history[1].payload).toMatchObject({ from: "saved", to: "applied" });
   });
 
   it("current state always equals the last state_changed event", async () => {
@@ -118,6 +125,30 @@ describe("changeState", () => {
     expect(await changeState(db as never, application.id, undefined)).toBeNull();
     expect(await changeState(db as never, 999999, "applied")).toBeNull();
     expect((await getApplication(db as never, application.id))!.state).toBe("interview");
+  });
+
+  it("A to B, B to A, A to B in the same millisecond keeps every move and the final state", async () => {
+    const { application } = (await saveApplication(db as never, p1, T0))!;
+    for (const s of ["applied", "saved", "applied"] as const) await changeState(db as never, application.id, s, { now: minutes(1) });
+    const moves = (await applicationHistory(db as never, application.id)).filter((e) => e.type === "state_changed");
+    expect(moves.map((e) => e.payload.to)).toEqual(["applied", "saved", "applied"]);
+    expect((await getApplication(db as never, application.id))!.state).toBe("applied");
+  });
+
+  it("two simultaneous moves leave the state equal to the last event", async () => {
+    const { application } = (await saveApplication(db as never, p1, T0))!;
+    await Promise.allSettled([
+      changeState(db as never, application.id, "applied", { now: minutes(1) }),
+      changeState(db as never, application.id, "interview", { now: minutes(2) }),
+    ]);
+    const moves = (await applicationHistory(db as never, application.id)).filter((e) => e.type === "state_changed");
+    expect((await getApplication(db as never, application.id))!.state).toBe(moves[moves.length - 1].payload.to);
+  });
+
+  it("an absurdly large id is refused, not sent to the database", async () => {
+    expect(await changeState(db as never, 1e20, "applied")).toBeNull();
+    expect(await getApplication(db as never, 1e20)).toBeNull();
+    expect(await setNextAction(db as never, 1e20, null)).toBeNull();
   });
 
   it("an event dated in the past (a reply read later) is kept in order", async () => {

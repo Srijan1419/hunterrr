@@ -9,15 +9,18 @@ export type ActionResult = { ok: true; applicationId: number } | { ok: false; er
 
 const BAD_INPUT: ActionResult = { ok: false, error: "That request was not valid." };
 
+const validId = (n: unknown): n is number => typeof n === "number" && Number.isSafeInteger(n) && n > 0;
+
 function refresh() {
   revalidatePath("/tracker");
   revalidatePath("/jobs");
+  revalidatePath("/jobs/[id]", "page");
 }
 
 /** Save a posting to the tracker (idempotent). Every action starts with the session check. */
 export async function saveJob(postingId: number): Promise<ActionResult> {
   await requireSession();
-  if (!Number.isInteger(postingId)) return BAD_INPUT;
+  if (!validId(postingId)) return BAD_INPUT;
   const saved = await saveApplication(db as never, postingId);
   if (!saved) return { ok: false, error: "That job no longer exists." };
   refresh();
@@ -26,7 +29,7 @@ export async function saveJob(postingId: number): Promise<ActionResult> {
 
 export async function moveApplication(applicationId: number, state: string): Promise<ActionResult> {
   await requireSession();
-  if (!Number.isInteger(applicationId) || !isApplicationState(state)) return BAD_INPUT;
+  if (!validId(applicationId) || !isApplicationState(state)) return BAD_INPUT;
   const moved = await changeState(db as never, applicationId, state);
   if (!moved) return { ok: false, error: "That application was not found." };
   refresh();
@@ -36,7 +39,7 @@ export async function moveApplication(applicationId: number, state: string): Pro
 /** `date` is "YYYY-MM-DD" or an empty string to clear the reminder. */
 export async function scheduleNextAction(applicationId: number, date: string): Promise<ActionResult> {
   await requireSession();
-  if (!Number.isInteger(applicationId)) return BAD_INPUT;
+  if (!validId(applicationId)) return BAD_INPUT;
   let when: Date | null = null;
   if (date !== "") {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return BAD_INPUT;
@@ -51,7 +54,7 @@ export async function scheduleNextAction(applicationId: number, date: string): P
 
 export async function saveNotes(applicationId: number, notes: string): Promise<ActionResult> {
   await requireSession();
-  if (!Number.isInteger(applicationId) || typeof notes !== "string") return BAD_INPUT;
+  if (!validId(applicationId) || typeof notes !== "string") return BAD_INPUT;
   const updated = await setNotes(db as never, applicationId, notes);
   if (!updated) return { ok: false, error: "That application was not found." };
   refresh();

@@ -38,7 +38,7 @@ function Card({ app, now }: { app: TrackedApplication; now: Date }) {
         <span>{days === 0 ? "today" : `${days}d in stage`}</span>
         {due ? (
           <span className={overdue ? styles.due : undefined}>
-            {overdue ? "Follow up overdue" : `Follow up ${due.toISOString().slice(0, 10)}`}
+            {overdue ? `Follow up overdue (${due.toISOString().slice(0, 10)})` : `Follow up ${due.toISOString().slice(0, 10)}`}
           </span>
         ) : null}
       </div>
@@ -101,7 +101,11 @@ export function TrackerView({ board, now = new Date() }: { board: Record<Applica
                         <span>{TITLE[state]}</span>
                         {app.companyName ? <span>{app.companyName}</span> : null}
                       </div>
-                      <StateSelect applicationId={app.id} state={app.state} nextActionDate="" />
+                      <StateSelect
+                        applicationId={app.id}
+                        state={app.state}
+                        nextActionDate={app.nextActionAt ? app.nextActionAt.slice(0, 10) : ""}
+                      />
                     </li>
                   )),
                 )}
