@@ -49,7 +49,7 @@ _KEYS: dict[str, Any] = {
 }
 
 _SELECT = text(
-    "SELECT id, title, description_md, posted_at, "
+    "SELECT id, source, extraction_version, title, description_md, posted_at, "
     + ", ".join(f"{k}, {k}_provenance" for k in _KEYS)
     + " FROM hunterrr.postings WHERE extraction_version < :v AND id > :after ORDER BY id LIMIT :n"
 )
@@ -100,6 +100,13 @@ def recheck_row(row: Mapping[str, Any]) -> tuple[dict[str, Any], bool]:
     # (an old wrong guess from description boilerplate must not outrank the board's location text).
     # Values from the board itself ("source", "jsonld"), the AI step ("llm") or the owner ("user") stay.
     start = {k: (Field() if f.provenance == "rule" else f) for k, f in before.items()}
+    # Ashby sets `isRemote` for hybrid roles too, and until extraction version 8 that was stored as the work mode
+    # (provenance "source"). Those values cannot be told apart from a real `workplaceType: Remote`, and the raw
+    # board data is gone, so they are reset and re-derived from the location text and description; a posting
+    # whose text does not say remote becomes unknown (hidden) instead of a hybrid job shown as remote.
+    if (row.get("source") == "ashby" and before["remote_type"].provenance == "source"
+            and before["remote_type"].value == "remote" and int(row.get("extraction_version") or 0) < 8):
+        start["remote_type"] = Field()
     try:
         after, _ = apply_rules(
             dict(start),

@@ -109,3 +109,29 @@ def test_recheck_updates_old_rows_once(engine):
     assert untouched[0] is None  # same old label, but already on the current version
 
     assert recheck(engine).seen == 0  # once per version
+
+
+# --- Ashby: isRemote was stored as the work mode for hybrid jobs too (fixed in extraction version 8) --------------
+def _ashby_row(**cols):
+    row = stored(title="Software Engineer", description_md="Great team.", remote_type="remote", remote_type_provenance="source")
+    row.update({"source": "ashby", "extraction_version": 7})
+    row.update(cols)
+    return row
+
+
+def test_ashby_remote_from_the_old_board_field_is_reset_and_rederived_from_the_text():
+    # the location text and description say nothing about remote: it becomes unknown, not a hybrid job shown as remote
+    params, changed = recheck_row(_ashby_row(locations=[{"raw": "San Francisco, California", "city": None, "region": None, "country": None}], locations_provenance="source"))
+    assert changed and params["remote_type"] is None
+
+    # a posting that really is remote still says so in its location text
+    params, _ = recheck_row(_ashby_row(locations=[{"raw": "Remote - US", "city": None, "region": None, "country": None}], locations_provenance="source"))
+    assert params["remote_type"] == "remote" and params["remote_type_provenance"] == "rule"
+
+
+def test_the_ashby_reset_touches_only_old_ashby_board_values():
+    base = dict(locations=[{"raw": "San Francisco, California", "city": None, "region": None, "country": None}], locations_provenance="source")
+    assert recheck_row(_ashby_row(extraction_version=8, **base))[0]["remote_type"] == "remote"          # already current
+    assert recheck_row(_ashby_row(source="lever", **base))[0]["remote_type"] == "remote"                 # another board
+    assert recheck_row(_ashby_row(remote_type="hybrid", **base))[0]["remote_type"] == "hybrid"           # not a remote claim
+    assert recheck_row(_ashby_row(remote_type_provenance="user", **base))[0]["remote_type"] == "remote"  # the owner's own value
