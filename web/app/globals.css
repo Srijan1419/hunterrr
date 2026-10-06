@@ -71,6 +71,7 @@
   --fs-3: 19px;  /* card and section titles */
   --fs-4: 24px;  /* page sub-heads, big numbers */
   --fs-5: 30px;  /* page titles */
+  --fs-6: 38px;  /* display: one headline per screen at most (sign-in pitch) */
 
   /* Content never spreads wider than this, even on very wide screens. */
   --content-max: 1240px;
