@@ -1,0 +1,27 @@
+# Gold labels, batch 07 (rest of stratum E: fixed-term, temp, freelance, internships; start of stratum F: levels).
+- {gid: ec22e6af0d, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Toronto, no work mode; 5+ years"}
+- {gid: dec87f549d, remote: unknown, india: na, employment: internship, entry: "yes", flags: [], why: "'YouTube & Content - Internship', Bengaluru"}
+- {gid: d66bb72df7, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "UK counsel, must be qualified to practise in the UK; 4+ years"}
+- {gid: 91e7d661bb, remote: unknown, india: na, employment: unknown, entry: "no", flags: [language_required], why: "'Mandarin Speaker' in the title, Singapore; 4+ years"}
+- {gid: a9718949b9, remote: onsite, india: na, employment: temporary, entry: unknown, flags: [not_a_job], why: "'only for temporary associates ... conversion program': internal application, not open to outside applicants"}
+- {gid: a7c2d6aac0, remote: onsite, india: na, employment: temporary, entry: unknown, flags: [not_a_job], why: "Temp to full-time conversion posting for existing temporary associates only"}
+- {gid: f406c2f419, remote: onsite, india: na, employment: temporary, entry: unknown, flags: [not_a_job], why: "'only for ShipBob's temporary associate conversion program'"}
+- {gid: 9efe02d77f, remote: remote, india: unknown, employment: contract, entry: "no", flags: [], why: "'on a freelance basis', 'fully remote', locations in Lithuania; mid-senior, 5+ years"}
+- {gid: 741318ec43, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "'hybrid capacity out of our San Francisco headquarters', PST hours; senior, 4+ years"}
+- {gid: 4f45084681, remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "'from one of our US hubs or remotely in the United States'; 5+ years"}
+- {gid: 65f19e7fa5, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Los Angeles, no work mode; sales manager, 4+ and 8+ years"}
+- {gid: "3342237988", remote: unknown, india: na, employment: temporary, entry: "yes", flags: [], why: "'full-time, temporary position that includes a start and end date'; New York; asks 2+ years"}
+- {gid: 982684baed, remote: hybrid, india: na, employment: temporary, entry: "no", flags: [language_required], why: "'fixed-term contract starting ASAP' (parental leave cover), Paris; 7+ years [corrected: the board's own workplaceType (hybrid) field was not in my reading view; the text also says 'Fluency in French and English' is needed]"}
+- {gid: f6f3a63a16, remote: onsite, india: na, employment: temporary, entry: unknown, flags: [], why: "'temporary full-time on-site role', workplaceType OnSite, San Francisco"}
+- {gid: 0c64252697, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "workplaceType Hybrid, New York / SF; 7+ years"}
+- {gid: 87e69767a5, remote: onsite, india: na, employment: temporary, entry: unknown, flags: [not_a_job], why: "Temp to full-time conversion posting for existing temporary associates only"}
+- {gid: d8b29c03af, remote: onsite, india: na, employment: internship, entry: "yes", flags: [], why: "'PhD Intern', internship based in SF or NY hub offices"}
+- {gid: f8c6409a32, remote: hybrid, india: na, employment: internship, entry: "yes", flags: [], why: "'Applied Scientist Intern', workplaceType Hybrid, New York"}
+- {gid: d971801842, remote: remote, india: "no", employment: contract, entry: "no", flags: [], why: "'Freelance Principal Recruiter', locations are European countries (Remote); principal"}
+- {gid: 8f7e9dfa43, remote: hybrid, india: na, employment: internship, entry: "yes", flags: [], why: "Winter 2027 internship, must work out of the SF office, workplaceType Hybrid"}
+- {gid: a2432010df, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "'in the office at least three days per week', Dublin; 8+ years"}
+- {gid: d56b8da624, remote: onsite, india: na, employment: full_time, entry: "yes", flags: [], why: "Associate asks 2-3 years (Senior Associate 3-5), Bangalore, no work mode [corrected: the board's own workplaceType/commitment (onsite, Full-time) field was not in my reading view]"}
+- {gid: 6372d14f78, remote: onsite, india: na, employment: unknown, entry: unknown, flags: [], why: "Fulfilment-centre night-shift lead in Fort Worth; no years stated"}
+- {gid: 686c2ca916, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "'in the office at least three days per week', Chicago; 5+ years"}
+- {gid: b3845b5053, remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "Recruiting manager; 7+ years [corrected: 'can be held from one of our US hubs or remotely in the United States' was cut off in my view]"}
+- {gid: 905674dcfc, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "'Staff Engineer 1' is staff level, not entry; 10+ years; Bangalore, no work mode"}

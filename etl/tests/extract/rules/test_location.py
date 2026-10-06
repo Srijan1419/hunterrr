@@ -95,3 +95,84 @@ def test_no_location_section(text):
 def test_sentence_is_not_a_city():
     f = parse_locations("Join us in Paris, Texas", CTX)
     assert all(len((loc["city"] or "").split()) <= 3 for loc in f.value)
+
+
+# Real wording found on 6,600 postings from 65 boards (2026-10-06): the word "remote" about OTHER people, or a
+# benefits paragraph that mentions the hybrid policy, must not decide the work mode of THIS job.
+import pytest as _pytest
+from etl.extract.rules.location import parse_remote_type as _parse_remote_type
+
+
+@_pytest.mark.parametrize("text", [
+    "You will collaborate effectively with local and remote teams across various time zones.",
+    "Support remote employees and distributed colleagues.",
+    "Comfortable working with remote stakeholders.",
+    "Experience with both local and remote customers.",
+])
+def test_remote_word_about_other_people_is_not_a_remote_job(text):
+    assert _parse_remote_type(text).value is None
+
+
+@_pytest.mark.parametrize("text,mode", [
+    ("This is a remote role, reporting to the Director. Learn more about our hybrid working model and benefits.", "remote"),
+    ("This role is based remotely in the United States. We have a hybrid policy for office-based roles.", "remote"),
+    ("This is a hybrid position located in the Bay Area. Our remote-first teams are elsewhere.", "hybrid"),
+    ("Location: Remote (US). #LI-Hybrid", None),  # two explicit statements disagree: unknown
+    ("The role can be done from one of our US hubs or remotely in the United States.", "remote"),
+    ("Fully remote since day one.", "remote"),
+])
+def test_one_explicit_statement_about_the_role_decides(text, mode):
+    assert _parse_remote_type(text).value == mode
+
+
+# --- found by the held-back part of the gold set (2026-10-06) -----------------------------------------------------
+@_pytest.mark.parametrize("text", [
+    "Comfortability working remotely or on-site in a highly distributed team.",
+    "Remote positions can be performed from the following approved operating countries.",
+    "Our remote roles are open in many countries.",
+])
+def test_either_or_and_generic_plural_wording_is_not_a_remote_job(text):
+    assert _parse_remote_type(text).value is None
+
+
+def test_based_remotely_in_a_city_is_remote():
+    assert _parse_remote_type("This role will be based remotely in Chicago.").value == "remote"
+
+
+from etl.extract.rules_rung import apply_rules as _apply_rules
+from etl.core.types import Field as _Field
+
+
+def test_a_board_remote_field_the_text_contradicts_becomes_unknown():
+    board = {"remote_type": _Field(value="remote", provenance="source", evidence="workplaceType")}
+    out, conflicts = _apply_rules(dict(board), title="Staff Product Manager",
+                                  description="In-person collaboration matters, so this role isn't a fit for fully remote working.", posted_at=None)
+    assert out["remote_type"].value is None and any("board says remote" in c for c in conflicts)
+    kept, _ = _apply_rules(dict(board), title="Engineer", description="Fully remote since day one.", posted_at=None)
+    assert kept["remote_type"].value == "remote"
+    user = {"remote_type": _Field(value="remote", provenance="user", evidence=None)}
+    assert _apply_rules(dict(user), title="x", description="This role isn't a fit for fully remote working.", posted_at=None)[0]["remote_type"].value == "remote"
+
+
+# --- a bare "remote" / "hybrid" is a work-mode statement only in a work-mode context (gold set, 2026-10-06) ---------
+@_pytest.mark.parametrize("text", [
+    "Build IDEs, linters and remote development environments for engineers.",
+    "You will communicate clearly in a remote, asynchronous environment.",
+    "From remote and shift work to cross-cultural dynamics.",
+    "A design/development hybrid background, or experience building websites.",
+    "This is a hybrid technical and commercial role.",
+    "We offer many team members the option to work remotely either as fully remote or hybrid-remote employees.",
+    "Experience with hybrid cloud and remote procedure call layers.",
+])
+def test_the_words_remote_and_hybrid_in_ordinary_sentences_are_not_work_modes(text):
+    assert _parse_remote_type(text).value is None
+
+
+@_pytest.mark.parametrize("text,mode", [
+    ("Data Analyst (Remote)", "remote"), ("Engineer - Remote", "remote"), ("Remote - US", "remote"), ("Remote", "remote"),
+    ("Position: Remote", "remote"), ("Work type: remote", "remote"), ("Hybrid (Pune)", "hybrid"), ("Support Engineer, Hybrid", "hybrid"),
+    ("The remote-friendly role is based in Bengaluru, India.", "remote"), ("We operate as a hybrid workplace.", "hybrid"),
+    ("#LI- Remote", "remote"), ("All of our roles are remote.", "remote"), ("This role can be done remotely.", "remote"),
+])
+def test_work_mode_contexts_still_count(text, mode):
+    assert _parse_remote_type(text).value == mode

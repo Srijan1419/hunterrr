@@ -93,3 +93,27 @@ def test_hidden_kinds():
 
 def test_empty_view_is_unknown():
     assert employment_kind({}) == ("unknown", "Employment type not stated")
+
+
+# --- found by the gold set (real postings, 2026-10-06) ----------------------------------------------------------
+@pytest.mark.parametrize("title", ["HR-Recruitment stage", "Customer Retention stage", "Marketing stagiair", "Stagiaire commercial", "Praktikum Softwareentwicklung", "Werkstudent Data"])
+def test_european_internship_words_in_the_title(title):
+    assert kind(title, stated="FullTime") == "internship"
+
+
+@pytest.mark.parametrize("title", ["Engineer, Early Stage Startups", "Stage Manager", "Growth Stage Account Executive"])
+def test_stage_in_an_english_title_is_not_an_internship(title):
+    assert kind(title) != "internship"
+
+
+@pytest.mark.parametrize("title,description", [
+    ("Senior GL Accountant FTC", ""), ("Account Manager (CDD)", ""), ("Recruiter (Fixed Term Contract)", ""),
+    ("Accountant", "This is a fixed-term contract starting ASAP, to cover a parental leave."),
+    ("Analyst", "Maternity cover for 9 months."),
+])
+def test_fixed_term_roles(title, description):
+    assert kind(title, description) == "temporary"
+
+
+def test_fixed_term_in_benefits_boilerplate_is_not_this_role():
+    assert kind("Staff Engineer", "Leave is paid depending on their Fixed Term Contract and their country of employment.") == "unknown"

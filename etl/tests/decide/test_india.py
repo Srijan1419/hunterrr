@@ -122,3 +122,26 @@ def test_remote_role_in_india_that_needs_clearance_is_unknown():
 def test_missing_and_odd_inputs_never_raise():
     assert india_eligible({})[0] == "unknown"
     assert india_eligible({"eligible_countries": "IN", "locations": "x", "work_auth_required": 5})[0] == "unknown"
+
+
+# --- found by the gold set (real postings, 2026-10-06) ----------------------------------------------------------
+def test_a_raw_india_location_on_a_remote_role_is_resolved_to_india():
+    # GitLab: all-remote company, board location "Bangalore, India" stored without a resolved country
+    assert india_eligible(v(locations=[{"raw": "Bangalore, India", "city": None, "region": None, "country": None}])) == ("yes", "Remote role located in India")
+    assert india_eligible(v(locations=[{"raw": "Mumbai", "country": None}]))[0] == "yes"
+    assert india_eligible(v(locations=[{"raw": "Dublin, Ireland", "country": None}]))[0] == "unknown"
+
+
+@pytest.mark.parametrize("title", ["Director, Partnerships - US-Based", "Account Executive (UK only)", "Support Lead, Canada-based", "Engineer (EMEA-based)"])
+def test_a_title_that_restricts_the_job_to_a_country_is_no(title):
+    verdict_, reason = india_eligible(v(title=title, eligibility_scope="worldwide"))
+    assert verdict_ == "no" and "Title restricts" in reason
+
+
+@pytest.mark.parametrize("title", ["Engineer (India-based)", "Support Associate", "Remote-based Engineer", "Home-based Agent", "APAC-based Support"])
+def test_titles_that_do_not_restrict_away_from_india(title):
+    assert india_eligible(v(title=title, eligibility_scope="worldwide"))[0] == "yes"
+
+
+def test_named_india_but_a_title_restriction_is_unknown():
+    assert india_eligible(v(title="Director - US-Based", eligibility_scope="countries", eligible_countries=["IN"]))[0] == "unknown"

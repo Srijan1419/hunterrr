@@ -31,7 +31,14 @@ _TYPE_PATTERNS = (
 )
 _FULL_TIME_TYPE = re.compile(r"full[ _-]?time|permanent|\bregular\b|\bemployee\b", _I)
 
-_INTERN_TITLE = re.compile(r"\bintern(?:s|ship)?\b|\bsummer\s+analyst\b", _I)
+# Internship words, English and the ones Europe's boards use: Dutch "stage"/"stagiair", French "stagiaire" and
+# "alternance", German "Praktikum"/"Werkstudent", Spanish "becario". Bare "stage" only counts at the END of a
+# title ("HR-Recruitment stage"), never "Early Stage" or "Stage Manager".
+_INTERN_TITLE = re.compile(
+    r"\bintern(?:s|ship)?\b|\bsummer\s+analyst\b|\bstagiair\w*|\bstagiaire\b|\bpraktik\w+|\bwerkstudent\w*|\bbecari[oa]s?\b|\balternan(?:t|ce)\b"
+    r"|(?<!early\s)(?<!late\s)(?<!growth\s)(?<!seed\s)\bstage\s*$",
+    _I,
+)
 _TRAINEE_TITLE = re.compile(r"\b(?:trainee|apprentice(?:ship)?)\b", _I)
 _FIXED_TERM_TRAINING = re.compile(
     r"\b\d{1,2}\s*[- ]?\s*(?:months?|weeks?)\b[^.\n]{0,30}\b(?:training|trainee|internship|apprentice\w*|programme|program)\b"
@@ -57,7 +64,14 @@ _PART_TIME = re.compile(
 )
 _PART_TIME_TITLE = re.compile(r"\bpart[- ]?time\b", _I)
 _CONTRACT_TITLE = re.compile(r"\b(?:contract(?:or)?|freelance|freelancer)\b", _I)
-_TEMPORARY_TITLE = re.compile(r"\b(?:temporary|temp|seasonal|fixed[- ]term)\b", _I)
+_TEMPORARY_TITLE = re.compile(r"\b(?:temporary|temp|seasonal|fixed[- ]term|cdd|ftc)\b", _I)
+# "This is a fixed-term contract starting ASAP, to cover a parental leave". The words "Fixed Term Contract" also appear in
+# benefits boilerplate ("depending on their Fixed Term Contract and country"), so only statements about THIS role count.
+_TEMPORARY_DESC = re.compile(
+    r"\bthis\s+is\s+an?\s+(?:\w+\s+){0,2}fixed[- ]term\b|\bfixed[- ]term\s+contract\s+(?:starting|to\s+cover|for\s+\d|of\s+\d)"
+    r"|\b(?:maternity|parental)\s+(?:leave\s+)?cover\b|\bcover\s+(?:a\s+)?(?:maternity|parental)\b",
+    _I,
+)
 
 
 def _kind_of_type(value: Any) -> str | None:
@@ -109,6 +123,8 @@ def employment_kind(view: Mapping[str, Any]) -> tuple[str, str]:
     p = _PART_TIME.search(cleaned)
     if p:
         return PART_TIME, "Description says the role is part-time"
+    if _TEMPORARY_DESC.search(cleaned):
+        return TEMPORARY, "Description says the role is a fixed-term contract"
     if _STIPEND.search(cleaned) and not _REAL_JOB_CUES.search(cleaned) and stated_kind != FULL_TIME:
         return INTERNSHIP, "Pays a stipend, with no salary or full-time wording"
 

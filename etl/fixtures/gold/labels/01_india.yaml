@@ -1,0 +1,33 @@
+# Gold labels, batch 01 (stratum A: postings that mention India). Written by READING the posting text, not by
+# running the extractor. Fields: remote (remote|hybrid|onsite|unknown), india (yes|no|unknown|na: na when the job is
+# not remote), employment, entry (yes|no|unknown: does it target 0-2 years), flags (hard flags), why.
+- {gid: 99e82402e8, remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'This role will be remote, and based in India'; asks 3+ years"}
+- {gid: 8f8c0bf3d1, remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'Location: Remote in India'; 3+ years is a must"}
+- {gid: 4fedb9f7a6, remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "Board location 'Remote - India', based in Bengaluru; 12+ years"}
+- {gid: 83fcd14a3a, remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "Location 'US-Remote'; Bengaluru is only named as a delivery-centre example; 8+ years"}
+- {gid: 6d094e9713, remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'remote, and based in India'; 15+ years"}
+- {gid: 270f4facf1, remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "'This is a remote role'; locations are US states; USD pay; 10+ years"}
+- {gid: b34c6a870c, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "Bengaluru office, #LI-Hybrid; 7+ years"}
+- {gid: 6fb1f0328b, remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "All-remote company, role located Bangalore India; 'Intermediate' is mid level"}
+- {gid: 4e91ea40f6, remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "All-remote globally distributed team, Bangalore; engineering manager"}
+- {gid: 98429747bd, remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "Text: 'fully remote from your home office in India' (board label says Hybrid - India); 12+ years"}
+- {gid: ad0da1fe3b, remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'All of our roles are remote'; Bangalore; engineering manager"}
+- {gid: f6fceaa83d, remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "All-remote team, leads India recruiting, Bangalore; director"}
+- {gid: f1fcf8232a, remote: onsite, india: na, employment: full_time, entry: "no", flags: [], why: "'Based in or willing to relocate to Delhi NCR'; 10-15 years [corrected: the board's own commitment (Full Time Employee) field was not in my reading view]"}
+- {gid: 7a6b9ba800, remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'fully remote environment', Bangalore; 'Intermediate' is mid level"}
+- {gid: 382341dcef, remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'remote-first, asynchronous organization', Bangalore; staff level"}
+- {gid: 553cc4e2c1, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "#LI_Hybrid, Bengaluru; 5+ years"}
+- {gid: 5f50a1d18a, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "#LI_Hybrid, Bengaluru; 5+ years"}
+- {gid: 53d1b7b484, remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "Board location 'Remote - India'; 15+ years"}
+- {gid: e874d5ff2c, remote: onsite, india: na, employment: unknown, entry: "no", flags: [], why: "'The role is based onsite'; director"}
+- {gid: 8fabc30829, remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'This role will be remote, and based in India'; 5+ years"}
+- {gid: 9b0cc42ce9, remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'remote-first, asynchronous organization', Bangalore; senior"}
+- {gid: 429b8fea2a, remote: onsite, india: na, employment: full_time, entry: "no", flags: [], why: "Bangalore, no work-mode statement; 6+ years [corrected: the board's own workplaceType/commitment (onsite, Full-time) field was not in my reading view]"}
+- {gid: c62857a9ba, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "#LI-Hybrid, Bengaluru; principal"}
+- {gid: 69ca9a8d14, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "#LI_Hybrid, Bengaluru; staff, 5+ years"}
+- {gid: d6f96fced5, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Bengaluru/Mumbai, no work-mode statement; 6+ years, manager"}
+- {gid: ad4a58eb0b, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Board location 'Remote - India' (a #LI-Hybrid tag is boilerplate); 4-7+ years [corrected: the board location says 'Remote - India' but the posting also carries '#LI-Hybrid' and 'Zscaler's hybrid working model': two explicit statements disagree, so the truth is unknown]"}
+- {gid: f6a778a25f, remote: remote, india: "yes", employment: unknown, entry: unknown, flags: [], why: "Mumbai, no work-mode or years stated; enterprise account executive [corrected: the text carries the recruiter tag '#LI- Remote' and the location is Mumbai, India]"}
+- {gid: c441ffd509, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "#LI-Hybrid, Bengaluru; 8+ years"}
+- {gid: fcd87bb133, remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'remotely based in India'; marketing manager"}
+- {gid: 0546adcadc, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "'remotely or on-site' with required client on-site work; 7+ years"}

@@ -20,6 +20,9 @@ from __future__ import annotations
 import re
 from typing import Any, Mapping
 
+from etl.extract.rules.geo import resolve_country
+from etl.extract.rules.locstring import read_location
+
 YES, NO, UNKNOWN = "yes", "no", "unknown"
 
 #: Work-authorisation labels (stored by `etl.extract.rules.workauth`) an Indian cannot satisfy.
@@ -62,12 +65,36 @@ def _as_list(value: Any) -> list[str]:
 
 
 def _location_countries(value: Any) -> set[str]:
+    """Countries of a posting's locations. A board's raw "Bangalore, India" is stored without a resolved
+    country, so it is resolved here with the same reader the extraction uses."""
     out: set[str] = set()
     if isinstance(value, (list, tuple)):
         for item in value:
-            if isinstance(item, Mapping) and isinstance(item.get("country"), str):
-                out.add(item["country"].upper())
+            if not isinstance(item, Mapping):
+                continue
+            if isinstance(item.get("country"), str) and item["country"].strip():
+                out.add(item["country"].strip().upper())
+            elif isinstance(item.get("raw"), str):
+                try:
+                    out.update(read_location(item["raw"]).countries)
+                except Exception:  # noqa: BLE001 - a odd location string must not stop the decision
+                    pass
     return out
+
+
+#: "US-Based", "UK only", "Canada-based" in a title restrict the job to that country. India (and APAC, which
+#: contains it) is not a restriction.
+_TITLE_RESTRICTION = re.compile(r"\b([A-Za-z][A-Za-z.]{1,14})[-\s](?:based|only|residents?|citizens?)\b", re.IGNORECASE)
+_REGION_WORDS = {"europe", "european", "emea", "eu", "latam", "americas", "american", "nordic", "dach", "benelux"}
+
+
+def _title_restriction(title: str) -> str | None:
+    for m in _TITLE_RESTRICTION.finditer(title or ""):
+        word = m.group(1).strip(".")
+        code = resolve_country(word)
+        if (code and code != "IN") or word.lower() in _REGION_WORDS:
+            return " ".join(m.group(0).split())
+    return None
 
 
 def _list_countries(codes: list[str], limit: int = 5) -> str:
@@ -88,6 +115,13 @@ def india_eligible(view: Mapping[str, Any]) -> tuple[str, str]:
     countries = [c.upper() for c in _as_list(view.get("eligible_countries"))]
     scope = view.get("eligibility_scope")
     auth = [label for label in _as_list(view.get("work_auth_required")) if label in BLOCKING_AUTH]
+
+    # 1b. The title itself restricts the job ("Director, Partnerships - US-Based").
+    restriction = _title_restriction(title)
+    if restriction:
+        if "IN" in countries:
+            return UNKNOWN, f"Names India but the title says \"{restriction}\""
+        return NO, f"Title restricts it: \"{restriction}\""
 
     # 2. India is named (directly, or through a region that was expanded to countries).
     if "IN" in countries:

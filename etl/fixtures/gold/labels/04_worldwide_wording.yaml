@@ -1,0 +1,25 @@
+# Gold labels, batch 04 (stratum C: postings with "worldwide / distributed / anywhere" wording, mostly company boilerplate).
+- {gid: 861b4d6312, remote: remote, india: "no", employment: unknown, entry: unknown, flags: [], why: "Role is 'Remote, AMER' with Americas-hours overlap; the 'We hire globally' line is a generic perk"}
+- {gid: 8dcf5d1013, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Sydney, no work mode; 4+ years people leadership"}
+- {gid: effddac98a, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Denver / US West Coast, no work mode; 5+ years"}
+- {gid: d6074a472a, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Bengaluru, no work mode; staff, 12+ years"}
+- {gid: ca6ac0d548, remote: hybrid, india: na, employment: full_time, entry: "no", flags: [], why: "'full time role based in our San Francisco Hub', office 2 days a week; 7+ years"}
+- {gid: b957f80709, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "'based in Zurich for our hybrid working model'; 3+ years closing experience"}
+- {gid: 2a9edbc9d2, remote: remote, india: unknown, employment: full_time, entry: "no", flags: [], why: "East Coast, no work mode; director, 12+ years [corrected: the board's own workplaceType (remote); location 'East Coast' names no country field was not in my reading view]"}
+- {gid: e1bbbb3590, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "#LI-Hybrid, Singapore; 5+ years"}
+- {gid: 78704cb251, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "#LI-Hybrid, San Francisco; 8+ years; asks for US government authorisations"}
+- {gid: ab41e8699f, remote: remote, india: "no", employment: full_time, entry: "no", flags: [], why: "'Remote-first: United States; BC & ON, Canada - Full-time - Permanent'; staff"}
+- {gid: 5bf82efd02, remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "'based in our Dublin office or remotely within Ireland'; senior"}
+- {gid: 3070f6984b, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Spain, no work mode stated; senior"}
+- {gid: a285dfdfd1, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "Barcelona/Madrid, no work mode; lead [corrected: the board's own workplaceType (hybrid) field was not in my reading view]"}
+- {gid: b97439dd9c, remote: onsite, india: na, employment: unknown, entry: "no", flags: [], why: "'based in our Tel Aviv office, being present on site is central'; director"}
+- {gid: d75795cfa3, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "'based in Bangalore, India' new in-region team, no remote statement; senior manager"}
+- {gid: ef8c698951, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Location Switzerland, 'distributed by intention' boilerplate only; senior"}
+- {gid: b33962dd91, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "'This is a Hybrid role'; 9+ years"}
+- {gid: ccd29d534c, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Location United States, 'distributed company' boilerplate only; 6+ years"}
+- {gid: 3b6878e08a, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "San Francisco, no work mode; director"}
+- {gid: f49f9677b5, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "#LI-Hybrid, New York; principal, 10+ years"}
+- {gid: 6db6f0a1ea, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Pune, no work mode; senior staff, 5-7 years"}
+- {gid: 0a4a1fb930, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "'hybrid workplace', Washington DC; 3+ years closing experience"}
+- {gid: 767b9ceddf, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "'This is a Hybrid role', Singapore; principal"}
+- {gid: 3fa2dec41b, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Location Ireland, 'distributed by intention' boilerplate only; principal"}

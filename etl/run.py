@@ -187,6 +187,15 @@ def decide_cmd(batch_size: int, limit: int | None, max_seconds: float | None) ->
     return 0
 
 
+def eval_cmd(show_misses: bool) -> int:
+    """Score the extraction + decisions against the hand-labelled gold set (no database, no network, no AI)."""
+    from etl.eval.gold import evaluate, format_report
+
+    report = evaluate()
+    print(format_report(report, show_misses=show_misses))
+    return 1 if report.failures else 0
+
+
 def seed_cmd(path: str) -> int:
     """Add the companies and boards in config/companies.yaml that the database does not have yet."""
     from etl.discovery.seed import SeedError, load_entries, sync
@@ -259,6 +268,14 @@ def main(argv: list[str] | None = None) -> int:
         except SystemExit:
             return 2
         return decide_cmd(max(1, args.batch_size), args.limit, args.max_seconds)
+    if argv and argv[0] == "eval":
+        parser = argparse.ArgumentParser(prog="etl.run eval")
+        parser.add_argument("--no-misses", action="store_true", help="print only the score table")
+        try:
+            args = parser.parse_args(argv[1:])
+        except SystemExit:
+            return 2
+        return eval_cmd(not args.no_misses)
     print("Usage: python -m etl.run collect --shard i/N | process [--batch-size N] [--limit N]", file=sys.stderr)
     return 2
 

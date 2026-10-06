@@ -137,3 +137,19 @@ def test_decision_key_changes_with_version_extraction_and_content():
     base = decision_key(6, "abc")
     assert base == f"{DECISION_VERSION}:6:abc"
     assert len({base, decision_key(7, "abc"), decision_key(6, "abd")}) == 3
+
+
+@pytest.mark.parametrize("text,lang", [("5+ years in Customer Success - Good level of French - Experience managing customers", "french"),
+                                       ("Strong command of German is expected.", "german")])
+def test_level_word_then_language_is_a_requirement(text, lang):
+    assert lang in required_languages(text)[0]
+
+
+@pytest.mark.parametrize("text", ["Knowledge of IFRS and French GAAP.", "Solid German tax law experience.", "Good Spanish market knowledge helps."])
+def test_subject_or_market_wording_is_not_a_language_requirement(text):
+    assert not required_languages(text)[0]
+
+
+def test_language_skills_that_would_help_are_a_nice_to_have():
+    required, nice = required_languages("Portuguese, Italian and/or Spanish language skills would set you up for success in this role.")
+    assert not required and {"portuguese", "italian", "spanish"} & nice

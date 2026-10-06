@@ -19,7 +19,11 @@ from etl.extract.rules.dates import parse_deadline, parse_joining
 from etl.extract.rules.eligibility import parse_eligibility
 from etl.extract.rules.experience import parse_experience
 from etl.extract.rules.locstring import combine, read_location
-from etl.extract.rules.location import parse_location_section, parse_locations, parse_remote_type
+from etl.extract.rules.geo import resolve_country
+from etl.extract.rules.location import (
+    _STRONG_HYBRID, _STRONG_ONSITE, _STRONG_REMOTE, NOT_REMOTE_STRONG, parse_location_section, parse_locations,
+    parse_remote_type,
+)
 from etl.extract.rules.pay import parse_pay
 from etl.extract.rules.workauth import parse_workauth
 
@@ -72,6 +76,12 @@ def _comparable_pay(value: Any) -> Any:
 
 
 _LOCATION_FILLER = {"remote", "anywhere", "worldwide", "global", "globally", "work", "from", "home", "wfh", "or", "and", "-", ","}
+
+
+def _description_says_not_remote(description: str) -> bool:
+    """An explicit hybrid / on-site statement about THIS role, with no explicit remote statement to balance it."""
+    text = description or ""
+    return bool((_STRONG_HYBRID.search(text) or _STRONG_ONSITE.search(text)) and not _STRONG_REMOTE.search(text))
 
 
 def _names_a_place(field: Field | None) -> bool:
@@ -199,7 +209,13 @@ def apply_rules(
             locs = out.get("locations")
             if not _is_known(locs) or not isinstance(locs.value, list):
                 return
-            reading = combine(read_location(loc.get("raw") if isinstance(loc, dict) else loc) for loc in locs.value)
+            raws = [loc.get("raw") if isinstance(loc, dict) else loc for loc in locs.value]
+            # Ashby adds the postal address's country ("India") as an extra location next to "Bangalore - Remote":
+            # a bare country name is not another option with an unknown work mode, so it is left out.
+            places = [r for r in raws if not (isinstance(r, str) and resolve_country(r.strip()))]
+            reading = combine(read_location(r) for r in (places or raws))
+            if reading.remote_type == "remote" and _description_says_not_remote(description):
+                return  # the board's location text says remote but the description says the role is hybrid / on-site
             if reading.remote_type:
                 offer("remote_type", Field(value=reading.remote_type, provenance="rule", evidence="location text"))
             # Who may apply is claimed only when the text states a work mode (a plain city says where the
@@ -257,6 +273,17 @@ def apply_rules(
             offer("work_auth_required", auth)
 
         guarded(workauth)
+
+        def remote_contradicted() -> None:
+            """The board says remote but the text says THIS role is not ("isn't a fit for fully remote working"):
+            two explicit statements disagree, so claim nothing rather than show a hybrid job as remote."""
+            current = out.get("remote_type")
+            if current is not None and current.value == "remote" and current.provenance != "user" \
+                    and NOT_REMOTE_STRONG.search(description):
+                out["remote_type"] = Field()
+                conflicts.append("remote_type: the board says remote but the description says this role is not")
+
+        guarded(remote_contradicted)
     except Exception:
         return dict(fields), ()
     return out, tuple(conflicts)

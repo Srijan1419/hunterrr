@@ -1,0 +1,23 @@
+# Fresh HOLDOUT, batch 01 (2026-10-06): postings the rules had never been tuned on, labelled by reading the text AND
+# the board's own structured fields. Never tune rules against these misses; once seen they move to dev and a new
+# holdout is drawn.
+- {gid: "6504407cf4", remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'All of our roles are remote', Bangalore, India; staff"}
+- {gid: "b7f7e5ad58", remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Bangalore, no work-mode statement ('remote and shift work' is generic); 7+ years"}
+- {gid: "f9de980ef2", remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'remote, and based in India'; 12+ years"}
+- {gid: "c66f06ce24", remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "'Location: Mumbai', no work mode; 4-5 years"}
+- {gid: "d9e13e26c9", remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'remote-first, asynchronous organization', all GitLab roles remote; Bangalore; 'Intermediate' is mid level"}
+- {gid: "71b8a7ba94", remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'All of our roles are remote', Bangalore; engineering manager"}
+- {gid: "68bced1fea", remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'remote, and based in India'; 8+ years"}
+- {gid: "dee0bd2c14", remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Hyderabad, no work mode; lead, 10 years"}
+- {gid: "ac46ec734e", remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'This remote-friendly role is based in Bengaluru, India'; all roles remote; director"}
+- {gid: "9737835da1", remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Bengaluru, no work mode; 6+ years"}
+- {gid: "37a6420c8c", remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'All of our roles are remote', Bangalore; director"}
+- {gid: "b27a57f615", remote: unknown, india: na, employment: full_time, entry: "no", flags: [], why: "Mixed: 'Bangalore - Remote' next to Mumbai and Delhi offices, 'can be based in either'; 8+ years"}
+- {gid: "75fdb8b9c6", remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'All of our roles are remote', Bangalore; 7+ years"}
+- {gid: "15e313fdf1", remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'Remote and based in India'; 7+ years"}
+- {gid: "b708651304", remote: remote, india: "yes", employment: full_time, entry: "no", flags: [], why: "Board workplaceType Remote, location APAC, 'You are located in India'; works 9pm-7am IST; 4+ years"}
+- {gid: "59121f73b7", remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'based remotely in India'; 3+ years"}
+- {gid: "ed043a2ce5", remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'remote, and based in India'; 5+ years"}
+- {gid: "262e8ce898", remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "'team based in India', Bengaluru, no work mode; 10+ years"}
+- {gid: "f2d04d11f2", remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "US locations, no work-mode statement; 5+ years [corrected: the text says 'can be held from one of our US hubs or remotely in the United States']"}
+- {gid: "ed2318db42", remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Location United States, no work mode; principal"}

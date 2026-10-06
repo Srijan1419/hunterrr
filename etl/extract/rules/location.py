@@ -38,13 +38,117 @@ def _unknown() -> Field:
 # Negative lookbehind to avoid matching "remote" in "Remote.com", "RemoteOK", etc.
 _REMOTE_POSITIVE = re.compile(
     r"(?<!remote\.)(?<!remoteok)(?<!remote\w)(?<!\wremote\.com)"
-    r"(?:\b(?:fully\s+remote|100%\s+remote|remote\s*[-–]?\s*first|work\s+from\s+anywhere|wfh)\b"
-    r"|\bremote\b)",
+    # "WFH equipment allowance" / "WFH stipend" is a benefit, not the job's work mode (found on a Miro posting)
+    r"(?:\b(?:fully\s+remote|100%\s+remote|remote\s*[-–]?\s*first|work\s+from\s+anywhere)\b"
+    r"|\bwfh\b(?!\s+(?:equipment|allowance|stipend|budget|set[-\s]?up|benefits?|policy|reimbursement))"
+    # "working remotely or on-site" offers both: not a statement about the role's mode
+    r"|\b(?:based|work(?:ing)?|located)\s+remotely\b(?!\s*(?:or|and|/)\s*(?:on[-\s]?site|in[-\s]?office|hybrid|from\s+(?:the\s+|an?\s+)?office))"
+    r"|\bremotely\s+(?:within|in|from|across)\b"
+    # recruiter tags and "all-remote" / "can be done remotely" are statements about the work mode
+    r"|#\s*(?:li[-_]\s*)?remote\b|\ball[-\s]remote\b"
+    r"|\b(?:can|may|will|able\s+to)\s+(?:be\s+)?(?:work(?:ed)?|done|performed|based|held)\s+remote(?:ly)?\b)",
     re.IGNORECASE,
 )
 
+# A bare "remote" is a work-mode statement only in a work-mode context. In a description it is also an ordinary word
+# ("remote development environments", "a remote, asynchronous environment", "remote and shift work"), so it counts
+# only when it is bracketed or delimited ("(Remote)", "- Remote", "Remote, US"), follows a word that names the work
+# mode ("is remote", "location: remote", "fully remote"), or is followed by one ("remote role", "remote-friendly",
+# "remote work"). Everything else is left unknown.
+_OPTION_BEFORE = re.compile(
+    r"(?:option|options|choice|ability|opportunity|flexibility|freedom|chance|possibility|able|allowed|permitted|eligible|encouraged)\s+"
+    r"(?:to|for)\s+(?:\w+\s+){0,2}$",
+    re.IGNORECASE,
+)
+_PLAIN_REMOTE = re.compile(r"(?<!remote\.)(?<!remoteok)(?<!remote\w)(?<!\wremote\.com)\bremote\b", re.IGNORECASE)
+_MODE_BEFORE = (
+    r"(?:\bis|\bare|\bbe|\bbeing|\bfully|\bentirely|\bcompletely|\ball|\bwork|\bworking|\bworks|\bhire|\bhiring|\bposition|\brole|"
+    r"\bjob|\blocation|\bopportunity|\btype|\bmode|\barrangement|\bstatus|\bsetup)\s*[:\-–]?\s*(?:\s*(?:fully|entirely|completely)\s+)?$"
+)
+_REMOTE_BEFORE_OK = re.compile(_MODE_BEFORE, re.IGNORECASE)
+_REMOTE_AFTER_OK = re.compile(
+    r"^(?:[-\s]+(?:first|friendly|eligible|based|only|option|options|flexib\w+)|\s+(?:work|worker|workers|role|position|job|opportunity|"
+    r"culture|company|organi[sz]ation|first|only|option|options|basis)\b)",
+    re.IGNORECASE,
+)
+_DELIM_BEFORE = re.compile(r"(?:^|[(\[\n|;/–-]|,\s)\s*$")
+_DELIM_AFTER = re.compile(r"^\s*(?:$|[)\]\n|;/(–-]|,\s*(?-i:[A-Z]))")
+
+
+def _plain_remote_ok(text: str, m: re.Match) -> bool:
+    before, after = text[max(0, m.start() - 40):m.start()], text[m.end():m.end() + 40]
+    if _DELIM_BEFORE.search(before) and _DELIM_AFTER.match(after):
+        return True
+    return bool(_REMOTE_BEFORE_OK.search(before) or _REMOTE_AFTER_OK.match(after))
+
+# A plain "remote" next to one of these nouns describes someone else, not this job:
+# "collaborate with remote teams", "support remote employees", "local and remote stakeholders".
+_REMOTE_MODIFIES_OTHERS = re.compile(
+    r"^[\s-]*(?:teams?|colleagues?|stakeholders?|employees?|workers?|offices?|locations?|customers?|clients?|collaboration|"
+    r"meetings?|support|access|sessions?|environments?|participants?|candidates?|interviews?|learning|training|"
+    r"resources?|monitoring|servers?|desktops?|control|sensing|devices?|devs?|developers?|talent|staff|members?|"
+    r"communication|culture\s+of\s+others|positions|roles|jobs|opportunities|options|arrangements)\b",
+    re.IGNORECASE,
+)
+_REMOTE_AFTER_LISTING = re.compile(r"(?:\blocal|\bboth|\band|\bor|\bon[-\s]?site|\bhybrid|\bin[-\s]?office|\bdistributed|\bco-?located)\s*[,/]?\s*$", re.IGNORECASE)
+
+# Explicit statements about THIS role. When the text also carries the other modes (a benefits paragraph that
+# mentions the hybrid policy, an "#LI-Hybrid" tag), exactly one explicit statement decides.
+_STRONG_REMOTE = re.compile(
+    r"\bthis\s+(?:is\s+)?(?:a\s+)?(?:fully\s+)?remote\s+(?:role|position|job|opportunity)\b"
+    r"|\b(?:role|position|job)\s+(?:is|will\s+be)\s+(?:fully\s+)?remote\b|\bfully\s+remote\s+(?:role|position|job)\b"
+    r"|\b(?:based|work(?:ing)?|located)\s+remotely\b(?!\s*(?:or|and|/)\s*(?:on[-\s]?site|in[-\s]?office|hybrid))"
+    r"|\b100%\s+remote\b|\blocation\s*:\s*remote\b|\ball\s+of\s+our\s+roles\s+are\s+remote\b",
+    re.IGNORECASE,
+)
+# The text says THIS role is not remote, whatever the board field says ("this role isn't a fit for fully remote
+# working", "this is not a remote position", "no remote option", "must work in the office").
+NOT_REMOTE_STRONG = re.compile(
+    r"\b(?:role|position|job|this)\b[^.]{0,30}\b(?:isn't|is\s+not|not)\s+(?:a\s+)?(?:fit\s+for\s+)?(?:fully\s+)?remote\b"
+    r"|\bnot\s+(?:a\s+)?(?:fully\s+)?remote\s+(?:role|position|job)\b|\bno\s+remote\s+(?:work|option|working)\b"
+    r"|\bisn't\s+a\s+fit\s+for\s+fully\s+remote\b",
+    re.IGNORECASE,
+)
+_STRONG_HYBRID = re.compile(
+    # "this is a hybrid role" counts only when it goes on to talk about the office ("This is a hybrid role: part
+    # strategist, part data scientist" is about the skills)
+    r"\bthis\s+(?:is\s+)?(?:a\s+)?hybrid\s+(?:role|position|job)\b(?=[^.]{0,80}\b(?:office|days?|week|on[-\s]?site|located|based|hub|in[-\s]?person)\b)"
+    r"|\bhybrid\s+(?:work\s+)?(?:model|schedule|basis)\b"
+    r"|\b(?:role|position)\s+is\s+hybrid\b|#li[-_]hybrid\b|\b\d\s+days?\s+(?:a|per)\s+week\s+(?:in|at)\s+(?:the\s+|our\s+)?office\b"
+    r"|\bin\s+the\s+office\s+(?:at\s+least\s+)?\w+\s+days?\b",
+    re.IGNORECASE,
+)
+_STRONG_ONSITE = re.compile(
+    r"\bthis\s+(?:is\s+)?(?:an?\s+)?on[-\s]?site\s+(?:role|position|job)\b|\b(?:role|position)\s+is\s+(?:based\s+)?on[-\s]?site\b"
+    r"|#li[-_]onsite\b|\bbased\s+(?:onsite|on[-\s]site)\b",
+    re.IGNORECASE,
+)
+
+# The word "hybrid" has the same problem as "remote" ("a hybrid technical and commercial role", "design/development
+# hybrid background", "hybrid cloud"): it counts only bracketed/delimited, after a work-mode word, or before one.
+_HYBRID_WORD = re.compile(r"\bhybrid\b", re.IGNORECASE)
+_HYBRID_BEFORE_OK = re.compile(
+    r"(?:\bis|\bare|\bbe|\bwork|\bworking|\bworks|\bposition|\brole|\bjob|\blocation|\btype|\bmode|\bsetup|\barrangement)\s*[:\-–]?\s*$",
+    re.IGNORECASE,
+)
+_HYBRID_AFTER_OK = re.compile(
+    r"^(?:\s+(?:work(?:ing)?|model|schedule|policy|setup|set-up|arrangement|environment|office|basis|workplace|opportunity|culture|from\b)"
+    r"|\s+(?:role|position|job)\b(?=[^.]{0,80}\b(?:office|days?|week|on[-\s]?site|located|based|hub|in[-\s]?person)\b))",
+    re.IGNORECASE,
+)
+
+
+def _hybrid_matches(text: str) -> list[re.Match]:
+    out = list(_HYBRID_PATTERNS.finditer(text))
+    for m in _HYBRID_WORD.finditer(text):
+        before, after = text[max(0, m.start() - 40):m.start()], text[m.end():m.end() + 80]
+        if (_DELIM_BEFORE.search(before) and _DELIM_AFTER.match(after)) or _HYBRID_BEFORE_OK.search(before) or _HYBRID_AFTER_OK.match(after):
+            out.append(m)
+    return sorted(out, key=lambda x: x.start())
+
+
 _HYBRID_PATTERNS = re.compile(
-    r"\b(?:hybrid|"
+    r"\b(?:"
     r"\d+\s*days?\s*(?:in\s+office|on\s*site|on-site|in\s+office|office)|"
     r"\d+\s*days?\s*a\s+week\s*(?:on\s*site|on-site|in\s+office)|"
     r"part[-\s]?time\s+office|"
@@ -59,6 +163,11 @@ _ONSITE_PATTERNS = re.compile(
     # "in-person" only with a work word: "an in-person interview" says nothing about the job
     r"in[-\s]?person\s+(?:role|position|job|work|expectations?|presence|attendance)|"
     r"work(?:ing)?\s+in[-\s]?person)\b",
+    re.IGNORECASE,
+)
+
+_EITHER_OR_MODE = re.compile(
+    r"\b(?:remote(?:ly)?|on[-\s]?site|in[-\s]?office|hybrid)\s*(?:or|/|and/or)\s*(?:remote(?:ly)?|on[-\s]?site|in[-\s]?office|hybrid)\b",
     re.IGNORECASE,
 )
 
@@ -95,7 +204,15 @@ def parse_remote_type(text: Any, ctx: ParseContext | None = None) -> Field:
     
     def _first_valid_remote(text: str) -> re.Match | None:
         """Find first remote match that isn't a false positive or city name."""
-        for m in _REMOTE_POSITIVE.finditer(text):
+        candidates = list(_REMOTE_POSITIVE.finditer(text)) + [
+            m for m in _PLAIN_REMOTE.finditer(text) if _plain_remote_ok(text, m)]
+        for m in sorted(candidates, key=lambda x: x.start()):
+            # "the option to work remotely" / "the ability to work remotely" is a policy, not this role's mode
+            if _OPTION_BEFORE.search(text[max(0, m.start() - 45):m.start()]):
+                continue
+            # an either/or offer ("fully remote or hybrid") says nothing about which mode this role is
+            if any(e.start() < m.end() and m.start() < e.end() for e in _EITHER_OR_MODE.finditer(text)):
+                continue
             span = m.span()
             # Check false positives
             is_fp = False
@@ -112,17 +229,22 @@ def parse_remote_type(text: Any, ctx: ParseContext | None = None) -> Field:
                 after = text[m.end():m.end()+30]
                 if re.match(r"^\s*,\s*[A-Z][a-zA-Z]+", after):
                     continue
+                # a plain "remote" that describes other people ("remote teams", "local and remote") is not this job
+                if _REMOTE_MODIFIES_OTHERS.match(after) or _REMOTE_AFTER_LISTING.search(text[max(0, m.start() - 20):m.start()]):
+                    continue
             return m
         return None
     
     def _first_hybrid(text: str) -> re.Match | None:
-        return _HYBRID_PATTERNS.search(text)
+        found = _hybrid_matches(text)
+        return found[0] if found else None
     
     def _first_onsite(text: str) -> re.Match | None:
         for m in _ONSITE_PATTERNS.finditer(text):
-            # Check if contained in a hybrid match
+            # Check if contained in a hybrid match, or in an either/or pairing ("remotely or on-site"): an
+            # offer of both modes says nothing about which one this role is.
             contained = False
-            for hm in _HYBRID_PATTERNS.finditer(text):
+            for hm in _hybrid_matches(text) + list(_EITHER_OR_MODE.finditer(text)):
                 if hm.start() <= m.start() and m.end() <= hm.end():
                     contained = True
                     break
@@ -171,6 +293,15 @@ def parse_remote_type(text: Any, ctx: ParseContext | None = None) -> Field:
         # Conflicting signals - check for specific "remote or hybrid" pattern
         if re.search(r"\bremote\s+(?:or|/)\s+hybrid\b", capped, re.IGNORECASE):
             return _unknown()
+        # Exactly one explicit statement about this role decides ("This is a remote role" beats a benefits
+        # paragraph that mentions the hybrid policy).
+        strong = [(mode, pat.search(capped)) for mode, pat, active in (
+            ("remote", _STRONG_REMOTE, active_remote), ("hybrid", _STRONG_HYBRID, active_hybrid),
+            ("onsite", _STRONG_ONSITE, active_onsite)) if active]
+        strong = [(mode, m) for mode, m in strong if m is not None]
+        if len(strong) == 1:
+            mode, m = strong[0]
+            return Field(value=mode, provenance="rule", evidence=m.group(0).strip()[:MAX_EVIDENCE])
         # "not remote" with explicit onsite -> onsite
         if not_remote and active_onsite and not active_hybrid:
             result_value = "onsite"

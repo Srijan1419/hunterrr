@@ -1,0 +1,19 @@
+# Fresh HOLDOUT, batch 03 (2026-10-06). See holdout_01.yaml.
+- {gid: "297510a3bf", remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Pune, no work mode; staff, 10+ years"}
+- {gid: "daeb9bd39c", remote: onsite, india: na, employment: full_time, entry: "no", flags: [], why: "Board workplaceType onsite, Full-time; lead, 6-10 years"}
+- {gid: "1b8d9b17bb", remote: onsite, india: na, employment: full_time, entry: unknown, flags: [], why: "Board workplaceType onsite, Full-time; no years shown"}
+- {gid: "1a017dc98c", remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "'This is a hybrid role based in Pune'; 5+ years"}
+- {gid: "d7dc719981", remote: hybrid, india: na, employment: full_time, entry: "no", flags: [], why: "Board workplaceType Hybrid, San Francisco; 8+ years"}
+- {gid: "d76d0b63fd", remote: hybrid, india: na, employment: unknown, entry: "yes", flags: [language_required], why: "'Dutch Speaker' in the title, Dublin hybrid model; asks 1-2 years"}
+- {gid: "963f27347f", remote: hybrid, india: na, employment: internship, entry: "yes", flags: [], why: "'Product Management Intern', 'hybrid workplace' (#LI-Hybrid), New York"}
+- {gid: "7da487ee1d", remote: hybrid, india: na, employment: full_time, entry: "no", flags: [], why: "'hybrid work model of 3 days in the office', Singapore; 8+ years"}
+- {gid: "c7dadcc124", remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "'candidates who are based in the US for our remote working model'; 5+ years"}
+- {gid: "e09d2187ab", remote: hybrid, india: na, employment: full_time, entry: "no", flags: [], why: "'hybrid work model of 3 days in the office', San Francisco; 8+ years"}
+- {gid: "bb50e93a7e", remote: unknown, india: na, employment: temporary, entry: "no", flags: [language_required], why: "'Fixed Term Contract' recruiter in Singapore; 'Fluency in Mandarin Chinese' required; 6-10 years"}
+- {gid: "9078018f9b", remote: unknown, india: na, employment: full_time, entry: "yes", flags: [], why: "Austin, board employmentType FullTime, no work mode; asks 2-5 years"}
+- {gid: "47b55fa620", remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "'This is a Remote (DC Metro Area) role', US citizenship required; senior manager"}
+- {gid: "c02870889c", remote: remote, india: "no", employment: unknown, entry: unknown, flags: [], why: "Location 'France, Remote' (EMEA partner role); no years shown"}
+- {gid: "0a922ecb1c", remote: onsite, india: na, employment: full_time, entry: unknown, flags: [non_english], why: "Dutch posting for a distribution centre in Amsterdam, board FullTime"}
+- {gid: "b027ac252e", remote: onsite, india: na, employment: unknown, entry: "no", flags: [], why: "'This role is based on-site in our NYC office'; 8+ years"}
+- {gid: "94f13c6740", remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "'can be held from one of our US hubs or remotely in the United States'; 3+ years"}
+- {gid: "b089962eab", remote: unknown, india: na, employment: unknown, entry: "no", flags: [language_required], why: "Germany, no work mode; senior solution architect [corrected: the text says 'Fluency in German is essential']"}

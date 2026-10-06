@@ -1,0 +1,25 @@
+# Gold labels, batch 03 (stratum B: remote or location-only postings that say nothing about India). Written by reading.
+- {gid: 6de79ce3e2, remote: onsite, india: na, employment: unknown, entry: unknown, flags: [], why: "Title '(on site)', on-site interview in Amsterdam; no years stated"}
+- {gid: 4b42cd823e, remote: onsite, india: na, employment: part_time, entry: unknown, flags: [non_english], why: "Dutch warehouse team-lead role in Amsterdam [corrected: the board's own employmentType (PartTime) field was not in my reading view]"}
+- {gid: 55793b3b15, remote: remote, india: unknown, employment: unknown, entry: "no", flags: [], why: "'All positions at Postscript are fully remote' but no country stated; 5+ years"}
+- {gid: 873e61a20e, remote: unknown, india: na, employment: unknown, entry: "no", flags: [language_required], why: "Paris, no work mode; 'Good level of French' is a requirement; 5+ years"}
+- {gid: 03fdeacd1e, remote: unknown, india: na, employment: internship, entry: "yes", flags: [non_english], why: "Dutch 'stage' (internship), Amsterdam"}
+- {gid: 791b7426b4, remote: onsite, india: na, employment: part_time, entry: unknown, flags: [non_english], why: "Dutch delivery driver role (scooter licence) [corrected: the board's own employmentType (PartTime) field was not in my reading view]"}
+- {gid: b4e44f8ceb, remote: remote, india: "no", employment: unknown, entry: unknown, flags: [], why: "Remote, locations 'North America; Europe'; no years stated"}
+- {gid: e6dbbf566a, remote: unknown, india: na, employment: unknown, entry: "no", flags: [language_required], why: "'NYC, Remote' vs a hybrid policy; 'Portuguese and Spanish Fluency are required'; 4+ years"}
+- {gid: 5d3c39723f, remote: unknown, india: na, employment: unknown, entry: unknown, flags: [non_english, not_a_job], why: "Dutch open application ('Open Sollicitatie'), not a real job"}
+- {gid: fb1dbb0af4, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "San Francisco, workplaceType Hybrid; 5+ years"}
+- {gid: 1809a2f21f, remote: hybrid, india: na, employment: internship, entry: "yes", flags: [], why: "'12+ week hybrid technical internship', Vienna"}
+- {gid: f67ae5b99d, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "San Francisco, Hybrid; staff, 10+ years"}
+- {gid: e9ee04a876, remote: onsite, india: na, employment: unknown, entry: unknown, flags: [], why: "'in office 4-5 days/week in San Francisco'; no years stated"}
+- {gid: ae21d6f1cc, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "San Francisco, Hybrid; 5+ years"}
+- {gid: afc0e9b7d0, remote: remote, india: "no", employment: unknown, entry: unknown, flags: [], why: "'open to candidates based in Europe'; no years stated"}
+- {gid: 6943a29e17, remote: hybrid, india: na, employment: internship, entry: "yes", flags: [], why: "Summer 2027 internship, SF/NYC, workplaceType Hybrid"}
+- {gid: effbc0fb95, remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "'open to candidates based in North America'; 5+ years"}
+- {gid: 0a72852ed4, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "'three days per week in the office', San Francisco; senior"}
+- {gid: 9aca876616, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "Belgrade, workplaceType Hybrid; 4+ years"}
+- {gid: dafb471d46, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "San Francisco, Hybrid; staff"}
+- {gid: 7b9c31458e, remote: remote, india: unknown, employment: unknown, entry: unknown, flags: [], why: "Location 'Remote', workplaceType Remote; no country, no years stated"}
+- {gid: f23b45f151, remote: hybrid, india: na, employment: unknown, entry: "yes", flags: [], why: "Toronto, Hybrid; asks 2 to 3 years (worth a shot)"}
+- {gid: 32cd058ec7, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Toronto, no work mode; senior, 5+ years"}
+- {gid: 6854915a24, remote: remote, india: unknown, employment: unknown, entry: "no", flags: [], why: "'distributed by intention', location Norway: no statement about India; principal"}

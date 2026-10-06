@@ -122,3 +122,23 @@ def test_freelance_and_occasional_office_labels():
 def test_evidence_quotes_the_text():
     result = scan_flags({"title": "x", "description_md": "Registration fee of Rs 500 is payable."})
     assert "registration fee" in result.evidence["fee_requested"].lower()
+
+
+# --- not a real job (found on real boards, 2026-10-06) ----------------------------------------------------------
+@pytest.mark.parametrize("title,text", [
+    ("Oyster Talent Community Sign Up", ""), ("Open Sollicitatie", ""), ("General Application", ""),
+    ("Apply Here: Future Product & Engineering Leadership Roles!", ""),
+    ("SIC - Temp to Full Time Employee Application", "Only temporary ShipBob associates may apply."),
+    ("Warehouse Associate", "This posting is only for ShipBob's temporary associate conversion program."),
+])
+def test_postings_that_are_not_an_open_job_are_flagged(title, text):
+    assert "not_a_job" in scan_flags({"title": title, "description_md": text, "source": "greenhouse"}).flags
+
+
+@pytest.mark.parametrize("title,text", [
+    ("Software Engineer", "We run a talent community for alumni events."),
+    ("Recruiter", "Our team can apply here lessons from past hiring."),
+    ("Support Engineer", "Only candidates with SQL experience may apply."),
+])
+def test_normal_postings_are_not_flagged_as_not_a_job(title, text):
+    assert "not_a_job" not in scan_flags({"title": title, "description_md": text, "source": "greenhouse"}).flags

@@ -38,7 +38,19 @@ def test_lever_and_ashby_bodies_map():
     assert ex.fields["remote_type"].value == "hybrid"
     ab = json.loads((REPO_FIX / "ats_ashby_sample.json").read_text(encoding="utf-8"))["jobs"][0]
     ex = extract(json_doc("ashby", ab))
-    assert ex.fields["remote_type"].value == "remote"
+    # the captured posting says isRemote=true AND workplaceType=Hybrid: Ashby sets isRemote for hybrid roles too
+    assert ex.fields["remote_type"].value == "hybrid"
+
+
+def test_ashby_work_mode_comes_from_workplace_type_and_is_remote_is_only_a_fallback():
+    base = {"title": "Engineer", "id": "1", "location": "Berlin", "descriptionPlain": "A job."}
+    mode = lambda **kw: extract(json_doc("ashby", {**base, **kw})).fields["remote_type"].value
+    assert mode(isRemote=True, workplaceType="Hybrid") == "hybrid"
+    assert mode(isRemote=True, workplaceType="OnSite") == "onsite"
+    assert mode(isRemote=True, workplaceType="Remote") == "remote"
+    assert mode(isRemote=False, workplaceType="Remote") == "remote"
+    assert mode(isRemote=True) == "remote"          # no workplaceType: isRemote is all we have
+    assert mode(isRemote=None, workplaceType=None) is None
 
 
 def test_unknown_source_uses_no_mapper():

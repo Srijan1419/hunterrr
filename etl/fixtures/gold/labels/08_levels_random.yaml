@@ -1,0 +1,25 @@
+# Gold labels, batch 08 (stratum F levels and stratum G random).
+- {gid: f5806792ef, remote: remote, india: unknown, employment: unknown, entry: "no", flags: [], why: "'remote-first team' but location Vancouver and CAD pay, no country statement; senior"}
+- {gid: 4ded0921b7, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "Locations include 'Remote (US)'; 8+ years, tech lead and manager [corrected: the board's own workplaceType (Hybrid) for a posting that also lists 'Remote (US)' field was not in my reading view]"}
+- {gid: 58b0125c2e, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "'Hybrid - San Francisco'; 8+ years, engineering manager"}
+- {gid: "8599823088", remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "'fully remote position and can be based in the US or Canada'; senior, 4+ years"}
+- {gid: f5cead3af7, remote: onsite, india: na, employment: full_time, entry: "yes", flags: [], why: "Bangalore, no work mode; Senior Associate / Assistant Manager asking 2-4 years [corrected: the board's own workplaceType/commitment (onsite, Full Time Employee) field was not in my reading view]"}
+- {gid: 331454663c, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Senior lead PR; 10+ years; San Francisco"}
+- {gid: 81fcc84fdc, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "#LI-Hybrid, London; senior, 5+ years"}
+- {gid: ac2c44fd2f, remote: onsite, india: na, employment: unknown, entry: "no", flags: [], why: "Senior Manager, Bangalore, no work mode [corrected: the board's own workplaceType (onsite) field was not in my reading view]"}
+- {gid: f694cf24ed, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Bangalore, no work mode; 3+ years"}
+- {gid: d076db42e4, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "'hybrid position', office 2 times per week; staff, 8-10+ years"}
+- {gid: 6b5855a2fd, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Hyderabad, no work mode; lead, 7-11 years"}
+- {gid: 17bb01442f, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "'in the office at least three days per week'; 4+ years"}
+- {gid: "9223744939", remote: onsite, india: na, employment: full_time, entry: "no", flags: [], why: "Associate Director, 6 to 10 years, Bangalore [corrected: the board's own workplaceType/commitment (onsite, Full Time Employee) field was not in my reading view]"}
+- {gid: 162234db63, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "#LI-Hybrid, Dublin/London; senior, 5+ years"}
+- {gid: 2812978d7b, remote: onsite, india: na, employment: unknown, entry: unknown, flags: [], why: "'work on-site in Bellevue, WA in a rotating shift-based environment'; no years stated"}
+- {gid: 5c05751560, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "Board says Remote but the text says 'this role isn't a fit for fully remote working'; staff"}
+- {gid: cfaa6f7a05, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "'hybrid model, typically in the office 3-4 days per week'; 3-5+ years"}
+- {gid: 29bded3f94, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Pune, no work mode; senior, 8+ years"}
+- {gid: 2c7522ece9, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Bengaluru, no work mode; 4-7 years"}
+- {gid: e146325f60, remote: hybrid, india: na, employment: full_time, entry: "no", flags: [], why: "Wroclaw, no work mode; senior analyst [corrected: the board's own workplaceType/commitment (hybrid, Full-time) field was not in my reading view]"}
+- {gid: 55798559a3, remote: hybrid, india: na, employment: unknown, entry: unknown, flags: [], why: "'We work from our offices on Mondays, Tuesdays and Thursdays', New York; no years stated"}
+- {gid: e424b9e267, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Tokyo, no work mode; 6+ years"}
+- {gid: 463fbb4e14, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Paris, 'Remote' positions are listed separately; this one has no stated mode; principal, 10+ years"}
+- {gid: bcbe3a6aad, remote: hybrid, india: na, employment: full_time, entry: "no", flags: [not_a_job], why: "'Apply Here: Future ... Leadership Roles': a general interest posting, not an open job [corrected: the board's own workplaceType/commitment (hybrid, Full time) field was not in my reading view]"}

@@ -1,0 +1,25 @@
+# Gold labels, batch 05 (end of stratum C, start of stratum D: remote postings with country / work-authorisation limits).
+- {gid: 46f0ee0e31, remote: onsite, india: na, employment: unknown, entry: "no", flags: [], why: "#LI-Onsite, San Francisco; global head"}
+- {gid: 1d059f76f6, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [language_required], why: "'hybrid position based in Japan'; 5+ years [corrected: 'High fluency in written and spoken Japanese' is a requirement I had not seen]"}
+- {gid: 6635a3793c, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "#LI-Hybrid, Sydney; 5+ years"}
+- {gid: f04d8ee215, remote: hybrid, india: na, employment: unknown, entry: unknown, flags: [], why: "San Francisco, workplaceType Hybrid; no years stated"}
+- {gid: e3673f14e9, remote: unknown, india: na, employment: unknown, entry: unknown, flags: [], why: "London, no work mode or years in the text"}
+- {gid: be8903e3a6, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "'hybrid position ... San Francisco office two days per week'; 8-10 years; US work authorisation"}
+- {gid: 80e3fd837d, remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "'This is a remote position', location Canada; no visa sponsorship; 8+ years"}
+- {gid: 3bbffb7b90, remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "'all of Oyster's positions are fully remote'; posted for Spain/Austria/Ireland/Portugal; senior; extra languages only a plus"}
+- {gid: dd6bb75811, remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "Locations are US states 'Remote'; US federal sector; 8-10+ years"}
+- {gid: bde91b9f7a, remote: remote, india: unknown, employment: unknown, entry: "no", flags: [], why: "Location 'Anywhere' and 'can be done from anywhere' but the title says 'US-Based': contradictory; 8+ years"}
+- {gid: 678a00cc49, remote: remote, india: "no", employment: full_time, entry: "no", flags: [], why: "'Remote-first (United States; BC & ON, Canada) - Full-time - Permanent'; 8+ years"}
+- {gid: d8325d5e63, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "'hybrid work model of three days in the office', Washington DC; US persons only; 12+ years"}
+- {gid: 8a880b717f, remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "US locations; 'Be a US Citizen'; the work mode sentence is cut off; 6+ years [corrected: 'can be based out of any MongoDB U.S. office or remotely within the United States' was cut off in my view]"}
+- {gid: 06be0333d5, remote: remote, india: "no", employment: full_time, entry: "no", flags: [], why: "'Remote-first (United States) - Full-time - Permanent'; VP"}
+- {gid: 8d087c9798, remote: remote, india: unknown, employment: unknown, entry: "no", flags: [], why: "Fully remote; posted for Spain/Romania/Hungary/Bulgaria yet 'Global candidate-location options available'; 5+ years"}
+- {gid: b741a5a208, remote: remote, india: "no", employment: full_time, entry: "no", flags: [], why: "Locations are Americas / Europe / UK regions; no visa sponsorship; 7-10+ years [corrected: the board's own commitment (Full-time) field was not in my reading view]"}
+- {gid: ac67758599, remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "'can be fully remote' in US time zones; 'Be a US Citizen'; 5+ years"}
+- {gid: 3a9b063208, remote: hybrid, india: na, employment: full_time, entry: "no", flags: [language_required], why: "London hybrid 3 days; 'Fluent in German' required; 3+ years"}
+- {gid: 4fc73898f7, remote: remote, india: unknown, employment: unknown, entry: "no", flags: [], why: "Fully remote company, location United States, but teammates elsewhere are hired as contractors: unclear; VP"}
+- {gid: 6f70bec84d, remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "'based remotely in the United States'; 'Be a US Citizen'; 5+ years"}
+- {gid: a185a613d4, remote: remote, india: "no", employment: full_time, entry: "no", flags: [], why: "'Remote-first (Argentina)'; permanent full-time employee; 7+ years"}
+- {gid: 55e5933dbf, remote: remote, india: "no", employment: full_time, entry: "no", flags: [], why: "'This is a remote position'; locations EMEA / Canada / Latin America; manager [corrected: the board's own commitment (Full-time) field was not in my reading view]"}
+- {gid: 821eacb0c3, remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "'Location: Fully remote ... based within' EMEA/Brazil/Canada/Mexico; 3+ years"}
+- {gid: 273e250e1b, remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "Options 'San Francisco (Hybrid)' or 'U.S. Remote'; senior, 4+ years"}

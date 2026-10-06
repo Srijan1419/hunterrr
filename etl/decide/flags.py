@@ -22,7 +22,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Any, Mapping
 
-HARD_FLAGS = ("fee_requested", "unpaid", "commission_only", "suspicious_contact", "too_good")
+HARD_FLAGS = ("fee_requested", "unpaid", "commission_only", "suspicious_contact", "too_good", "not_a_job")
 SOFT_LABELS = ("night_shift", "freelance", "occasional_office")
 
 MAX_SCAN = 20_000
@@ -74,6 +74,20 @@ _TOO_GOOD = re.compile(
     r"|\b100\s*%\s*(?:job\s+)?(?:guarantee|placement)\b|\bpay\s+per\s+(?:task|click|like|view|order|video)\b"
     r"|\bearn\s+(?:up\s+to\s+)?(?:rs\.?|₹|inr|\$)?\s*[\d,]{4,}\s*(?:/|per|a)\s*(?:day|week)\b"
     r"|\bwork\s+from\s+home\b[^.\n]{0,60}\bearn\s+(?:rs\.?|₹|inr)?\s*[\d,]{5,}",
+    _I,
+)
+
+# Postings that are not an open job: talent-community sign-ups, open / spontaneous applications, "future roles"
+# pools, and conversion postings only existing temporary staff may use (all found on real boards, 2026-10-06).
+_NOT_A_JOB_TITLE = re.compile(
+    r"\btalent\s+(?:community|network|pool)\b|\bopen\s+(?:application|sollicitatie)\b|\b(?:general|spontaneous)\s+application\b"
+    r"|\bfuture\s+(?:opportunities|openings|roles|\w+\s+roles)\b|\bexpression\s+of\s+interest\b|\bapply\s+here\b|\bsollicitatie\b"
+    r"|\bjoin\s+our\s+(?:talent|team)\s+(?:community|network|pool)\b|\btemp\s+to\s+(?:full[- ]?time|perm\w*)\b",
+    _I,
+)
+_NOT_A_JOB_TEXT = re.compile(
+    r"\bonly\s+(?:\w+\s+){0,3}(?:may|can)\s+apply\b|\bconversion\s+program\b|\bnot\s+every\s+(?:\w+\s+)?role\s+is\s+open\b"
+    r"|\bwe(?:'|’)re\s+always\s+interested\s+(?:in\s+meeting|to\s+meet)\b|\bno\s+(?:current|open)\s+(?:positions|openings|vacancies)\b",
     _I,
 )
 
@@ -129,6 +143,7 @@ def scan_flags(view: Mapping[str, Any]) -> FlagResult:
     hard("unpaid", _first_unguarded(_UNPAID, cleaned))
     hard("commission_only", _first_unguarded(_COMMISSION_ONLY, text))
     hard("too_good", _first_unguarded(_TOO_GOOD, text))
+    hard("not_a_job", _NOT_A_JOB_TITLE.search(title) or _NOT_A_JOB_TEXT.search(description[:3000]))
     if source not in KNOWN_BOARD_SOURCES:
         for m in _WHATSAPP.finditer(text):
             near = text[max(0, m.start() - 80):m.end() + 80]

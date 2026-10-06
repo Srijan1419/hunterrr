@@ -176,7 +176,8 @@ def test_ashby_spot_check_five_against_raw():
     for job in ashby_jobs()[:5]:
         f = fields_from_ashby(job)
         assert f["employment_type"].value == ["full_time"]
-        assert f["remote_type"].value == "remote"
+        # the board's workplaceType decides (isRemote is also true for hybrid roles)
+        assert f["remote_type"].value == {"Remote": "remote", "Hybrid": "hybrid", "OnSite": "onsite"}[job["workplaceType"]]
         assert f["posted_at"].value == datetime.fromisoformat(job["publishedAt"])
         assert f["apply_url"].value == job["applyUrl"]
         assert (f["description_md"].value or "").startswith(

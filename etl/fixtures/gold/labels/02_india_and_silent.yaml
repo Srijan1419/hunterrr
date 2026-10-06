@@ -1,0 +1,23 @@
+# Gold labels, batch 02 (rest of stratum A, start of stratum B). Written by reading the posting text.
+- {gid: 27442dcedb, remote: remote, india: unknown, employment: unknown, entry: "no", flags: [], why: "Board and location line say Remote - Ireland, but the text also says 'support team in India': contradictory, so unknown; 5-7 years"}
+- {gid: 68fdbb983f, remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "Board location 'India - Remote'; 5+ years"}
+- {gid: 659e5b39d2, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Hyderabad, no work-mode statement; lead, 7+ years"}
+- {gid: e1c7abfe04, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "'hybrid work model of 3 days in the office per week'; architect"}
+- {gid: e569d9d8f5, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "'hybrid work model of three days in the office'; 5+ years"}
+- {gid: 5b2b22e112, remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'remotely based in India'; 6+ years"}
+- {gid: 2de44b17cb, remote: remote, india: "no", employment: full_time, entry: "no", flags: [], why: "Location 'Remote, United States'; US bar membership; 10+ years [corrected: the board's own commitment (Full-time) field was not in my reading view]"}
+- {gid: 2daa45932c, remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'Location: Remote - India'; 3+ years"}
+- {gid: 401690965c, remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'Location: Remote (AUS and APAC Time Zone)', board location Bangalore; 8+ years"}
+- {gid: fa14a61774, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "'hybrid work model of 3 days in the office'; 10+ years"}
+- {gid: 84082d43f5, remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "Board location 'Bangalore - Remote', role based in Bangalore; 10+ years"}
+- {gid: 5bc52f698e, remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "'remote, and based in India (only in Karnataka, ...)'; 14+ years"}
+- {gid: 4b83c93b94, remote: hybrid, india: na, employment: full_time, entry: "no", flags: [], why: "Locations Austin / 'Remote, United States'; 8+ years [corrected: the board's own workplaceType (hybrid) field was not in my reading view]"}
+- {gid: 25009115b7, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Bengaluru, no work-mode statement; 6-8 years"}
+- {gid: c8d8879eb1, remote: hybrid, india: na, employment: full_time, entry: "no", flags: [], why: "'Hybrid work model (3 days in office)'; 7+ years [corrected: the board's own commitment (Full-time) field was not in my reading view]"}
+- {gid: ec0f4ca300, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "Board workplaceType Hybrid, Toronto; 4+ years"}
+- {gid: 4333e3c077, remote: hybrid, india: na, employment: temporary, entry: "no", flags: [], why: "Paris, workplaceType Hybrid; 'CDD' is a French fixed-term contract; French is only a plus; 5+ years"}
+- {gid: 415e6f073d, remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "'fully remote and can be based in the US or Canada'; 6+ years"}
+- {gid: 4875fe8b3b, remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "'United States (Remote)'; text lists UK, Ireland, Germany... for another variant; staff level"}
+- {gid: e82c0888b4, remote: remote, india: "no", employment: unknown, entry: "yes", flags: [], why: "Location 'Remote - US'; asks 1-3 years of closing experience (worth a shot)"}
+- {gid: 32eb42814b, remote: onsite, india: na, employment: unknown, entry: unknown, flags: [non_english], why: "Dutch posting for a hub in Breda"}
+- {gid: 9e8de4ad23, remote: unknown, india: na, employment: internship, entry: "yes", flags: [non_english], why: "Dutch 'stage' (internship) in Amsterdam"}

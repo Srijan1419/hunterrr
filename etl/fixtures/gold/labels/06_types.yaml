@@ -1,0 +1,27 @@
+# Gold labels, batch 06 (rest of stratum D, start of stratum E: internships, trainee, fixed-term wording).
+- {gid: 92515afd14, remote: remote, india: "yes", employment: unknown, entry: unknown, flags: [not_a_job], why: "'Talent Community Sign Up', location 'Any Location': not a real job. Would be worldwide if it were one"}
+- {gid: be214eb7d6, remote: remote, india: "no", employment: unknown, entry: unknown, flags: [], why: "'This is a remote position', title US-Based, 'authorized to work in the US'; years not shown"}
+- {gid: cf71f4a8dc, remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "Fully remote but 'requires you to be based' in EMEA countries (Hungary/Austria/Ireland); 5-8 years"}
+- {gid: 6f1ba7d0cf, remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "Fully remote, posted for Brazil/Costa Rica/Chile/Colombia; 3+ years"}
+- {gid: 8f49f6f21e, remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "'remote role in the East Coast'; 'US Citizenship required'; principal"}
+- {gid: 8cdea2bc6e, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "'US HQ (Hybrid) or Washington DC metro (remote)': mixed; senior"}
+- {gid: b927887c03, remote: remote, india: "yes", employment: unknown, entry: "no", flags: [], why: "Fully remote; locations include the APAC region (contains India) with CET overlap needed; 4+ years legal"}
+- {gid: 674aec5610, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "'hybrid role (onsite three days a week)'; US citizenship required; staff"}
+- {gid: 084bd053f7, remote: remote, india: "no", employment: full_time, entry: "no", flags: [], why: "'This is a remote position'; locations Canada / Central & South America; 4+ years [corrected: the board's own commitment (Full-time) field was not in my reading view]"}
+- {gid: e2666f9e3f, remote: hybrid, india: na, employment: unknown, entry: unknown, flags: [], why: "London, workplaceType Hybrid, right to work in the UK; no years shown"}
+- {gid: 868434a5aa, remote: remote, india: "no", employment: full_time, entry: "no", flags: [], why: "'Remote-first (Argentina)', permanent full-time employee; 5+ years"}
+- {gid: 580d23c8b6, remote: remote, india: "no", employment: full_time, entry: "yes", flags: [], why: "'This is a remote position'; South/Central America, Eastern Europe; asks 2-3+ years (worth a shot) [corrected: the board's own commitment (Full-time) field was not in my reading view]"}
+- {gid: c801161a8c, remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "Chicago field sales, 'Must live in territory'; 5+ years [corrected: the text says 'This role will be based remotely in Chicago', which the view had cut off]"}
+- {gid: 3e13ae5a0f, remote: remote, india: unknown, employment: unknown, entry: "no", flags: [], why: "Fully remote company, location United States, but 'authorized to work from their home country': unclear; 8+ years"}
+- {gid: 417d5e5812, remote: hybrid, india: na, employment: unknown, entry: unknown, flags: [], why: "San Francisco, workplaceType Hybrid, 'US work authorization required'"}
+- {gid: 71b575f4a1, remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "'hybrid work model of 3 days', Washington DC; Top Secret clearance"}
+- {gid: 7b1dabcd37, remote: unknown, india: na, employment: internship, entry: "yes", flags: [], why: "'Software Engineering Internship, Winter 2027', Palo Alto"}
+- {gid: 3c46e458df, remote: unknown, india: na, employment: internship, entry: "yes", flags: [], why: "'Software Engineer, Intern', Singapore"}
+- {gid: dab35d9117, remote: onsite, india: na, employment: internship, entry: "yes", flags: [], why: "'internship role based in either Figma's San Francisco or New York hub offices'"}
+- {gid: 2ccb011d6c, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Chicago, no work mode; 3+ years client-facing"}
+- {gid: def7760002, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "London, no work mode; senior, 5+ years"}
+- {gid: e9c3f2761f, remote: hybrid, india: na, employment: internship, entry: "yes", flags: [], why: "'Hybrid - San Francisco' engineering intern, Winter '27"}
+- {gid: 251f5cb3c9, remote: hybrid, india: na, employment: unknown, entry: "yes", flags: [], why: "'Dublin for our hybrid working model'; 'Recent graduates or professionals with up to 18 months'"}
+- {gid: 98df1a47e0, remote: unknown, india: na, employment: temporary, entry: "no", flags: [], why: "'Fixed Term Contract' recruiter in Chicago; 4+ years"}
+- {gid: 7086f7c52a, remote: unknown, india: na, employment: internship, entry: "yes", flags: [], why: "'Data Analyst, Intern', New York / Seattle / South San Francisco"}
+- {gid: c39933c012, remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Strategic Sourcing Manager; minimum 8 years"}

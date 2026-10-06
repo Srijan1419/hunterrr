@@ -44,13 +44,21 @@ _REQUIRED = (
         r"support|candidates?|analysts?|managers?|engineers?|professionals?|advisors?|consultants?|moderators?|writers?|recruiters?|roles?|positions?|jobs?)\b",
         _I),
     re.compile(r"\b" + _LANG + r"\s+(?:speaker|support|specialist)\b", _I),
+    # "Good level of French", "strong command of German": a level word, then the language, and not a subject
+    # ("French GAAP", "German tax law", "Spanish market knowledge") or a market.
+    re.compile(
+        r"\b(?:good|working|strong|excellent|advanced|business|professional|solid|intermediate)\s+"
+        r"(?:level\s+of\s+|command\s+of\s+|knowledge\s+of\s+|proficiency\s+in\s+)?" + _LANG + r"\b"
+        r"(?!\s+(?:gaap|tax|law|laws|market|markets|regulat\w+|labou?r|accounting|standards?|culture|customers?|companies|clients?|business|rules?|cuisine|history|literature))",
+        _I),
 )
 # "German is a plus", "Japanese preferred": the language is named only as a bonus.
 _NICE_ONLY = re.compile(
     r"\b" + _LANG + r"\b[^.\n]{0,15}?\b(?:is\s+)?(?:a\s+plus|an?\s+(?:advantage|bonus|asset)|nice[- ]to[- ]have|preferred|desirable|beneficial)\b",
     _I)
 _NICE_AFTER = re.compile(
-    r"^[^.\n]{0,40}\b(?:is\s+)?(?:a\s+plus|an?\s+(?:advantage|bonus|asset)|nice[- ]to[- ]have|preferred|desirable|beneficial|not\s+required|optional)\b", _I)
+    r"^[^.\n]{0,40}\b(?:is\s+)?(?:a\s+plus|an?\s+(?:advantage|bonus|asset)|nice[- ]to[- ]have|preferred|desirable|beneficial|not\s+required|optional"
+    r"|helpful|useful|welcome|would\s+(?:be\s+)?(?:helpful|an?\s+advantage|beneficial|great|nice|useful)|would\s+set\s+you\s+up\s+for\s+success)\b", _I)
 _NICE_BEFORE = re.compile(r"\b(?:plus|bonus|nice[- ]to[- ]have|preferred|desirable|advantage|beneficial|optional)\b[^.\n]{0,30}$", _I)
 
 _STOPWORDS = frozenset(

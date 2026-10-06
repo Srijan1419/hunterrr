@@ -1,0 +1,23 @@
+# Fresh HOLDOUT, batch 02 (2026-10-06). See holdout_01.yaml.
+- {gid: "c96573affd", remote: unknown, india: na, employment: unknown, entry: "no", flags: [language_required], why: "Barcelona, no work mode; 'Fluent in Norwegian and English' is required; 3+ years"}
+- {gid: "b5051e0487", remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "NYC / San Francisco, no work mode; staff, 5+ years"}
+- {gid: "b8aa757517", remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "Text says 'Location: Remote - France'; senior manager"}
+- {gid: "9a672d22e8", remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "'can be held from one of our US hubs or remotely in the United States'; 7+ years"}
+- {gid: "6cf8f9fc13", remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "'This is a Hybrid role'; principal, 10+ years"}
+- {gid: "ed75312a2a", remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "US cities, no work mode; 12+ years"}
+- {gid: "3dd0f4c520", remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "'This role will be remote, based in Singapore'; 12 years"}
+- {gid: "705be29185", remote: remote, india: "no", employment: unknown, entry: "no", flags: [language_required], why: "Location 'Remote - China'; 7+ years [corrected: the text says 'Business proficiency in Mandarin ... are required']"}
+- {gid: "2aad01dff6", remote: remote, india: "no", employment: full_time, entry: "no", flags: [], why: "Board workplaceType remote, 'Remote, Colombia', commitment Fulltime Exempt; 5+ years"}
+- {gid: "e083b61679", remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Mixed 'Remote - Georgia; Remote - Texas; San Francisco'; 7+ years"}
+- {gid: "d025a063ea", remote: hybrid, india: na, employment: full_time, entry: unknown, flags: [], why: "Board workplaceType Hybrid, lists 'Remote (US)' too; no years shown"}
+- {gid: "8c026957c2", remote: remote, india: unknown, employment: unknown, entry: "no", flags: [], why: "Location 'Remote', USD pay for US offices/remote, no country stated; 5+ years management"}
+- {gid: "72911f9549", remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "'Remote - Illinois, USA', '#LI-Remote', Central region of the United States; senior manager"}
+- {gid: "d7252c8b50", remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "'Florida, USA, Remote', '#LI-Remote'; 3+ years closing"}
+- {gid: "e6b9b61d89", remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "'United Kingdom (Remote)', hire someone based in London; 5-8+ years"}
+- {gid: "f9ffda5674", remote: remote, india: "no", employment: full_time, entry: "no", flags: [], why: "Board workplaceType Remote, 'Remote, AMER'; 3+ years"}
+- {gid: "7cfe98ee7a", remote: remote, india: unknown, employment: unknown, entry: "no", flags: [], why: "Location 'Remote', no country stated; 7+ years"}
+- {gid: "f4dda84c56", remote: remote, india: "no", employment: unknown, entry: "no", flags: [], why: "'Remote - Massachusetts/New York/North Carolina, USA', '#LI-Remote'; 8+ years"}
+- {gid: "e25a728954", remote: remote, india: "no", employment: full_time, entry: "no", flags: [], why: "Board workplaceType Remote, 'US - Remote'; 12+ years"}
+- {gid: "6f05dd19a8", remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "'hybrid opportunity 3 days a week in San Jose, CA or Remote', '#LI-Hybrid': either/or; 10+ years"}
+- {gid: "9d475aede7", remote: unknown, india: na, employment: unknown, entry: "no", flags: [], why: "Bangalore, no work mode; 7-11 years"}
+- {gid: "a4def61b4c", remote: hybrid, india: na, employment: unknown, entry: "no", flags: [], why: "'Location: Bengaluru, India - Hybrid'; 6+ years"}

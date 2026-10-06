@@ -331,7 +331,15 @@ def fields_from_ashby(payload: dict) -> dict[str, Field]:
     if locs:
         set_known("locations", locs, "location (+secondary, addressCountry)")
 
-    if payload.get("isRemote") is True:
+    # `workplaceType` (Remote / Hybrid / OnSite) is the board's own work-mode statement. `isRemote` is true for
+    # hybrid roles too (found on real postings, 2026-10-06: Notion / Sentry / Ramp hybrid jobs came out as
+    # remote), so it is only a fallback when `workplaceType` is absent.
+    workplace = _str(payload.get("workplaceType"))
+    mode = {"remote": "remote", "hybrid": "hybrid", "onsite": "onsite", "on-site": "onsite", "on site": "onsite"}.get(
+        (workplace or "").strip().lower())
+    if mode is not None:
+        set_known("remote_type", mode, "workplaceType")
+    elif payload.get("isRemote") is True and workplace is None:
         set_known("remote_type", "remote", "isRemote")
 
     emp = _norm_employment(payload.get("employmentType"))
