@@ -81,6 +81,22 @@ companies:
   - {name: Canva,        ats: smartrecruiters, slug: canva}        # 100+ jobs (read 100 per page)
   - {name: BigCommerce,  ats: smartrecruiters, slug: bigcommerce}  # 2 jobs
 
+  # Remote-friendly SaaS (verified live 2026-10-06)
+  - {name: Figma,          ats: greenhouse, slug: figma}           # 161 jobs, 9 entry-level titles
+  - {name: Intercom,       ats: greenhouse, slug: intercom}        # 107 jobs
+  - {name: Algolia,        ats: greenhouse, slug: algolia}         # 39 jobs, 8 remote
+  - {name: Calendly,       ats: greenhouse, slug: calendly}        # 10 jobs, 7 remote
+  - {name: Airtable,       ats: greenhouse, slug: airtable}        # 4 jobs
+  - {name: ActiveCampaign, ats: lever,      slug: activecampaign}  # 12 jobs
+  - {name: Bazaarvoice,    ats: lever,      slug: bazaarvoice}     # 23 jobs
+  - {name: Linear,         ats: ashby,      slug: linear}          # 31 jobs, remote-first
+  - {name: Miro,           ats: ashby,      slug: miro}            # 26 jobs
+  - {name: Paddle,         ats: ashby,      slug: paddle}          # 20 jobs, all remote
+  - {name: Help Scout,     ats: ashby,      slug: helpscout}       # 7 jobs, all remote
+  - {name: Kustomer,       ats: ashby,      slug: kustomer}        # 2 jobs, remote
+  - {name: Crisp,          ats: ashby,      slug: crisp}           # 30 jobs
+  - {name: Thinkific,      ats: ashby,      slug: thinkific}       # 1 job, remote
+
   # Companies with their OWN careers page (no Greenhouse/Lever/... behind it). `ats: careerpage` needs a `url`.
   # The page is read for schema.org JobPosting data (robots.txt respected, one level of job links).
   # A JavaScript-rendered page with no such data shows as "needs a look" on the Sources page until the
