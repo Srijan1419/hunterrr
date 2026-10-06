@@ -13,7 +13,7 @@ export function SkillTag({ skill, matched = false }: SkillTagProps) {
       style={{
         display: "inline-block",
         fontFamily: "var(--font-dm-mono)",
-        fontSize: 11,
+        fontSize: "var(--fs-1)",
         letterSpacing: "0.08em",
         textTransform: "uppercase",
         lineHeight: 1.5,

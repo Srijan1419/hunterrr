@@ -22,7 +22,7 @@ export function StatTile({ value, label, tone = "default" }: StatTileProps) {
         style={{
           fontFamily: "var(--font-display)",
           fontWeight: 800,
-          fontSize: 24,
+          fontSize: "var(--fs-4)",
           lineHeight: 1.2,
           color: tone === "hot" ? "var(--hot)" : "var(--ink)",
           fontVariantNumeric: "tabular-nums",
@@ -32,7 +32,7 @@ export function StatTile({ value, label, tone = "default" }: StatTileProps) {
       </div>
       <div
         style={{
-          fontSize: 12,
+          fontSize: "var(--fs-1)",
           color: "var(--fg-2)",
           marginTop: 2,
         }}

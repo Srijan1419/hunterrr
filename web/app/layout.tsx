@@ -1,18 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Bricolage_Grotesque, Hanken_Grotesk, DM_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Hanken_Grotesk, DM_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { LegacyOnly } from "@/components/LegacyOnly";
-
-const geistSans = Geist({
-  subsets: ["latin"],
-  variable: "--font-geist-sans",
-});
-
-const geistMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-geist-mono",
-});
 
 // Atlas fonts: display (logo, titles, big numbers), body/UI, and mono
 // (scores, pay, dates, small labels). No external stylesheet link.
@@ -36,7 +26,7 @@ const monoFont = DM_Mono({
 
 export const metadata: Metadata = {
   title: "Hunterrr",
-  description: "Remote job market analytics dashboard",
+  description: "A personal job-hunting tool: entry-level jobs you can apply to, and an application tracker",
 };
 
 export const viewport: Viewport = {
@@ -52,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${displayFont.variable} ${bodyFont.variable} ${monoFont.variable}`}>
+    <html lang="en" className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable}`}>
       <body className="min-h-screen bg-background font-sans antialiased flex flex-col">
         <LegacyOnly>
           <SiteHeader />

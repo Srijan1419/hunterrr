@@ -21,7 +21,7 @@ export function Chip({ tone = "default", children }: ChipProps) {
     <span
       style={{
         display: "inline-block",
-        fontSize: 12,
+        fontSize: "var(--fs-1)",
         lineHeight: 1.5,
         padding: "2px 10px",
         borderRadius: 999,

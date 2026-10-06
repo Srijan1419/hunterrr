@@ -56,7 +56,7 @@ export function MatchDial({ score, size = 54 }: MatchDialProps) {
           justifyContent: "center",
           fontFamily: "var(--font-display)",
           fontWeight: 700,
-          fontSize: Math.max(11, Math.round(size * 0.28)),
+          fontSize: Math.max(13, Math.round(size * 0.28)),
           color: "var(--fg)",
           fontVariantNumeric: "tabular-nums",
         }}

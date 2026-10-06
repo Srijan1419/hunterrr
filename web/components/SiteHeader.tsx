@@ -13,7 +13,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b bg-background/70 backdrop-blur">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
-          <span className="inline-block size-2.5 rounded-full bg-primary shadow-[0_0_12px_2px_var(--primary)]" />
+          <span className="inline-block size-2.5 rounded-full bg-primary shadow-[0_0_12px_2px_var(--accent)]" />
           Hunterrr
         </Link>
         <nav className="flex items-center gap-1 text-sm">

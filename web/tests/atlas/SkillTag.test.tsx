@@ -3,10 +3,10 @@ import { render, screen } from "@testing-library/react";
 import { SkillTag } from "@/components/atlas/SkillTag";
 
 describe("SkillTag", () => {
-  it("renders mono 11px text", () => {
+  it("renders mono text at the smallest scale step (--fs-1, 13px)", () => {
     render(<SkillTag skill="python" />);
     const el = screen.getByText("python");
-    expect(el).toHaveStyle({ "font-size": "11px" });
+    expect(el).toHaveStyle({ "font-size": "var(--fs-1)" });
     expect(el.tagName).toBe("SPAN");
   });
 

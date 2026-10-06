@@ -1,15 +1,15 @@
 .page { display: grid; gap: 20px; }
-.title { font-family: var(--font-display), system-ui, sans-serif; font-weight: 800; letter-spacing: -0.03em; font-size: 32px; line-height: 1.1; color: var(--ink); margin: 0; }
+.title { font-family: var(--font-display), system-ui, sans-serif; font-weight: 800; letter-spacing: -0.03em; font-size: var(--fs-5); line-height: 1.1; color: var(--ink); margin: 0; }
 .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg, 16px); padding: 18px 20px; display: grid; gap: 12px; overflow-x: auto; }
-.cardTitle { font-family: var(--font-display), system-ui, sans-serif; font-weight: 700; font-size: 16px; color: var(--ink); margin: 0; }
-.table { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+.cardTitle { font-family: var(--font-display), system-ui, sans-serif; font-weight: 700; font-size: var(--fs-2); color: var(--ink); margin: 0; }
+.table { width: 100%; border-collapse: collapse; font-size: var(--fs-2); font-variant-numeric: tabular-nums; }
 .table th, .table td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--line); color: var(--fg); white-space: nowrap; }
-.table thead th { font-family: var(--font-dm-mono), ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-3); font-weight: 500; }
+.table thead th { font-family: var(--font-dm-mono), ui-monospace, monospace; font-size: var(--fs-1); letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-3); font-weight: 500; }
 .table tbody th { font-weight: 600; color: var(--ink); }
 .list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
-.row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: var(--fs-2); }
 .row:last-child { border-bottom: 0; }
 .name { font-weight: 600; color: var(--ink); }
-.muted { color: var(--fg-2); font-size: 13px; margin: 0; }
-@media (max-width: 700px) { .title { font-size: 26px; } }
+.muted { color: var(--fg-2); font-size: var(--fs-1); margin: 0; }
+@media (max-width: 700px) { .title { font-size: var(--fs-4); } }

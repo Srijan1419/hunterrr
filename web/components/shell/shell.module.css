@@ -14,7 +14,7 @@
 }
 
 .topbarInner {
-  max-width: 1400px;
+  max-width: var(--content-max);
   margin: 0 auto;
   padding: 0 16px;
   min-height: 64px;
@@ -37,7 +37,7 @@
   z-index: 50;
   background: var(--accent);
   color: var(--accent-fg);
-  font-size: 14px;
+  font-size: var(--fs-2);
   font-weight: 600;
   padding: 8px 14px;
   border-radius: var(--r-sm);
@@ -62,7 +62,7 @@
   font-family: var(--font-display), system-ui, sans-serif;
   font-weight: 800;
   letter-spacing: -0.03em;
-  font-size: 20px;
+  font-size: var(--fs-3);
   color: var(--ink);
   line-height: 1;
 }
@@ -86,7 +86,7 @@
 
 .tab,
 .tabActive {
-  font-size: 14px;
+  font-size: var(--fs-2);
   line-height: 1.5;
   text-decoration: none;
   padding: 7px 14px;
@@ -146,7 +146,7 @@
   color: var(--fg-2);
   border: 1px solid var(--line);
   border-radius: var(--r-md);
-  font-size: 14px;
+  font-size: var(--fs-2);
   line-height: 1.5;
   padding: 7px 12px;
   cursor: pointer;
@@ -165,7 +165,7 @@
 
 .searchKbd {
   font-family: var(--font-dm-mono), ui-monospace, monospace;
-  font-size: 11px;
+  font-size: var(--fs-1);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   background: var(--surface);
@@ -196,7 +196,7 @@
 }
 
 .main {
-  max-width: 1400px;
+  max-width: var(--content-max);
   margin: 0 auto;
   padding: 32px 16px 48px;
   width: 100%;
@@ -207,7 +207,7 @@
   border-top: 1px solid var(--line);
   padding: 16px;
   text-align: center;
-  font-size: 12px;
+  font-size: var(--fs-1);
   color: var(--fg-3);
 }
 
@@ -233,7 +233,7 @@
 
 .paletteInput {
   width: 100%;
-  font-size: 14px;
+  font-size: var(--fs-2);
   line-height: 1.5;
   padding: 10px 12px;
   border-radius: var(--r-sm);
@@ -271,14 +271,14 @@
 }
 
 .paletteItemLabel {
-  font-size: 14px;
+  font-size: var(--fs-2);
   font-weight: 600;
   color: var(--ink);
   white-space: nowrap;
 }
 
 .paletteItemDescription {
-  font-size: 12px;
+  font-size: var(--fs-1);
   color: var(--fg-2);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -287,7 +287,7 @@
 
 .paletteEmpty {
   margin: 12px 4px 4px;
-  font-size: 14px;
+  font-size: var(--fs-2);
   color: var(--fg-2);
 }
 

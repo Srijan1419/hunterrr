@@ -1,58 +1,46 @@
 @import "tailwindcss";
 
 /*
-  Design tokens. The components use shadcn-style names (bg-card, text-muted-foreground,
-  bg-primary ...); Tailwind v4 only generates those classes if the colours are declared
-  here. Dark-first: a deep ink background, one electric accent (violet -> cyan).
+  ONE theme: Atlas. Older components use shadcn-style class names (bg-card,
+  text-muted-foreground, bg-primary ...); Tailwind v4 only generates those classes if the
+  colours are declared here, so those names are mapped onto the Atlas tokens below and
+  follow Atlas in light and dark. There is no second palette (the v1 violet is gone).
 */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--foreground);
-  --color-destructive: var(--destructive);
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--fg);
+  --color-muted: var(--surface-2);
+  --color-muted-foreground: var(--fg-3);
+  --color-border: var(--line);
+  --color-input: var(--line-strong);
+  --color-ring: var(--accent);
+  --color-primary: var(--accent);
+  --color-primary-foreground: var(--accent-fg);
+  --color-secondary: var(--surface-2);
+  --color-secondary-foreground: var(--fg);
+  --color-accent: var(--accent-soft);
+  --color-accent-foreground: var(--fg);
+  --color-destructive: var(--bad);
   --color-destructive-foreground: #ffffff;
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-dm-mono);
   --radius-lg: 0.75rem;
 }
 
 :root {
-  --background: #f7f7fb;
-  --foreground: #0d1020;
-  --card: #ffffff;
-  --muted: #eceef6;
-  --muted-foreground: #5b6178;
-  --border: #dfe2ee;
-  --input: #cfd3e4;
-  --ring: #7c5cff;
-  --primary: #6d4aff;
-  --primary-foreground: #ffffff;
-  --secondary: #eceef6;
-  --destructive: #e5484d;
-
-  /* Atlas tokens (light). Dark overrides live in the blocks below.
-     NOTE: Atlas redefines --accent as the product teal (#0B7A78); the old v1
-     violet accent is superseded by the spec. Every other v1 variable above is
-     kept so existing v1 class usage keeps working. */
+  /* Atlas tokens (light). Dark overrides live in the blocks below. */
   --bg: #F2F6F6;
   --surface: #FFFFFF;
   --surface-2: #E7EEEE;
   --line: #D5E0E0;
+  /* Borders that must be seen (inputs, focusable controls): at least 3:1 on bg and surface. */
+  --line-strong: #7A8E8F;
   --fg: #0E1A1B;
   --fg-2: #3D5557;
-  --fg-3: #5B7274;
+  /* 4.74:1 on surface-2, 5.1:1 on bg (was #5B7274, 4.35:1 on surface-2: an AA fail). */
+  --fg-3: #566C6E;
   --ink: #08292A;
   --accent: #0B7A78;
   --accent-fg: #FFFFFF;
@@ -75,24 +63,20 @@
   --dur-hover: 150ms;
   --dur-drawer: 200ms;
   --ease: cubic-bezier(.2,.7,.2,1);
+
+  /* Atlas type scale: 15px base x ~1.25, rounded. Nothing smaller than 13px anywhere;
+     13px is only for metadata (dates, counts, small labels). */
+  --fs-1: 13px;  /* meta, labels, chips */
+  --fs-2: 15px;  /* body and controls */
+  --fs-3: 19px;  /* card and section titles */
+  --fs-4: 24px;  /* page sub-heads, big numbers */
+  --fs-5: 30px;  /* page titles */
+
+  /* Content never spreads wider than this, even on very wide screens. */
+  --content-max: 1240px;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0b14;
-    --foreground: #eef0fb;
-    --card: #121425;
-    --muted: #1a1d33;
-    --muted-foreground: #9aa0bd;
-    --border: #23264080;
-    --input: #2a2e50;
-    --ring: #8b73ff;
-    --primary: #7c5cff;
-    --primary-foreground: #ffffff;
-    --secondary: #1a1d33;
-    --destructive: #f2555a;
-  }
-
   /* Atlas dark overrides (system preference, unless pinned to light). */
   :root:not([data-theme="light"]) {
     color-scheme: dark;
@@ -100,6 +84,7 @@
     --surface: #112022;
     --surface-2: #173033;
     --line: #21403F;
+    --line-strong: #4C7A78;
     --fg: #E6F2F1;
     --fg-2: #A5C4C2;
     --fg-3: #86A8A6;
@@ -122,6 +107,7 @@
   --surface: #112022;
   --surface-2: #173033;
   --line: #21403F;
+  --line-strong: #4C7A78;
   --fg: #E6F2F1;
   --fg-2: #A5C4C2;
   --fg-3: #86A8A6;
@@ -137,14 +123,14 @@
 }
 
 * {
-  border-color: var(--border);
+  border-color: var(--line);
 }
 
 body {
   background: var(--bg);
   color: var(--fg);
-  font-family: var(--font-body, var(--font-sans)), system-ui, sans-serif;
-  font-size: 14px;
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: var(--fs-2);
   line-height: 1.5;
   font-variant-numeric: tabular-nums;
 }

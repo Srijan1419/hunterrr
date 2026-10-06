@@ -78,8 +78,8 @@ describe("Atlas showcase", () => {
     }
     expect(screen.getAllByRole("button")).toHaveLength(2); // only the toggles
 
-    // SkillTag: mono 11px, matched filled with --accent.
-    expect(screen.getByText("python")).toHaveStyle({ "font-size": "11px" });
+    // SkillTag: mono at --fs-1 (13px), matched filled with --accent.
+    expect(screen.getByText("python")).toHaveStyle({ "font-size": "var(--fs-1)" });
     expect(screen.getByText("rust")).toHaveStyle({ background: "var(--accent)" });
 
     // ProvenanceChip: every source with its plain-words title.

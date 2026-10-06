@@ -14,7 +14,7 @@ export function ScoreBar({ label, points, max }: ScoreBarProps) {
 
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 12, width: "100%" }}>
-      <span style={{ fontSize: 14, color: "var(--fg)", minWidth: 0 }}>{label}</span>
+      <span style={{ fontSize: "var(--fs-2)", color: "var(--fg)", minWidth: 0 }}>{label}</span>
       <span
         role="presentation"
         style={{
@@ -40,7 +40,7 @@ export function ScoreBar({ label, points, max }: ScoreBarProps) {
       <span
         style={{
           fontFamily: "var(--font-dm-mono)",
-          fontSize: 12,
+          fontSize: "var(--fs-1)",
           color: "var(--fg-2)",
           fontVariantNumeric: "tabular-nums",
           whiteSpace: "nowrap",
