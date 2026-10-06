@@ -2,10 +2,15 @@
 
 **Live: https://hunterrr.vercel.app** · **Source: https://github.com/Srijan1419/hunterrr**
 
-**A remote job market intelligence dashboard.** A scheduled ETL pipeline pulls postings
-from public, no-login job feeds, normalizes and enriches them, and a public analytics
-site reports what it finds — including where the data itself is thin, because a
-dashboard that hides its own blind spots is worse than one that publishes them.
+**A personal job-hunting tool.** GitHub Actions collects postings from company job boards
+every few hours into Postgres (Neon), extracts structured fields with fixed rules first and
+AI only for what is still unknown, and a private web app (Next.js on Vercel, one Google
+account allowed) shows entry-level jobs ranked by fit with your profile, with an application
+tracker.
+
+> **Status (2026-10-06):** this README is mid-rewrite. The sections below describe the first
+> version, a public analytics dashboard on Turso, which has been retired. They stay as design
+> history until the portfolio rewrite replaces them.
 
 ## Why this project
 
@@ -103,35 +108,30 @@ cannot render on this site without stating how many postings are behind it):
 
 ## Running it locally
 
-**ETL** — Python 3.11+, no API key or network needed to run the test suite:
+**ETL** — Python 3.11+. The default test run needs no API key and no network:
 
 ```bash
-cd etl
-pip install -r requirements.txt
-pytest tests/ -v --no-header    # 655 tests, fully offline
+pip install -r etl/requirements.txt
+python -m pytest etl/tests -q -m "not live"
 ```
 
-Running the pipeline for real needs `NVIDIA_API_KEY` (skill extraction only — never used
-for country, pay, or seniority) and, to sync anywhere durable, `TURSO_DATABASE_URL` /
-`TURSO_AUTH_TOKEN`:
-
-```bash
-python -m etl.run_pipeline
-```
+The real runs are `python -m etl.run collect --shard 0/8`, `python -m etl.run process` and
+`python -m etl.run recheck`. They read `DATABASE_URL` (Postgres, schema `hunterrr`) and, for the
+AI extraction step, `NVIDIA_API_KEY` / `GROQ_API_KEY`. GitHub Actions runs them on a schedule
+(`collect.yml`, `process.yml`).
 
 **Web** — Node 22+:
 
 ```bash
 cd web
 npm install
-npm run typecheck && npm run test    # 145 tests, in-memory database, no live Turso needed
+npm run check      # typecheck + tests, in-memory Postgres, no live database needed
 npm run dev
 ```
 
-The web app falls back to a local SQLite file when `TURSO_DATABASE_URL` is unset, so
-`npm run build` and the full test suite never require live credentials either. A real
-deployment needs `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `BETTER_AUTH_SECRET`, and
-`BETTER_AUTH_URL` — see `web/.env.example` for the full list.
+A real deployment needs `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `ALLOWED_EMAIL`,
+`GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` (plus `GROQ_API_KEY` / `NVIDIA_API_KEY` for résumé
+reading) — see `web/.env.example`. This README is rewritten properly in the portfolio phase.
 
 ## Data sources and attribution
 

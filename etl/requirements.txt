@@ -15,11 +15,6 @@ sqlalchemy>=2.0
 # h2-03b: database access with psycopg 3
 psycopg[binary]>=3.2
 
-# No libSQL client library on purpose. `etl/sync_to_turso.py` talks to Turso's HTTP API
-# (`/v2/pipeline`) with the standard library: the `libsql-client` package it first used
-# was last released in 2023 and its batch requests are now rejected by Turso's server
-# (HTTP 400), which only a live run - never the mocked tests - could reveal.
-
 # Test dependencies. The ETL's whole reason for writing to a local SQLite file is that
 # `pytest` runs with no network and no API key (ADR-005), so these are the only things
 # needed to run the suite offline.
