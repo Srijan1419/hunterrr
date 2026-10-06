@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { JobRow } from "@/components/feed/JobRow";
+import { JobRow, initials } from "@/components/feed/JobRow";
 import type { FeedRow } from "@/lib/queries/feed";
 
 const base: FeedRow = {
@@ -33,5 +33,21 @@ describe("JobRow", () => {
     const apply = screen.getByRole("link", { name: "Apply to Backend Engineer" });
     expect(apply.getAttribute("href")).toBe("https://boards.greenhouse.io/acme/jobs/1");
     expect(apply.getAttribute("rel")).toContain("noopener");
+  });
+
+  it("marks the company with its initials, hidden from screen readers (the name is in the text)", () => {
+    const { container } = render(<ul><JobRow row={{ ...base, companyName: "Acme Corp" }} /></ul>);
+    const mark = container.querySelector('[aria-hidden="true"]');
+    expect(mark?.textContent).toBe("AC");
+  });
+});
+
+describe("initials", () => {
+  it("takes two letters, copes with one word, symbols and unknown companies", () => {
+    expect(initials("Acme Corp")).toBe("AC");
+    expect(initials("openai")).toBe("OP");
+    expect(initials("  Zensar  Technologies Ltd ")).toBe("ZT");
+    expect(initials("@#$")).toBe("?");
+    expect(initials(null)).toBe("?");
   });
 });

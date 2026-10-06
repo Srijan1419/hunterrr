@@ -7,6 +7,14 @@ import styles from "./feed.module.css";
 
 const REMOTE_LABEL = { remote: "Remote", hybrid: "Hybrid", onsite: "On-site" } as const;
 
+/** Up to two initials from the company name ("Acme Corp" -> "AC"); "?" when the company is unknown. */
+export function initials(name: string | null): string {
+  const words = (name ?? "").replace(/[^\p{L}\p{N}\s]/gu, " ").split(/\s+/).filter(Boolean);
+  if (words.length === 0) return "?";
+  const letters = words.length === 1 ? words[0].slice(0, 2) : words[0][0] + words[1][0];
+  return letters.toUpperCase();
+}
+
 /** One posting in the feed. Chips only appear for facts the posting states; nothing is guessed. */
 export function JobRow({ row, now, saved = false }: { row: FeedRow; now?: Date; saved?: boolean }) {
   const pay = formatPay(row);
@@ -16,6 +24,7 @@ export function JobRow({ row, now, saved = false }: { row: FeedRow; now?: Date; 
 
   return (
     <li className={styles.row}>
+      <span className={styles.mark} aria-hidden="true">{initials(row.companyName)}</span>
       <div className={styles.main}>
         <h2 className={styles.jobTitle}>
           <Link href={`/jobs/${row.id}`} className={styles.titleLink}>{row.title}</Link>
@@ -35,6 +44,7 @@ export function JobRow({ row, now, saved = false }: { row: FeedRow; now?: Date; 
       <div className={styles.side}>
         {pay ? <span className={styles.pay}>{pay}</span> : null}
         {posted ? <span className={styles.posted}>{posted}</span> : null}
+        <div className={styles.actions}>
         {row.applyUrl ? (
           <a
             className={styles.apply}
@@ -49,6 +59,7 @@ export function JobRow({ row, now, saved = false }: { row: FeedRow; now?: Date; 
           <span className={styles.noApply}>No apply link</span>
         )}
         <SaveButton postingId={row.id} saved={saved} />
+        </div>
       </div>
     </li>
   );

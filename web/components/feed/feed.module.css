@@ -10,8 +10,11 @@
 .select { height: 40px; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--r-md, 10px); background: var(--surface); color: var(--fg); font: inherit; font-size: var(--fs-2); }
 
 .list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-.row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 20px; align-items: center; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg, 16px); transition: border-color 150ms, transform 150ms; }
-.row:hover { border-color: var(--accent); }
+.row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px 16px; align-items: center; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg, 16px); box-shadow: 0 1px 0 rgb(255 255 255 / 0.04) inset; transition: border-color 150ms, box-shadow 150ms; }
+.row:hover { border-color: var(--line-strong); box-shadow: 0 1px 0 rgb(255 255 255 / 0.06) inset, 0 6px 18px -12px rgb(0 0 0 / 0.45); }
+/* Company mark: initials on the soft accent, one colour for every company (identity, not decoration). */
+.mark { width: 40px; height: 40px; border-radius: var(--r-sm, 8px); display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-family: var(--font-display), system-ui, sans-serif; font-weight: 700; font-size: var(--fs-2); letter-spacing: -0.02em; align-self: start; }
+.actions { display: flex; gap: 8px; align-items: center; }
 .main { min-width: 0; display: grid; gap: 6px; }
 .jobTitle { font-family: var(--font-display), system-ui, sans-serif; font-weight: 700; font-size: var(--fs-3); letter-spacing: -0.01em; color: var(--ink); margin: 0; overflow-wrap: anywhere; }
 .meta { font-size: var(--fs-1); color: var(--fg-2); display: flex; flex-wrap: wrap; gap: 4px 12px; }
@@ -34,8 +37,8 @@
 .empty strong { display: block; font-family: var(--font-display), system-ui, sans-serif; font-size: var(--fs-3); color: var(--ink); margin-bottom: 6px; }
 
 @media (max-width: 700px) {
-  .row { grid-template-columns: 1fr; }
-  .side { justify-items: start; text-align: left; grid-auto-flow: column; grid-auto-columns: max-content; align-items: center; gap: 12px; }
+  .row { grid-template-columns: auto minmax(0, 1fr); }
+  .side { grid-column: 1 / -1; justify-items: start; text-align: left; grid-auto-flow: column; grid-auto-columns: max-content; align-items: center; gap: 12px; }
   .title { font-size: var(--fs-4); }
 }
 @media (prefers-reduced-motion: reduce) {
