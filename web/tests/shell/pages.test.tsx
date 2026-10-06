@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
-import TodayPage from "@/app/(app)/today/page";
 import InboxPage from "@/app/(app)/inbox/page";
 import CompaniesPage from "@/app/(app)/companies/page";
 import ProfilePage from "@/app/(app)/profile/page";
@@ -10,12 +9,6 @@ const PAGES: Array<{
   Page: () => React.JSX.Element;
   sentence: string;
 }> = [
-  {
-    name: "Today",
-    Page: TodayPage,
-    sentence:
-      "Your matches, replies and follow-ups will appear here once the first collection has run.",
-  },
   {
     name: "Inbox",
     Page: InboxPage,
@@ -34,6 +27,7 @@ const PAGES: Array<{
   },
 ];
 
+// Today is a real screen now (tests/today); these three are still placeholders.
 describe("empty-state pages", () => {
   for (const { name, Page, sentence } of PAGES) {
     it(`${name} renders its heading and its exact empty-state sentence`, () => {

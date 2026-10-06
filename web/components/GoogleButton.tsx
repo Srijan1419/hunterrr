@@ -21,7 +21,7 @@ export function GoogleButton() {
     setPending(true);
     setFailed(false);
     try {
-      const result = await authClient.signIn.social({ provider: "google", callbackURL: "/jobs" });
+      const result = await authClient.signIn.social({ provider: "google", callbackURL: "/today" });
       if (result?.error) throw new Error(result.error.message);
     } catch {
       setPending(false);

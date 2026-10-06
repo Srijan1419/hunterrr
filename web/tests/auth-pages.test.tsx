@@ -26,7 +26,7 @@ describe("sign-in page", () => {
     social.mockRejectedValueOnce(new Error("offline"));
     render(<SigninPage />);
     fireEvent.click(screen.getByRole("button", { name: /Continue with Google/ }));
-    expect(social).toHaveBeenCalledWith({ provider: "google", callbackURL: "/jobs" });
+    expect(social).toHaveBeenCalledWith({ provider: "google", callbackURL: "/today" });
     await waitFor(() => expect(screen.getByRole("alert").textContent).toMatch(/Could not reach Google/));
     expect((screen.getByRole("button", { name: /Continue with Google/ }) as HTMLButtonElement).disabled).toBe(false);
   });

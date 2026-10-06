@@ -64,6 +64,11 @@ function likePattern(q: string): string {
   return "%" + q.replace(/[\\%_]/g, (c) => "\\" + c) + "%";
 }
 
+/** The columns `toRow` reads (posting `p`, company `c`). */
+export const FEED_COLUMNS = sql`p.id, p.title, c.name AS company_name, p.source, p.locations, p.remote_type,
+  p.eligibility_scope, p.eligible_countries, p.pay_min, p.pay_max, p.pay_currency, p.pay_period,
+  p.pay_provenance, p.posted_at, p.apply_url_raw, p.seniority`;
+
 /**
  * Entry level = the posting SAYS so: an intern/entry seniority (from the title: intern, junior,
  * associate, fresher, new grad), or no seniority and stated experience that a fresher meets
@@ -71,7 +76,7 @@ function likePattern(q: string): string {
  * pass, whatever the years say. A posting that states nothing is not guessed into the list; the
  * page counts those separately.
  */
-const ENTRY_LEVEL = sql`(p.seniority IN ('intern', 'entry')
+export const ENTRY_LEVEL = sql`(p.seniority IN ('intern', 'entry')
   OR (p.seniority IS NULL AND (p.experience_min_years <= 1 OR p.experience_max_years <= 2)))`;
 const LEVEL_UNSTATED = sql`(p.seniority IS NULL AND p.experience_min_years IS NULL AND p.experience_max_years IS NULL)`;
 
@@ -132,7 +137,7 @@ export function safeHttpUrl(value: unknown): string | null {
   }
 }
 
-function toRow(r: Record<string, unknown>): FeedRow {
+export function toRow(r: Record<string, unknown>): FeedRow {
   const posted = r.posted_at;
   return {
     id: Number(r.id),
@@ -175,9 +180,7 @@ export async function queryFeed(db: FeedDb, filters: FeedFilters = {}): Promise<
   const page = Math.min(requested, pages); // ?page=9999 shows the last page, not an empty one
   const offset = (page - 1) * FEED_PAGE_SIZE;
   const list = await db.execute(sql`
-    SELECT p.id, p.title, c.name AS company_name, p.source, p.locations, p.remote_type,
-           p.eligibility_scope, p.eligible_countries, p.pay_min, p.pay_max, p.pay_currency, p.pay_period,
-           p.pay_provenance, p.posted_at, p.apply_url_raw, p.seniority
+    SELECT ${FEED_COLUMNS}
     FROM hunterrr.postings p
     LEFT JOIN hunterrr.companies c ON c.id = p.company_id
     WHERE ${where}

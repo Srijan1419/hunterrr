@@ -206,6 +206,15 @@ export async function applicationHistory(db: TrackerTx, id: number): Promise<App
   }));
 }
 
+/** Open applications whose follow-up date is before `before` (overdue or due today), soonest first. */
+export async function followUpsDue(db: TrackerTx, before: Date): Promise<TrackedApplication[]> {
+  const res = await db.execute(sql`${SELECT}
+    WHERE a.next_action_at IS NOT NULL AND a.next_action_at < ${before.toISOString()}
+      AND a.current_state IN (${sql.join(OPEN_STATES.map((s) => sql`${s}`), sql`, `)})
+    ORDER BY a.next_action_at ASC, a.id ASC`);
+  return res.rows.map(toApplication);
+}
+
 /** Postings the user already saved, for marking "Saved" in the feed. */
 export async function savedPostingIds(db: TrackerTx, postingIds: number[]): Promise<Set<number>> {
   if (postingIds.length === 0) return new Set();
