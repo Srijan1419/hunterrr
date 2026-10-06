@@ -51,6 +51,34 @@ _AUTH = [
 ]
 
 
+# A requirement that is negated is no requirement: "No security clearance required", "You do not need
+# to be a US citizen", "US work authorization is not required".
+_NEG_BEFORE = re.compile(
+    r"(?:\bno\b|\bnot\b|\bnever\b|\bwithout\b|\bdon't\b|\bdo\s+not\b|\bdoesn't\b|\bdoes\s+not\b|"
+    r"\bisn't\b|\bneedn't\b|\bno\s+need\s+(?:to\s+be|for)\b)[^.;!?\n]{0,30}$", _I)
+_NEG_AFTER = re.compile(
+    r"^[^.;!?\n]{0,25}\b(?:is\s+|are\s+)?(?:not|never)\s+(?:required|needed|necessary|a\s+requirement|mandatory)\b"
+    r"|^[^.;!?\n]{0,25}\b(?:isn't|aren't)\s+(?:required|needed|necessary)\b"
+    r"|^\s*(?:is\s+)?optional\b", _I)
+
+
+# "Candidates who are not authorized to work in the US will not be considered" still requires it.
+_CONDITION_BEFORE = re.compile(r"\b(?:who|that|if\s+you|applicants?|candidates?)\s+(?:are|is|do|does)\s+not\b[^.;!?\n]{0,30}$", _I)
+
+
+def _negated(text: str, m: re.Match) -> bool:
+    if _CONDITION_BEFORE.search(text[max(0, m.start() - 40):m.start()]):
+        return False
+    return bool(_NEG_BEFORE.search(text[max(0, m.start() - 40):m.start()]) or _NEG_AFTER.search(text[m.end():m.end() + 45]))
+
+
+def _first_affirmed(pattern: re.Pattern, text: str) -> re.Match | None:
+    for m in pattern.finditer(text):
+        if not _negated(text, m):
+            return m
+    return None
+
+
 def _unknown() -> Field:
     return Field(value=None, provenance="unknown", evidence=None)
 
@@ -84,12 +112,17 @@ def parse_workauth(text: Any, ctx: ParseContext | None = None) -> tuple[Field, F
     found: list[str] = []
     first_span: str | None = None
     for label, pattern in _AUTH:
-        m = pattern.search(capped)
+        m = _first_affirmed(pattern, capped)
         if m:
             found.append(label)
             if first_span is None:
                 first_span = m.group(0)
     # "US citizens only" also implies us_work_authorization.
+    # "Indian citizens only" is not a bar for an Indian: name the country instead of the generic label.
+    if "citizenship" in found and re.search(r"\bindian?\s+(?:citizens?|nationals?)\s+only\b", capped, _I):
+        found.remove("citizenship")
+        if "india_work_permit" not in found:
+            found.append("india_work_permit")
     if "citizenship" in found and re.search(r"\b(?:us|u\.s\.)\s+citizens?\s+only\b", capped, _I):
         if "us_work_authorization" not in found:
             found.insert(0, "us_work_authorization")

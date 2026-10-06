@@ -104,6 +104,18 @@ _REGION_ALTS = "|".join(re.escape(k) for k in sorted(_REGION_KEYWORDS.keys(), ke
 _REGION_PATTERN = re.compile(r"\b(" + _REGION_ALTS + r")\b", re.IGNORECASE)
 
 
+_WORLDWIDE_EXCEPTION = re.compile(
+    r"\b(?:except|excluding|exclude[sd]?|other\s+than|apart\s+from|with\s+the\s+exception\s+of|but\s+not|"
+    r"not\s+(?:in|from|available\s+in)|outside\s+of)\b", re.IGNORECASE)
+
+
+def _sentence_after(text: str, pos: int, limit: int = 120) -> str:
+    """The rest of the sentence that starts the worldwide claim (up to `limit` characters)."""
+    tail = text[pos:pos + limit]
+    end = re.search(r"[.;!?\n]", tail)
+    return tail[: end.start()] if end else tail
+
+
 _UPPER_TOKEN = re.compile(r"\b(?:US|USA|UK)\b")  # case-sensitive on purpose
 
 
@@ -130,6 +142,12 @@ def parse_eligibility(text: Any, ctx: ParseContext | None = None) -> tuple[Field
     worldwide_match = _WORLDWIDE_PATTERNS.search(capped)
     if worldwide_match is None and len(capped) <= 60:
         worldwide_match = _WORLDWIDE_BARE.match(capped.strip())
+    # "We hire globally, except in India" is not worldwide: an exception in the same sentence means the
+    # real list is unknown, so nothing is claimed (precision first: a wrong "worldwide" shows a job to
+    # people who cannot take it).
+    if worldwide_match and _WORLDWIDE_EXCEPTION.search(_sentence_after(capped, worldwide_match.end())):
+        # never fall through to the country scan: "except in India" would read as a list naming India
+        return _unknown(), _unknown()
     if worldwide_match:
         evidence = worldwide_match.group(0).strip()
         if len(evidence) > MAX_EVIDENCE:

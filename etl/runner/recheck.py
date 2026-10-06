@@ -45,6 +45,7 @@ _KEYS: dict[str, Any] = {
     "locations": _json_field,
     "eligible_countries": _text_list,
     "eligibility_scope": lambda f: _enum(f, ELIGIBILITY_SCOPES),
+    "work_auth_required": _text_list,
 }
 
 _SELECT = text(
@@ -59,6 +60,7 @@ _CASTS = {
     "eligibility_scope": "hunterrr.eligibility_scope",
     "locations": "jsonb",
     "eligible_countries": "text[]",
+    "work_auth_required": "text[]",
 }
 _UPDATE = text(
     "UPDATE hunterrr.postings SET "
