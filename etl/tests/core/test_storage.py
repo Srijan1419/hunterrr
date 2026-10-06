@@ -347,3 +347,41 @@ async def test_asset_uploads_go_to_the_uploads_host_and_everything_else_to_the_a
     assert refs
     posts = [s for s in seen if s[0] == "POST"]
     assert posts and all(host == "uploads.github.com" for _, host, _ in posts)
+
+
+
+from etl.core.storage import _is_duplicate_asset
+
+
+def test_the_duplicate_asset_check_knows_githubs_real_error_body_and_the_old_wording():
+    real = b'{"message":"Validation Failed","errors":[{"resource":"ReleaseAsset","code":"already_exists","field":"name"}],"documentation_url":"https://docs.github.com"}'
+    assert _is_duplicate_asset(real)
+    assert _is_duplicate_asset(b'{"message": "asset already exists"}')
+    assert _is_duplicate_asset(b'{"message": "Asset Already Exists"}')
+    # other 422s (a bad name, a size limit) are not duplicates and must still fail loudly
+    assert not _is_duplicate_asset(b'{"message":"Validation Failed","errors":[{"resource":"ReleaseAsset","code":"invalid","field":"name"}]}')
+    assert not _is_duplicate_asset(b"")
+    assert not _is_duplicate_asset(bytes([0xFF, 0xFE]) + b" not text")
+
+
+async def test_a_second_upload_of_the_same_name_retries_with_githubs_real_422_body():
+    calls = []
+    attempt = {"n": 0}
+
+    def handler(request):
+        calls.append(request.method)
+        if request.url.path.endswith("/releases/tags/raw-2026-10-03"):
+            return httpx.Response(200, json={"id": 789, "tag_name": "raw-2026-10-03"})
+        if request.url.path.endswith("/releases/789/assets"):
+            attempt["n"] += 1
+            if attempt["n"] == 1:
+                return httpx.Response(422, json={"message": "Validation Failed", "errors": [
+                    {"resource": "ReleaseAsset", "code": "already_exists", "field": "name"}]})
+            return httpx.Response(201, json={"name": "shard-1-1.jsonl.gz"})
+        return httpx.Response(404)
+
+    http, _ = make_http_client(handler)
+    archive = GithubReleaseArchive("owner/repo", "token", http)
+    with _FixedDate(__import__("datetime").date(2026, 10, 3)):
+        refs = await archive.put("shard-1", [b'{"id": 1}'])
+    assert attempt["n"] == 2 and len(refs) == 1

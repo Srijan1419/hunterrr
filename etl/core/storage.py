@@ -19,6 +19,18 @@ from typing import Any, Iterable, Protocol
 from etl.core.http import HttpClient, HttpError
 
 
+def _is_duplicate_asset(body: bytes) -> bool:
+    """GitHub's answer to an upload whose file name is taken.
+
+    The real body is `{"message":"Validation Failed","errors":[{"resource":"ReleaseAsset",
+    "code":"already_exists","field":"name"}]}` (code with an underscore); older and mocked bodies
+    say "asset already exists" (with a space). Both mean: pick another name and retry. Matching only
+    the spaced form made every second collect of the same day fail to archive (found 2026-10-06).
+    """
+    text = body.decode("utf-8", "replace").lower()
+    return "already_exists" in text or "already exists" in text
+
+
 class ArchiveError(Exception):
     """Raised when an archive operation fails irrecoverably."""
 
@@ -193,7 +205,7 @@ class GithubReleaseArchive:
                         for i in range(len(records_list))
                     ]
                     return refs
-                elif status == 422 and "already exists" in body.decode():
+                elif status == 422 and _is_duplicate_asset(body):
                     # Duplicate asset name - add suffix and retry
                     asset_name = f"{safe_label}-{int(time.time() * 1000)}.jsonl.gz"
                     continue
