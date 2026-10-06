@@ -75,6 +75,10 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
         <div className={styles.empty}>
           <strong>Nothing matches these filters</strong>
           Try removing a filter, or wait for the next collection run.
+          <div className={styles.emptyActions}>
+            {filters.entryLevel ? <a href={pageHref({ ...params, level: "all" }, 1)}>Show all levels</a> : null}
+            <a href="?">Clear all filters</a>
+          </div>
         </div>
       ) : (
         <ul className={styles.list}>

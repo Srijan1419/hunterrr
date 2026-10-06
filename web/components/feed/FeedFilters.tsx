@@ -38,6 +38,9 @@ export function FeedFilters() {
     push((n) => (on ? n.set(key, value) : n.delete(key)));
   }
 
+  // Anything that narrows the list beyond the defaults (entry level on, newest-or-best sorting).
+  const active = ["q", "remote", "pay", "days", "country"].some((k) => params.get(k)) || params.get("level") === "all";
+
   function submit(e: FormEvent) {
     e.preventDefault();
     push((n) => (q.trim() ? n.set("q", q.trim()) : n.delete("q")));
@@ -74,6 +77,11 @@ export function FeedFilters() {
           </option>
         ))}
       </select>
+      {active ? (
+        <button type="button" className={styles.clear} onClick={() => router.replace("?", { scroll: false })}>
+          Clear filters
+        </button>
+      ) : null}
     </form>
   );
 }
