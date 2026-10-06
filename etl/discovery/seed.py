@@ -19,11 +19,14 @@ from typing import Any, Iterable
 
 import yaml
 from sqlalchemy import text
+from urllib.parse import urlparse
 
 from etl.core.db import session_scope
 
 #: Job-board systems the collector can read today (the `ats` enum has more; they are not wired yet).
-SUPPORTED_ATS = ("greenhouse", "lever", "ashby", "workable", "recruitee", "smartrecruiters")
+SUPPORTED_ATS = ("greenhouse", "lever", "ashby", "workable", "recruitee", "smartrecruiters", "careerpage")
+#: "careerpage" is a company's own careers page (no job-board system): it needs a `url`, and is stored as ats `other`.
+CAREER_PAGE = "careerpage"
 _SLUG = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$")
 _BOARD_URL = {
     "greenhouse": "https://boards.greenhouse.io/{slug}",
@@ -45,6 +48,7 @@ class Entry:
     name: str
     ats: str
     slug: str
+    url: str | None = None  # only for ats "careerpage"
 
 
 @dataclass
@@ -76,18 +80,26 @@ def parse_entries(data: Any) -> list[Entry]:
         name = str(raw.get("name") or "").strip()
         ats = str(raw.get("ats") or "").strip().lower()
         slug = str(raw.get("slug") or "").strip()
+        url = str(raw.get("url") or "").strip() or None
         label = name or f"entry {i}"
         if not name or len(name) > 120:
             raise SeedError(f"entry {i}: name is required (at most 120 characters)")
         if ats not in SUPPORTED_ATS:
             raise SeedError(f"{label}: ats must be one of {', '.join(SUPPORTED_ATS)} (got {ats or 'nothing'})")
+        if ats == CAREER_PAGE:
+            parts = urlparse(url or "")
+            if parts.scheme != "https" or not parts.netloc or len(url or "") > 300:
+                raise SeedError(f"{label}: a careerpage entry needs an https url to the careers page")
+            slug = slug or normalize_company(name)  # one careers page per company unless a slug says otherwise
+        else:
+            url = None
         if not _SLUG.match(slug):
             raise SeedError(f"{label}: slug {slug!r} is not a valid board slug")
         key = (ats, slug.lower())
         if key in seen:
             raise SeedError(f"{label}: {ats}/{slug} is listed twice")
         seen.add(key)
-        out.append(Entry(name=name, ats=ats, slug=slug))
+        out.append(Entry(name=name, ats=ats, slug=slug, url=url))
     return out
 
 
@@ -107,9 +119,10 @@ def sync(engine, entries: Iterable[Entry]) -> SeedResult:
     with session_scope(engine) as conn:
         for e in entries:
             result.entries += 1
+            db_ats = "other" if e.ats == CAREER_PAGE else e.ats  # the ats enum has no value for a bare careers page
             exists = conn.execute(
                 text("SELECT 1 FROM hunterrr.boards WHERE ats = CAST(:ats AS hunterrr.ats) AND lower(slug) = lower(:slug)"),
-                {"ats": e.ats, "slug": e.slug},
+                {"ats": db_ats, "slug": e.slug},
             ).first()
             if exists:
                 result.boards_existing += 1
@@ -130,7 +143,8 @@ def sync(engine, entries: Iterable[Entry]) -> SeedResult:
                     "INSERT INTO hunterrr.boards (company_id, ats, slug, url) "
                     "VALUES (:cid, CAST(:ats AS hunterrr.ats), :slug, :url) ON CONFLICT (ats, slug) DO NOTHING"
                 ),
-                {"cid": company_id, "ats": e.ats, "slug": e.slug, "url": _BOARD_URL[e.ats].format(slug=e.slug)},
+                {"cid": company_id, "ats": db_ats, "slug": e.slug,
+                 "url": e.url if e.ats == CAREER_PAGE else _BOARD_URL[e.ats].format(slug=e.slug)},
             )
             result.boards_added += 1
             result.added.append(f"{e.name} ({e.ats}/{e.slug})")

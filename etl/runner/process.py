@@ -276,7 +276,9 @@ _PENDING_SQL = text(
     "SELECT r.id, r.source, r.source_key, r.url, r.content_type, r.content_hash, r.clean_text_gz, "
     "b.id AS board_id, b.company_id AS company_id "
     "FROM hunterrr.raw_documents r "
-    "LEFT JOIN hunterrr.boards b ON b.ats::text = r.source AND b.slug = (r.fetch_meta->>'slug') "
+    # career-page boards are stored with ats 'other' (there is no job-board system); their documents say 'careerpage'
+    "LEFT JOIN hunterrr.boards b ON (b.ats::text = r.source OR (r.source = 'careerpage' AND b.ats::text = 'other')) "
+    "AND b.slug = (r.fetch_meta->>'slug') "
     "WHERE r.clean_text_gz IS NOT NULL AND r.id > :after "
     "ORDER BY r.id LIMIT :n"
 )

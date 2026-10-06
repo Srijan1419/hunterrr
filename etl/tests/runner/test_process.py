@@ -416,3 +416,28 @@ def test_the_ai_rung_stops_asking_once_most_of_the_time_budget_is_spent(db, monk
     res = P.process(db, now=NOW, release_connections=False, llm_router=router, llm_budget=10,
                     llm_pace_seconds=0, max_seconds=100)
     assert res.written == 4 and router.calls == 2  # 0 s and 40 s are inside 60% of 100; 80 s is not
+
+
+@pg
+def test_a_career_page_posting_is_linked_to_its_board_and_company(db):
+    """Career-page boards are stored as ats 'other' while their documents say 'careerpage'; the link is what lets liveness close them."""
+    from etl.sources.careerpage.source import _ld_document, posting_key
+
+    bid, cid = seed_board(db, "other", "acme")
+    ld = {"title": "Data Analyst Intern", "identifier": {"value": "A-1"}, "datePosted": "2026-10-01",
+          "description": "<p>SQL and Python.</p>", "hiringOrganization": {"name": "Acme"}}
+    key = posting_key("acme", ld, "https://acme.example/careers")
+    body = _ld_document(ld)
+    with session_scope(db) as conn:
+        conn.execute(text(
+            "INSERT INTO hunterrr.raw_documents (source, source_key, url, fetched_at, http_status, content_type, content_hash, "
+            "fetch_meta, clean_text_gz) VALUES ('careerpage', :k, 'https://acme.example/careers', :t, 200, 'text/html', :h, "
+            "CAST(:m AS jsonb), :b)"),
+            {"k": key, "t": NOW, "h": content_hash(body), "m": json.dumps({"slug": "acme"}), "b": gzip.compress(body)})
+    res = P.process(db, now=NOW, release_connections=False)
+    assert res.written == 1 and res.failed == 0
+    assert scalar(db, f"SELECT board_id FROM hunterrr.postings") == bid
+    assert scalar(db, "SELECT company_id FROM hunterrr.postings") == cid
+    assert scalar(db, "SELECT title FROM hunterrr.postings") == "Data Analyst Intern"
+    assert scalar(db, "SELECT seniority FROM hunterrr.postings") == "intern"
+    assert scalar(db, "SELECT source_id FROM hunterrr.postings") == key.split("/", 1)[1]  # the id liveness compares against

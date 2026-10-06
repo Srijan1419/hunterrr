@@ -46,7 +46,7 @@ def test_the_shipped_company_list_is_valid_and_has_no_duplicates():
     entries = load_entries(ROOT / "config" / "companies.yaml")
     assert len(entries) >= 40
     assert len({(e.ats, e.slug.lower()) for e in entries}) == len(entries)
-    assert {e.ats for e in entries} <= {"greenhouse", "lever", "ashby", "workable", "recruitee", "smartrecruiters"}
+    assert {e.ats for e in entries} <= {"greenhouse", "lever", "ashby", "workable", "recruitee", "smartrecruiters", "careerpage"}
 
 
 def test_a_missing_or_broken_file_is_a_clear_error(tmp_path):
@@ -56,6 +56,18 @@ def test_a_missing_or_broken_file_is_a_clear_error(tmp_path):
     bad.write_text("companies: [unclosed", encoding="utf-8")
     with pytest.raises(SeedError, match="not valid YAML"):
         load_entries(bad)
+
+
+# ---- career pages ------------------------------------------------------------------------------
+def test_a_career_page_entry_needs_an_https_url_and_gets_a_slug_from_its_name():
+    (e,) = parse_entries({"companies": [{"name": "GemPages", "ats": "careerpage", "url": "https://gempages.com/careers"}]})
+    assert (e.ats, e.slug, e.url) == ("careerpage", "gempages", "https://gempages.com/careers")
+    for bad in (None, "", "http://gempages.com/careers", "gempages.com/careers", "https://", "ftp://x/careers"):
+        with pytest.raises(SeedError, match="needs an https url"):
+            parse_entries({"companies": [{"name": "GemPages", "ats": "careerpage", "url": bad}]})
+    # a url on a job-board entry is ignored, never stored
+    (g,) = parse_entries({"companies": [{"name": "Acme", "ats": "greenhouse", "slug": "acme", "url": "https://evil.example"}]})
+    assert g.url is None
 
 
 # ---- database ---------------------------------------------------------------------------------
@@ -103,6 +115,17 @@ def test_an_existing_company_gets_the_new_board_and_an_existing_board_is_untouch
     assert count(db, "SELECT count(*) FROM hunterrr.companies") == 1
     assert count(db, "SELECT status::text FROM hunterrr.boards WHERE slug = 'acme'") == "dead"  # history kept
     assert count(db, "SELECT consecutive_failures FROM hunterrr.boards WHERE slug = 'acme'") == 9
+
+
+@pg
+def test_a_career_page_is_stored_as_other_with_its_own_url(db):
+    entries = parse_entries({"companies": [{"name": "GemPages", "ats": "careerpage", "url": "https://gempages.com/careers"}]})
+    r = sync(db, entries)
+    assert (r.companies_added, r.boards_added) == (1, 1)
+    with session_scope(db) as conn:
+        row = conn.execute(text("SELECT ats::text, slug, url FROM hunterrr.boards")).one()
+    assert tuple(row) == ("other", "gempages", "https://gempages.com/careers")
+    assert sync(db, entries).boards_existing == 1  # idempotent
 
 
 @pg

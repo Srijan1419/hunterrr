@@ -6,6 +6,7 @@ from etl.sources.ats.lever import LeverSource
 from etl.sources.ats.recruitee import RecruiteeSource
 from etl.sources.ats.smartrecruiters import SmartRecruitersSource
 from etl.sources.ats.workable import WorkableSource
+from etl.sources.careerpage import CareerPageSource
 
 
 def get_sources() -> list:
@@ -13,4 +14,5 @@ def get_sources() -> list:
     return [
         GreenhouseSource(), LeverSource(), AshbySource(),
         WorkableSource(), RecruiteeSource(), SmartRecruitersSource(),
+        CareerPageSource(),
     ]

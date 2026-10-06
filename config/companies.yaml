@@ -80,3 +80,9 @@ companies:
   - {name: Buffer,       ats: ashby,           slug: buffer}       # 1 job, remote
   - {name: Canva,        ats: smartrecruiters, slug: canva}        # 100+ jobs (read 100 per page)
   - {name: BigCommerce,  ats: smartrecruiters, slug: bigcommerce}  # 2 jobs
+
+  # Companies with their OWN careers page (no Greenhouse/Lever/... behind it). `ats: careerpage` needs a `url`.
+  # The page is read for schema.org JobPosting data (robots.txt respected, one level of job links).
+  # A JavaScript-rendered page with no such data shows as "needs a look" on the Sources page until the
+  # browser-rendering step exists (task dq-21); nothing is stored for it and nothing is closed.
+  - {name: GemPages, ats: careerpage, url: "https://gempages.com/careers"}   # JavaScript page (checked 2026-10-06)

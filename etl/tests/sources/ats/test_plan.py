@@ -78,7 +78,7 @@ def planned(engine, source, shard):
 
 def test_registry_returns_every_source_with_the_right_names():
     sources = get_sources()
-    assert [s.name for s in sources] == ["greenhouse", "lever", "ashby", "workable", "recruitee", "smartrecruiters"]
+    assert [s.name for s in sources] == ["greenhouse", "lever", "ashby", "workable", "recruitee", "smartrecruiters", "careerpage"]
     assert any(isinstance(s, GreenhouseSource) for s in sources)
     assert any(isinstance(s, LeverSource) for s in sources)
     assert any(isinstance(s, AshbySource) for s in sources)
