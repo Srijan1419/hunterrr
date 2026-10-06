@@ -10,6 +10,7 @@ import { PostingFacts } from "@/components/feed/PostingFacts";
 import styles from "@/components/feed/detail.module.css";
 import { db } from "@/lib/db/client.v2";
 import { SaveButton } from "@/components/tracker/SaveButton";
+import { WrongButton } from "@/components/feed/WrongButton";
 import { formatEligibility, formatLocation, formatPay } from "@/lib/feed-format";
 import { scoreMatch } from "@/lib/match/score";
 import { getActiveProfile } from "@/lib/queries/profile";
@@ -78,6 +79,7 @@ export default async function JobDetailPage({ params }: { params: Params }) {
             <span className={styles.noApply}>No apply link was found for this posting.</span>
           )}
           <SaveButton postingId={posting.id} saved={saved} />
+          <WrongButton postingId={posting.id} />
         </div>
       </header>
       <div className={styles.layout}>
