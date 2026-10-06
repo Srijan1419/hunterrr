@@ -60,7 +60,7 @@ export default function SignupPage() {
         return;
       }
 
-      window.location.href = "/dashboard";
+      window.location.href = "/jobs";
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");
     } finally {
