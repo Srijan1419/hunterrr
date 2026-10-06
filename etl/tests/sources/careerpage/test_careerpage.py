@@ -231,3 +231,20 @@ def test_plan_returns_due_career_page_boards_with_their_own_url(engine):
         conn.execute(text("UPDATE hunterrr.boards SET last_polled_at = now() WHERE slug = 'gempages'"))
     with session_scope(engine) as conn:
         assert CareerPageSource().plan(conn, Shard(0, 1)) == []  # polled just now: not due yet
+
+
+# ---- a wrong address: parked domains -------------------------------------------------------------------
+@pytest.mark.parametrize("html", [
+    '<html><script src="https://assets.abovedomains.com/javascript/forsale.min.js?d=example.com"></script></html>',
+    "<html><body><h1>This domain is for sale</h1></body></html>",
+    "<html><body>Buy this domain today</body></html>",
+    "<html><body>Sedoparking</body></html>",
+])
+async def test_a_parked_domain_is_a_dead_board_not_a_careers_page(html):
+    res, _ = await run({"/careers": html})
+    assert res.status == "dead" and res.documents == [] and res.posting_ids is None
+
+
+async def test_a_real_careers_page_that_mentions_sale_is_not_mistaken_for_parking():
+    res, _ = await run({"/careers": page(job_ld("Sales Associate (retail sale of domains)", ident="1"))})
+    assert res.status == "ok"

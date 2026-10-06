@@ -97,8 +97,9 @@ companies:
   - {name: Crisp,          ats: ashby,      slug: crisp}           # 30 jobs
   - {name: Thinkific,      ats: ashby,      slug: thinkific}       # 1 job, remote
 
-  # Companies with their OWN careers page (no Greenhouse/Lever/... behind it). `ats: careerpage` needs a `url`.
-  # The page is read for schema.org JobPosting data (robots.txt respected, one level of job links).
-  # A JavaScript-rendered page with no such data shows as "needs a look" on the Sources page until the
-  # browser-rendering step exists (task dq-21); nothing is stored for it and nothing is closed.
-  - {name: GemPages, ats: careerpage, url: "https://gempages.com/careers"}   # JavaScript page (checked 2026-10-06)
+  # Companies with their OWN careers page (no Greenhouse/Lever/... behind it). `ats: careerpage` needs a `url`;
+  # the page is read for schema.org JobPosting data (robots.txt respected, one level of job links).
+  # Add one like this when you have the real careers URL:
+  #   - {name: Example Co, ats: careerpage, url: "https://example.com/careers"}
+  # (GemPages was tried and removed: gempages.com is a parked "for sale" page and gempages.net shows no
+  # careers link in its static HTML. Send the real careers URL and it goes here.)

@@ -42,6 +42,12 @@ _JOB_PATH = re.compile(r"/(?:jobs?|careers?|positions?|openings?|vacanc(?:y|ies)
 _SKIP_PATH = re.compile(r"/(?:saved|login|sign-?in|account|search|alerts?|talent-?community|benefits|culture|life-?at)\b", re.I)
 _ASSET = re.compile(r"\.(?:png|jpe?g|gif|svg|webp|pdf|css|js|ico|zip|xml|json)$", re.I)
 UA_NOTE = "careerpage"
+#: A parked domain ("this domain is for sale") is not a careers page: the address is wrong, the board is dead.
+_PARKED = re.compile(
+    r"domain\s+(?:name\s+)?(?:is|may\s+be)\s+for\s+sale|buy\s+this\s+domain|forsale\.min\.js|"
+    r"sedoparking|parkingcrew|domain\s+parking|this\s+domain\s+is\s+parked",
+    re.IGNORECASE,
+)
 
 
 class _Links(HTMLParser):
@@ -174,6 +180,8 @@ class CareerPageSource:
             if code is None:
                 return FetchResult(documents=[], status=str(html), posting_ids=None)  # type: ignore[arg-type]
 
+            if _PARKED.search(html[:200_000]):
+                return FetchResult(documents=[], status="dead", posting_ids=None)
             found: list[tuple[dict, str]] = [(p, board_url) for p in find_job_postings(html)]
             if not found:
                 links = job_links(board_url, html)
