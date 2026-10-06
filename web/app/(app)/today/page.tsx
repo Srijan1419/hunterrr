@@ -44,7 +44,7 @@ export default async function TodayPage() {
     data.newJobsCount === 0 && due === 0
       ? "Nothing needs you right now. New jobs arrive with each collection run, every few hours."
       : [
-          data.newJobsCount > 0 ? `${plural(data.newJobsCount, "new entry-level job", "new entry-level jobs")} in the last 24 hours` : null,
+          data.newJobsCount > 0 ? `${plural(data.newJobsCount, "new remote entry-level job", "new remote entry-level jobs")} in the last 24 hours` : null,
           due > 0 ? `${plural(due, "follow-up", "follow-ups")} due` : null,
         ].filter(Boolean).join(" · ") + ".";
 
@@ -59,7 +59,7 @@ export default async function TodayPage() {
       <p className={styles.summary}>{summary}</p>
 
       <div className={styles.stats}>
-        <StatTile value={data.newJobsCount.toLocaleString("en-IN")} label="New entry-level jobs (24 h)" />
+        <StatTile value={data.newJobsCount.toLocaleString("en-IN")} label="New remote entry-level jobs (24 h)" />
         <StatTile value={due} label="Follow-ups due" tone={due > 0 ? "hot" : "default"} />
         <StatTile value={data.activeCount} label="Active applications" />
         <StatTile value={data.pipeline.saved} label="Saved, not applied yet" />
@@ -67,14 +67,14 @@ export default async function TodayPage() {
 
       <section className={styles.section} aria-labelledby="new-jobs">
         <div className={styles.sectionHead}>
-          <h2 id="new-jobs" className={styles.sectionTitle}>New entry-level jobs</h2>
+          <h2 id="new-jobs" className={styles.sectionTitle}>New remote entry-level jobs</h2>
           {data.newJobsCount > data.newJobs.length ? (
             <Link href="/jobs?days=7" className={styles.more}>See all {data.newJobsCount.toLocaleString("en-IN")}</Link>
           ) : null}
         </div>
         {data.newJobs.length === 0 ? (
           <div className={styles.empty}>
-            No new entry-level jobs in the last 24 hours. The next collection runs within a few hours.
+            No new remote entry-level jobs open to India in the last 24 hours. The next collection runs within a few hours.
             <Link href="/jobs">Browse all entry-level jobs</Link>
           </div>
         ) : (

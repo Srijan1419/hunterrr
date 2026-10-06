@@ -26,7 +26,8 @@ async function posting(n: number, o: Record<string, string | number | null>) {
   );
   const cols: Record<string, unknown> = {
     raw_document_id: raw.rows[0].id, source: "greenhouse", source_id: String(n), title: `Job ${n}`,
-    title_normalized: `job ${n}`, content_hash: `h${n}`, company_id: 1, ...o,
+    title_normalized: `job ${n}`, content_hash: `h${n}`, company_id: 1,
+    remote_type: "remote", eligibility_scope: "worldwide", ...o,
   };
   const keys = Object.keys(cols);
   await pg.query(
@@ -60,6 +61,13 @@ beforeAll(async () => {
   await posting(4, { title: "Senior, found 1 h ago", seniority: "senior", first_seen_at: hoursAgo(1) });
   await posting(5, { title: "No level, found 1 h ago", first_seen_at: hoursAgo(1) });
   await posting(6, { title: "Closed intern", seniority: "intern", status: "closed", first_seen_at: hoursAgo(1) });
+  // entry level and new, but not what the owner wants: on-site, remote for the US only, remote with no stated eligibility
+  await posting(7, { title: "On-site intern", seniority: "intern", remote_type: "onsite", first_seen_at: hoursAgo(1) });
+  await posting(8, { title: "US-only remote intern", seniority: "intern", eligibility_scope: "countries", first_seen_at: hoursAgo(1) });
+  await pg.query("UPDATE hunterrr.postings SET eligible_countries = ARRAY['US'] WHERE source_id = '8'");
+  await posting(9, { title: "Remote, eligibility unstated", seniority: "intern", eligibility_scope: null, first_seen_at: hoursAgo(1) });
+  await posting(10, { title: "APAC remote intern", seniority: "intern", eligibility_scope: "regions", first_seen_at: hoursAgo(3) });
+  await pg.query("UPDATE hunterrr.postings SET eligible_countries = ARRAY['IN','SG','VN'] WHERE source_id = '10'");
 
   await application("Due later today (IST)", "applied", "2026-10-06T17:00:00Z"); // 22:30 IST today
   await application("Overdue", "interview", "2026-10-03T05:00:00Z");
@@ -79,8 +87,10 @@ describe("endOfTodayIST", () => {
 describe("queryToday", () => {
   it("counts only open entry-level postings first seen in the last 24 hours, newest first", async () => {
     const t = await queryToday(db as never, NOW);
-    expect(t.newJobsCount).toBe(2);
-    expect(t.newJobs.map((r) => r.title)).toEqual(["Intern, found 2 h ago", "Junior, found 20 h ago"]);
+    // remote + open to India + entry level only: worldwide and APAC (which contains India) count;
+    // on-site, US-only and "eligibility not stated" do not
+    expect(t.newJobsCount).toBe(3);
+    expect(t.newJobs.map((r) => r.title)).toEqual(["Intern, found 2 h ago", "APAC remote intern", "Junior, found 20 h ago"]);
   });
 
   it("lists open applications due today or overdue (IST), soonest first, never closed ones", async () => {

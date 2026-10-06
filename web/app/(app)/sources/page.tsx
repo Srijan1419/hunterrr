@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { DataQuality } from "@/components/sources/DataQuality";
 import { SourcesView } from "@/components/sources/SourcesView";
 import { db } from "@/lib/db/client.v2";
+import { queryQuality } from "@/lib/queries/quality";
 import { querySources } from "@/lib/queries/sources";
 
 export const metadata: Metadata = {
@@ -10,6 +12,11 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function SourcesPage() {
-  const data = await querySources(db as never);
-  return <SourcesView data={data} />;
+  const [data, quality] = await Promise.all([querySources(db as never), queryQuality(db as never)]);
+  return (
+    <>
+      <SourcesView data={data} />
+      <DataQuality q={quality} />
+    </>
+  );
 }

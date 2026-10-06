@@ -34,7 +34,8 @@ async function posting(n: number, companyId: number | null, o: Record<string, st
   );
   const cols: Record<string, unknown> = {
     raw_document_id: raw.rows[0].id, source: "greenhouse", source_id: String(n), title: `Job ${n}`,
-    title_normalized: `job ${n}`, content_hash: `h${n}`, company_id: companyId, first_seen_at: NOW.toISOString(), ...o,
+    title_normalized: `job ${n}`, content_hash: `h${n}`, company_id: companyId, first_seen_at: NOW.toISOString(),
+    remote_type: "remote", eligibility_scope: "worldwide", ...o,
   };
   const keys = Object.keys(cols);
   await pg.query(

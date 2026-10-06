@@ -61,7 +61,14 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
       ) : null}
       {filters.country && result.eligibilityUnknown > 0 ? (
         <p className={styles.note}>
-          {result.eligibilityUnknown.toLocaleString("en-US")} other postings do not say whether {filters.country} may apply and are not shown here.
+          {result.eligibilityUnknown.toLocaleString("en-US")} other postings do not say whether {filters.country} may apply and are not shown.{" "}
+          <a href={pageHref({ ...params, country: "any" }, 1)}>Show any country</a>
+        </p>
+      ) : null}
+      {filters.remote && result.modeUnknown > 0 ? (
+        <p className={styles.note}>
+          Remote only: {result.modeUnknown.toLocaleString("en-US")} other postings do not say whether the job is remote and are not shown.{" "}
+          <a href={pageHref({ ...params, remote: "0" }, 1)}>Include them</a>
         </p>
       ) : null}
       {filters.entryLevel && result.levelUnknown > 0 ? (

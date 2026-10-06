@@ -31,6 +31,9 @@ export type FeedFilters = {
 /** Ranking by fit scores this many of the newest matching postings, then pages through them. */
 export const MATCH_CANDIDATES = 400;
 
+/** The owner works from India: this country is the default eligibility filter (`?country=any` turns it off). */
+export const DEFAULT_COUNTRY = "IN";
+
 export type FeedLocation = { raw: string; city: string | null; region: string | null; country: string | null };
 
 export type FeedRow = {
@@ -66,6 +69,8 @@ export type FeedResult = {
   eligibilityUnknown: number;
   /** Postings the entry-level filter hides because they state neither a level nor years of experience. */
   levelUnknown: number;
+  /** Postings the remote filter hides because they do not say whether the job is remote, hybrid or on-site. */
+  modeUnknown: number;
   page: number;
   pages: number;
 };
@@ -92,6 +97,11 @@ export const FEED_COLUMNS = sql`p.id, p.title, c.name AS company_name, p.source,
  */
 /** Needs the company joined as `c`; a posting with no company row passes. */
 export const NOT_IGNORED = sql`c.watch IS DISTINCT FROM 'ignore'`;
+
+/** Remote AND open to this country: worldwide, or the country named (regions are already expanded to countries). */
+export function remoteFor(country: string): SQL {
+  return sql`(p.remote_type = 'remote' AND (p.eligibility_scope = 'worldwide' OR p.eligible_countries @> ARRAY[${country}]::text[]))`;
+}
 
 export const ENTRY_LEVEL = sql`(p.seniority IN ('intern', 'entry')
   OR (p.seniority IS NULL AND (p.experience_min_years <= 1 OR p.experience_max_years <= 2)))`;
@@ -204,7 +214,10 @@ export async function queryFeed(db: FeedDb, filters: FeedFilters = {}, profile: 
           AND (p.eligibility_scope IS NULL OR p.eligibility_scope = 'regions')) AS eligibility_unknown,
       (SELECT count(*) FROM hunterrr.postings p LEFT JOIN hunterrr.companies c ON c.id = p.company_id
         WHERE ${sql.join(conditions({ ...filters, entryLevel: undefined }), sql` AND `)}
-          AND ${LEVEL_UNSTATED}) AS level_unknown`);
+          AND ${LEVEL_UNSTATED}) AS level_unknown,
+      (SELECT count(*) FROM hunterrr.postings p LEFT JOIN hunterrr.companies c ON c.id = p.company_id
+        WHERE ${sql.join(conditions({ ...filters, remote: undefined }), sql` AND `)}
+          AND p.remote_type IS NULL) AS mode_unknown`);
 
   const c = counts.rows[0] ?? {};
   const total = num(c.total) ?? 0;
@@ -243,6 +256,7 @@ export async function queryFeed(db: FeedDb, filters: FeedFilters = {}, profile: 
     openTotal: num(c.open_total) ?? 0,
     eligibilityUnknown: filters.country ? (num(c.eligibility_unknown) ?? 0) : 0,
     levelUnknown: filters.entryLevel ? (num(c.level_unknown) ?? 0) : 0,
+    modeUnknown: filters.remote ? (num(c.mode_unknown) ?? 0) : 0,
     page,
     pages,
   };
@@ -264,8 +278,9 @@ export function filtersFromSearchParams(
   const country = (one("country") ?? "").toUpperCase();
   return {
     q: one("q")?.replace(/\u0000/g, "").slice(0, 80) || undefined,
-    remote: one("remote") === "1" || undefined,
-    country: /^[A-Z]{2}$/.test(country) ? country : undefined,
+    // Defaults: remote only, open to India. `remote=0` shows every work mode, `country=any` every country.
+    remote: one("remote") === "0" ? undefined : true,
+    country: country === "ANY" ? undefined : /^[A-Z]{2}$/.test(country) ? country : DEFAULT_COUNTRY,
     hasPay: one("pay") === "1" || undefined,
     postedWithinDays: Number.isInteger(days) && days > 0 && days <= 365 ? days : undefined,
     entryLevel: one("level") === "all" ? undefined : true,

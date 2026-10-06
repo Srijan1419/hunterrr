@@ -163,10 +163,19 @@ describe("filtersFromSearchParams", () => {
       q: "go", remote: true, country: "IN", hasPay: true, postedWithinDays: 7, entryLevel: true, sort: "match", page: 3,
     });
     expect(filtersFromSearchParams({ q: "a\u0000b" }).q).toBe("ab");
+    // junk values fall back to the defaults: remote on, open to India, entry level, best match
     expect(filtersFromSearchParams({ country: "India", days: "-1", page: "0", remote: "yes" })).toEqual({
-      q: undefined, remote: undefined, country: undefined, hasPay: undefined, postedWithinDays: undefined,
+      q: undefined, remote: true, country: "IN", hasPay: undefined, postedWithinDays: undefined,
       entryLevel: true, sort: "match", page: undefined,
     });
+  });
+
+  it("is remote and open to India by default; remote=0 and country=any switch those off", () => {
+    expect(filtersFromSearchParams({})).toMatchObject({ remote: true, country: "IN", entryLevel: true });
+    expect(filtersFromSearchParams({ remote: "0" }).remote).toBeUndefined();
+    expect(filtersFromSearchParams({ country: "any" }).country).toBeUndefined();
+    expect(filtersFromSearchParams({ country: "ANY" }).country).toBeUndefined();
+    expect(filtersFromSearchParams({ country: "us" }).country).toBe("US");
   });
 
   it("sort defaults to match and only sort=newest changes it", () => {

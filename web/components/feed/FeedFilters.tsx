@@ -6,7 +6,7 @@ import { FilterToggle } from "@/components/atlas/FilterToggle";
 import styles from "./feed.module.css";
 
 const COUNTRIES: { code: string; label: string }[] = [
-  { code: "", label: "Any country" },
+  { code: "any", label: "Any country" },
   { code: "IN", label: "India" },
   { code: "US", label: "United States" },
   { code: "GB", label: "United Kingdom" },
@@ -21,10 +21,13 @@ export function FeedFilters() {
   const urlQ = params.get("q") ?? "";
   const [q, setQ] = useState(urlQ);
   useEffect(() => setQ(urlQ), [urlQ]); // Back/Forward and cleared filters keep the box honest
-  const country = (params.get("country") ?? "").toUpperCase();
+  // Defaults: open to India (no param), "any" turns it off. Remote is on unless remote=0.
+  const rawCountry = (params.get("country") ?? "").trim();
+  const country = rawCountry.toLowerCase() === "any" ? "any" : rawCountry === "" ? "IN" : rawCountry.toUpperCase();
   const options = COUNTRIES.some((c) => c.code === country)
     ? COUNTRIES
     : [...COUNTRIES, { code: country, label: country }];
+  const remoteOn = params.get("remote") !== "0";
 
   function push(mutate: (next: URLSearchParams) => void) {
     const next = new URLSearchParams(params.toString());
@@ -39,7 +42,11 @@ export function FeedFilters() {
   }
 
   // Anything that narrows the list beyond the defaults (entry level on, newest-or-best sorting).
-  const active = ["q", "remote", "pay", "days", "country"].some((k) => params.get(k)) || params.get("level") === "all";
+  const active =
+    ["q", "pay", "days"].some((k) => params.get(k)) ||
+    params.get("level") === "all" ||
+    params.get("remote") === "0" ||
+    (rawCountry !== "" && rawCountry.toUpperCase() !== "IN");
 
   function submit(e: FormEvent) {
     e.preventDefault();
@@ -62,14 +69,18 @@ export function FeedFilters() {
         pressed={params.get("level") !== "all"}
         onPressedChange={(on) => push((n) => (on ? n.delete("level") : n.set("level", "all")))}
       />
-      <FilterToggle label="Remote" pressed={params.get("remote") === "1"} onPressedChange={(on) => setFlag("remote", on)} />
+      <FilterToggle
+        label="Remote"
+        pressed={remoteOn}
+        onPressedChange={(on) => push((n) => (on ? n.delete("remote") : n.set("remote", "0")))}
+      />
       <FilterToggle label="Pay stated" pressed={params.get("pay") === "1"} onPressedChange={(on) => setFlag("pay", on)} />
       <FilterToggle label="Last 7 days" pressed={params.get("days") === "7"} onPressedChange={(on) => setFlag("days", on, "7")} />
       <select
         className={styles.select}
         aria-label="Eligible country"
         value={country}
-        onChange={(e) => push((n) => (e.target.value ? n.set("country", e.target.value) : n.delete("country")))}
+        onChange={(e) => push((n) => (e.target.value === "IN" ? n.delete("country") : n.set("country", e.target.value)))}
       >
         {options.map((c) => (
           <option key={c.code} value={c.code}>

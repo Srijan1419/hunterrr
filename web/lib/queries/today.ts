@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { ENTRY_LEVEL, FEED_COLUMNS, NOT_IGNORED, toRow, type FeedRow } from "@/lib/queries/feed";
+import { DEFAULT_COUNTRY, ENTRY_LEVEL, FEED_COLUMNS, NOT_IGNORED, remoteFor, toRow, type FeedRow } from "@/lib/queries/feed";
 import {
   APPLICATION_STATES,
   CLOSED_STATES,
@@ -12,6 +12,7 @@ import {
 /**
  * The Today screen: what is new, what needs a reply, where the pipeline stands.
  *
+ * Only what the owner is looking for: remote, open to India, entry level, not from an ignored company.
  * "New" means first seen by Hunterrr in the last 24 hours (not the board's own posted date, which
  * can be weeks old for a job we only just found). There is no "since your last visit": the app
  * does not record visits, so it does not pretend to.
@@ -38,7 +39,7 @@ export function endOfTodayIST(now: Date): Date {
 
 export async function queryToday(db: TrackerTx, now: Date = new Date()): Promise<TodayData> {
   const since = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
-  const fresh = sql`p.status = 'open' AND ${NOT_IGNORED} AND ${ENTRY_LEVEL} AND p.first_seen_at >= ${since}`;
+  const fresh = sql`p.status = 'open' AND ${NOT_IGNORED} AND ${ENTRY_LEVEL} AND ${remoteFor(DEFAULT_COUNTRY)} AND p.first_seen_at >= ${since}`;
 
   const [list, count, followUps, states] = await Promise.all([
     db.execute(sql`
