@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { initials } from "@/components/feed/JobRow";
 import { StateSelect } from "@/components/tracker/StateSelect";
 import {
   APPLICATION_STATES,
@@ -17,6 +18,12 @@ const TITLE: Record<ApplicationState, string> = {
 export const TRACKER_EMPTY =
   "Applications you save or mark as applied will appear here, and replies from your inbox will move them along.";
 
+/** The dot beside each stage name: a quiet progression, the one hot colour kept for interviews. */
+const STAGE_CLASS: Partial<Record<ApplicationState, string>> = {
+  saved: styles.stageSaved, applied: styles.stageApplied, assessment: styles.stageAssessment,
+  interview: styles.stageInterview, offer: styles.stageOffer,
+};
+
 const DAY = 86_400_000;
 
 function daysIn(iso: string, now: Date): number {
@@ -30,9 +37,12 @@ function Card({ app, now }: { app: TrackedApplication; now: Date }) {
   const overdue = due !== null && due.getTime() < now.getTime();
   return (
     <li className={styles.card}>
-      <h3 className={styles.cardTitle}>
-        {app.postingId ? <Link href={`/jobs/${app.postingId}`}>{app.title}</Link> : app.title}
-      </h3>
+      <div className={styles.cardTop}>
+        <span className={styles.mark} aria-hidden="true">{initials(app.companyName)}</span>
+        <h3 className={styles.cardTitle}>
+          {app.postingId ? <Link href={`/jobs/${app.postingId}`}>{app.title}</Link> : app.title}
+        </h3>
+      </div>
       <div className={styles.meta}>
         {app.companyName ? <span>{app.companyName}</span> : null}
         <span>{days === 0 ? "today" : `${days}d in stage`}</span>
@@ -66,14 +76,21 @@ export function TrackerView({ board, now = new Date() }: { board: Record<Applica
         ) : null}
       </div>
       {total === 0 ? (
-        <p>{TRACKER_EMPTY}</p>
+        <div className={styles.emptyBoard}>
+          <p>{TRACKER_EMPTY}</p>
+          <Link href="/jobs" className={styles.emptyLink}>Find a job to save</Link>
+        </div>
       ) : (
         <>
           <div className={styles.board}>
             {OPEN_STATES.map((state) => (
               <section key={state} className={styles.column} aria-labelledby={`col-${state}`}>
                 <h2 id={`col-${state}`} className={styles.columnHead}>
-                  {TITLE[state]} <span className={styles.columnCount}>{board[state].length}</span>
+                  <span className={styles.columnName}>
+                    <span className={`${styles.stageDot} ${STAGE_CLASS[state] ?? ""}`} aria-hidden="true" />
+                    {TITLE[state]}
+                  </span>
+                  <span className={styles.columnCount}>{board[state].length}</span>
                 </h2>
                 {board[state].length === 0 ? (
                   <p className={styles.empty}>Nothing here.</p>

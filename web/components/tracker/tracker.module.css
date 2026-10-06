@@ -19,7 +19,7 @@
 .closed summary { cursor: pointer; font-weight: 600; color: var(--ink); }
 .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; }
 .field { display: grid; gap: 2px; font-size: var(--fs-1); color: var(--fg-3); font-family: var(--font-dm-mono), ui-monospace, monospace; text-transform: uppercase; letter-spacing: 0.06em; }
-.field select, .field input { height: 32px; padding: 0 8px; border: 1px solid var(--line); border-radius: var(--r-sm, 8px); background: var(--surface); color: var(--fg); font: inherit; font-size: var(--fs-1); text-transform: none; letter-spacing: 0; }
+.field select, .field input { height: 32px; padding: 0 8px; border: 1px solid var(--line-strong); border-radius: var(--r-sm, 8px); background: var(--surface); color: var(--fg); font: inherit; font-size: var(--fs-1); text-transform: none; letter-spacing: 0; }
 /* Secondary action: outlined, never filled (Apply is the one filled button in a row). */
 .save { display: inline-flex; align-items: center; height: 34px; padding: 0 16px; border: 1px solid var(--line-strong); border-radius: 999px; background: transparent; color: var(--fg); font: inherit; font-size: var(--fs-1); font-weight: 600; cursor: pointer; transition: transform 120ms, border-color 150ms, background-color 150ms; }
 .save:hover { border-color: var(--accent); background: var(--accent-soft); }
@@ -30,3 +30,15 @@
 .error { font-size: var(--fs-1); color: var(--bad); }
 @media (max-width: 900px) { .board { grid-template-columns: repeat(5, 240px); } .title { font-size: var(--fs-4); } }
 @media (prefers-reduced-motion: reduce) { .save { transition: none; } }
+
+.cardTop { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: 10px; }
+.mark { width: 32px; height: 32px; border-radius: var(--r-sm, 8px); display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-family: var(--font-display), system-ui, sans-serif; font-weight: 700; font-size: var(--fs-1); letter-spacing: -0.02em; }
+.columnName { display: inline-flex; align-items: center; gap: 8px; }
+.stageDot { width: 9px; height: 9px; border-radius: 999px; background: var(--fg-3); }
+.stageApplied { background: var(--accent); }
+.stageAssessment { background: var(--warn); }
+.stageInterview { background: var(--hot); }
+.stageOffer { background: var(--good); }
+.emptyBoard { display: grid; gap: 10px; justify-items: start; padding: 24px; border: 1px dashed var(--line-strong); border-radius: var(--r-lg, 18px); color: var(--fg-2); }
+.emptyBoard p { margin: 0; max-width: 56ch; }
+.emptyLink { color: var(--accent); text-underline-offset: 3px; }
