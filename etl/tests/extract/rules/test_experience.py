@@ -78,3 +78,40 @@ def test_description_never_sets_seniority():
     assert h.value is None and h.provenance == "unknown"
     _, _, h = parse_experience("principal director VP", CTX)
     assert h.value is None
+
+
+# --- dq-04: fresher level v2 (titles, level numbers, months, graduation-year cues) -----------------
+LEVEL_CASES = [
+    # (title, description, expected level, expected min, expected max)
+    ("Graduate Engineer Trainee", "", "entry", 0, None),
+    ("Trainee - Customer Success", "", "entry", 0, None),
+    ("Apprentice Developer", "", "entry", 0, None),
+    ("Early Career Software Engineer", "", "entry", 0, None),
+    ("Campus Hire - SDE", "", "entry", 0, None),
+    ("Account Executive, Graduate Programme", "", "entry", 0, None),
+    ("Machine Learning Engineer (University Graduate)", "", "entry", 0, None),
+    ("Software Development Engineer I", "", "entry", None, None),
+    ("SDE-1", "", "entry", None, None),
+    ("Software Engineer 1", "", "entry", None, None),
+    ("Engineer I", "", "entry", None, None),
+    ("Software Engineer II", "", "mid", None, None),
+    ("SDE 2", "", "mid", None, None),
+    ("Software Engineer III", "", "senior", None, None),
+    ("Engineering Manager", "", "lead", None, None),
+    ("Data Analyst", "2026 graduates (batch of 2026) can apply", "entry", 0, None),
+    ("Product Analyst", "Recent graduates (class of 2025)", "entry", 0, None),
+    ("Customer Support Specialist", "someone with 0-6 months experience", None, 0, 0.5),
+    ("Data Analyst", "less than a year of experience", None, 0, 1),
+    # NOT early career
+    ("Senior Graduate Engineer", "", "senior", None, None),     # the seniority word wins
+    ("Software Engineer", "Mentor early-career engineers and run our trainee programme.", None, None, None),
+    ("Engineer in Test", "", None, None, None),                  # "I" inside a word is not level I
+    ("Software Engineer", "Graduate degree preferred. 5+ years experience.", None, 5, None),
+    ("Backend Engineer", "Minimum 3 years of experience in Python", None, 3, None),
+]
+
+
+@pytest.mark.parametrize("title,desc,level,lo,hi", LEVEL_CASES, ids=[f"{c[0]} | {c[1][:28]}" for c in LEVEL_CASES])
+def test_level_v2(title, desc, level, lo, hi):
+    min_f, max_f, hint = parse_experience(desc, ParseContext(), title)
+    assert (hint.value, min_f.value, max_f.value) == (level, lo, hi)

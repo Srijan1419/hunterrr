@@ -28,7 +28,7 @@ from etl.extract.ladder import StoredDocument, extract
 from etl.extract.llm_rung import apply_llm
 from etl.extract.model import FIELD_KEYS, Extracted
 
-EXTRACTION_VERSION = 3  # 3: board location text read for work mode and eligibility; rule values re-derived (2026-10-06)
+EXTRACTION_VERSION = 4  # 4: fresher level v2 (trainee, campus, SDE-1, months, batch year); 3: board location text (2026-10-06)
 
 PROVENANCE = {"jsonld", "source", "rule", "llm", "user", "unknown"}
 REMOTE_TYPES = {"remote", "hybrid", "onsite"}

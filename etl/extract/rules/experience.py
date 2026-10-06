@@ -64,9 +64,39 @@ _OF_BEFORE = re.compile(r"\bof\b[\s:]{0,5}$", re.IGNORECASE)
 
 _FRESHER = re.compile(
     r"\bfreshers?\b|\bentry[\s-]*level\b|\bnew\s+grad(?:uate)?s?(?:\s+20[0-9]{2})?|\b"
-    r"recent\s+graduates?\b|\bno\s+(?:prior\s+|previous\s+)?experience\b",
+    r"recent\s+graduates?\b|\bno\s+(?:prior\s+|previous\s+)?experience\b|"
+    # a hiring cue by graduation year: "batch of 2026", "class of 2025", "2026 batch", "2025 pass-outs"
+    r"\b(?:batch|class)\s+of\s+20[0-9]{2}\b|\b20[0-9]{2}\s+(?:batch|graduates?|pass[\s-]?outs?)\b",
     re.IGNORECASE,
 )
+
+# Titles that say early career. Searched in the TITLE only: in a description the same words show up in
+# "we mentor early-career engineers" or "our trainee programme", which says nothing about THIS job.
+_FRESHER_TITLE = re.compile(
+    r"\btrainee\b|\bapprentice(?:ship)?\b|\bearly[\s-]*career\b|\bcampus(?:\s+(?:hire|recruit\w*|graduate|drive))?\b|"
+    r"\bgraduate\s+(?:engineer|programme|program|trainee|hire|scheme|role|software|developer|analyst)\b|"
+    r"\buniversity\s+graduate\b|\bfresh\s+graduate\b|\bgraduate\b(?=\s*[-,(]|\s*$)",
+    re.IGNORECASE,
+)
+
+# Level numbers in a role name: "Engineer I", "SDE-1", "Software Engineer 1" are entry; II / 2 is mid;
+# III and up is senior.
+_ROLE_WORD = (
+    r"(?:sde|swe|sdet|software\s+(?:development\s+)?(?:engineer|developer)|engineer|developer|analyst|"
+    r"associate|specialist|designer|consultant|scientist|programmer)"
+)
+_LEVEL_ONE = re.compile(rf"\b{_ROLE_WORD}[\s,-]*(?:i|1|l1|level\s*1)(?![A-Za-z0-9+#])", re.IGNORECASE)
+_LEVEL_TWO = re.compile(rf"\b{_ROLE_WORD}[\s,-]*(?:ii|2|l2|level\s*2)(?![A-Za-z0-9+#])", re.IGNORECASE)
+_LEVEL_THREE_UP = re.compile(
+    rf"\b{_ROLE_WORD}[\s,-]*(?:iii|iv|v|3|4|5|l3|l4|l5|level\s*[3-5])(?![A-Za-z0-9+#])", re.IGNORECASE
+)
+
+# Months: "0-6 months", "6-12 months of experience", "less than a year". Converted to (fractional) years.
+_MONTH_RANGE = re.compile(r"(?P<a>[0-9]{1,2})\s*(?:–|—|-|to)\s*(?P<b>[0-9]{1,2})\s*months?\b", re.IGNORECASE)
+_MONTH_SINGLE = re.compile(
+    r"(?P<a>[0-9]{1,2})\s*\+?\s*months?\b(?=[^.]{0,30}\b(?:experience|exp)\b)", re.IGNORECASE
+)
+_LESS_THAN_YEAR = re.compile(r"\b(?:less\s+than|under|below)\s+(?:a|1|one)\s+year\b", re.IGNORECASE)
 
 _TITLE_PATS = [
     ("intern", re.compile(r"\bintern(?:s|ship)?\b", re.IGNORECASE)),
@@ -77,7 +107,12 @@ _TITLE_PATS = [
     ("staff", re.compile(r"\bstaff\b", re.IGNORECASE)),
     ("lead", re.compile(r"\blead\b", re.IGNORECASE)),
     ("senior", re.compile(r"\bsenior\b|\bsr\.?(?!\w)", re.IGNORECASE)),
+    ("lead", re.compile(r"\b(?:engineering|software|data|product\s+design|design)\s+manager\b", re.IGNORECASE)),
+    ("senior", _LEVEL_THREE_UP),
+    ("mid", _LEVEL_TWO),
     ("entry", re.compile(r"\bjunior\b|\bjr\.?(?!\w)|\bassociate\b", re.IGNORECASE)),
+    ("entry", _FRESHER_TITLE),
+    ("entry", _LEVEL_ONE),
 ]
 
 
@@ -216,8 +251,34 @@ def parse_experience(
             continue
         add(a, None, m.group(0), m.start(), m.end())
 
-    fm_cap = _FRESHER.search(capped)
-    fm_title = _FRESHER.search(tcap) if tcap else None
+    def months_to_years(m: int) -> float | int:
+        y = round(m / 12, 2)
+        return int(y) if float(y).is_integer() else y
+
+    for m in _MONTH_RANGE.finditer(capped):
+        if overlaps(m.start(), m.end()):
+            continue
+        a, b = int(m.group("a")), int(m.group("b"))
+        if a > b:
+            a, b = b, a
+        if b <= 36:  # beyond three years the author means years, and "x-y months" is not a requirement
+            add(months_to_years(a), months_to_years(b), m.group(0), m.start(), m.end())
+    for m in _MONTH_SINGLE.finditer(capped):
+        if overlaps(m.start(), m.end()):
+            continue
+        a = int(m.group("a"))
+        if 0 < a <= 36:
+            add(months_to_years(a), None, m.group(0), m.start(), m.end())
+    for m in _LESS_THAN_YEAR.finditer(capped):
+        if not overlaps(m.start(), m.end()):
+            add(0, 1, m.group(0), m.start(), m.end())
+
+    # A title that says senior / lead / staff / principal / director / mid vetoes any fresher cue
+    # ("Senior Graduate Engineer", "Lead, Early Career Programme"): the level word decides.
+    title_level = next((name for name, pat in _TITLE_PATS if tcap and pat.search(tcap)), None)
+    vetoed = title_level in {"senior", "lead", "staff", "principal", "director", "mid"}
+    fm_cap = None if vetoed else _FRESHER.search(capped)
+    fm_title = (None if vetoed else (_FRESHER.search(tcap) or _FRESHER_TITLE.search(tcap))) if tcap else None
     fm = fm_cap or fm_title
     if fm is not None:
         add(0, None, fm.group(0), -1, -2)
