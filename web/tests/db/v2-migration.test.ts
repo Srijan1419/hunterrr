@@ -21,8 +21,9 @@ function loadMigrationStatements(): string[] {
     .readdirSync(MIGRATION_DIR)
     .filter((f) => /^\d+_.*\.sql$/.test(f))
     .sort();
-  // 0000 schema, 0001 auth tables and grants, 0002 relaxed nullability, 0003 application posting link
-  expect(files.length).toBe(4);
+  // 0000 schema, 0001 auth tables and grants, 0002 relaxed nullability, 0003 application posting link,
+  // 0004 account.password (Better Auth selects it on every sign-in lookup)
+  expect(files.length).toBe(5);
   const allSql = files.map((f) => fs.readFileSync(path.join(MIGRATION_DIR, f), "utf8")).join("\n");
   const stmts = allSql
     .split("--> statement-breakpoint")
@@ -106,8 +107,17 @@ describe("hunterrr v2 migration", { timeout: 120_000 }, () => {
     expect(stmts[0].toUpperCase()).toMatch(
       /^CREATE EXTENSION IF NOT EXISTS VECTOR/
     );
+    // No database role may get a password in a migration (the account.password COLUMN is fine).
     const all = stmts.join("\n").toLowerCase();
-    expect(all).not.toMatch(/password/i);
+    expect(all).not.toMatch(/(create|alter)\s+(role|user)[^;]*password/i);
+  });
+
+  it("gives the Better Auth account table the password column its sign-in lookup selects", async () => {
+    const r = await db.query<{ column_name: string }>(
+      `select column_name from information_schema.columns
+       where table_schema = 'hunterrr' and table_name = 'account' and column_name = 'password'`,
+    );
+    expect(r.rows).toHaveLength(1);
   });
 
   it("creates exactly the spec tables in schema hunterrr", async () => {
