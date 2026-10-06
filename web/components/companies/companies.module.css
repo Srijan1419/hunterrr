@@ -54,3 +54,4 @@
   .counts { justify-content: flex-start; text-align: left; }
 }
 @media (prefers-reduced-motion: reduce) { .toggle, .watchOn, .ignoreOn { transition: none; } }
+.signals { display: block; font-size: var(--fs-1); color: var(--fg-3); margin-top: 2px; }

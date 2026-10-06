@@ -73,6 +73,14 @@ export default async function CompaniesPage({ searchParams }: { searchParams: Pr
               <div>
                 <h2 className={styles.name}>{c.name}</h2>
                 <span className={styles.sub}>{c.boardSystems.length ? `Hires through ${c.boardSystems.join(", ")}` : "No job board recorded"}</span>
+                {c.openCount > 0 || c.closedLast30 > 0 ? (
+                  <span className={styles.signals}>
+                    {c.openCount > 0 ? `Pay stated on ${c.payStatedCount} of ${c.openCount}` : null}
+                    {c.openCount > 0 ? ` · ${c.remoteCount} remote` : null}
+                    {c.closedLast30 > 0 ? ` · ${c.closedLast30} taken down in 30 days` : null}
+                    {c.trackedSince ? ` · tracked since ${new Date(c.trackedSince).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short" })}` : null}
+                  </span>
+                ) : null}
               </div>
               <div className={styles.counts}>
                 <div>

@@ -66,6 +66,8 @@ beforeAll(async () => {
   await posting(5, beta, { seniority: "senior", status: "closed" });
   await posting(6, null, { seniority: "intern" }); // a posting with no company row
   await pg.query("INSERT INTO hunterrr.boards (company_id, ats, slug, url) VALUES ($1, 'greenhouse', 'acme', 'u')", [acme]);
+  await pg.query("UPDATE hunterrr.postings SET pay_min = 10, pay_max = 20 WHERE source_id = '1'");
+  await pg.query("UPDATE hunterrr.postings SET status = 'closed', last_seen_at = now() - interval '3 days' WHERE source_id = '3'");
 }, 90_000);
 
 describe("queryCompanies", () => {
@@ -73,10 +75,15 @@ describe("queryCompanies", () => {
     const r = await queryCompanies(db as never);
     expect(r.total).toBe(3);
     expect(r.rows.map((c) => [c.name, c.entryCount, c.openCount])).toEqual([
-      ["Acme Corp", 2, 3], // 2 entry level of 3 open
+      ["Acme Corp", 2, 2], // job 3 was closed below, so 2 open (both entry level)
       ["Beta Labs", 0, 1], // the closed posting does not count
       ["Quiet Co", 0, 0],
     ]);
+    const acmeRow = r.rows[0];
+    expect(acmeRow.payStatedCount).toBe(1);
+    expect(acmeRow.remoteCount).toBe(2);
+    expect(acmeRow.closedLast30).toBe(1); // job 3, taken down 3 days ago
+    expect(acmeRow.trackedSince).not.toBeNull();
     expect(r.rows[0].boardSystems).toEqual(["greenhouse"]);
   });
 

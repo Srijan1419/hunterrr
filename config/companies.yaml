@@ -68,3 +68,15 @@ companies:
   - {name: Judge.me,               ats: smartrecruiters, slug: judgeme}      # 1 job
   - {name: Hextom,                 ats: smartrecruiters, slug: hextominc}    # 2 jobs
   - {name: Hugging Face,           ats: workable,        slug: huggingface}  # remote-first, many EMEA/worldwide roles
+
+  # More remote-first and e-commerce companies (verified live 2026-10-06)
+  - {name: ShipBob,      ats: greenhouse,      slug: shipbobinc}   # 58 jobs, 10 remote, 15 entry-level titles
+  - {name: Typeform,     ats: greenhouse,      slug: typeform}     # 14 jobs, all remote
+  - {name: Squarespace,  ats: greenhouse,      slug: squarespace}  # 33 jobs
+  - {name: Remote,       ats: greenhouse,      slug: remote}       # 2 jobs, remote-first employer
+  - {name: Toptal,       ats: lever,           slug: toptal}       # 30 jobs, all remote
+  - {name: Zapier,       ats: ashby,           slug: zapier}       # 10 jobs, all remote
+  - {name: PostHog,      ats: ashby,           slug: posthog}      # 9 jobs, 8 remote
+  - {name: Buffer,       ats: ashby,           slug: buffer}       # 1 job, remote
+  - {name: Canva,        ats: smartrecruiters, slug: canva}        # 100+ jobs (read 100 per page)
+  - {name: BigCommerce,  ats: smartrecruiters, slug: bigcommerce}  # 2 jobs
