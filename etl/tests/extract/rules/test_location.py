@@ -1,7 +1,7 @@
 import pytest
 
 from etl.extract.rules.context import ParseContext
-from etl.extract.rules.location import parse_locations, parse_remote_type
+from etl.extract.rules.location import parse_location_section, parse_locations, parse_remote_type
 
 CTX = ParseContext()
 
@@ -15,6 +15,12 @@ REMOTE = [
     ("on-site", "onsite"), ("onsite", "onsite"), ("in office", "onsite"),
     ("work from office", "onsite"), ("On-site in Bengaluru", "onsite"),
     ("remote or hybrid", None), ("not remote", None), ("not remote but on-site", "onsite"),
+    # remote mentioned only to rule it out (Cloudflare intern posting, 2026-10-06)
+    ("We are not considering remote or part-time. In office 3-5 days a week in Lisbon, PT.", "onsite"),
+    ("no remote work; must work from office", "onsite"),
+    ("This role has in-person expectations", "onsite"),
+    # an in-person INTERVIEW says nothing about the job's work mode
+    ("You may attend an in-person interview. Fully remote role.", "remote"),
     ("Remote.com is hiring", None), ("RemoteOK", None), ("Join Remote.com today", None),
     ("", None), ("Great team", None), ("   ", None),
 ]
@@ -29,6 +35,10 @@ LOCATIONS = [
     ("Mumbai; Pune", [("Mumbai", "IN"), ("Pune", "IN")]),
     ("Delhi | Gurgaon", [("Delhi", "IN"), ("Gurgaon", "IN")]),
     ("Berlin, Germany or Paris, France", [("Berlin", "DE"), ("Paris", "FR")]),
+    # ISO country codes after the city; US state codes still win ("CA" is California)
+    ("Lisbon, PT", [("Lisbon", "PT")]),
+    ("Amsterdam, NL", [("Amsterdam", "NL")]),
+    ("Austin, TX", [("Austin", "US")]),
 ]
 
 NO_LOCATION = ["", "Remote - Worldwide", "Anywhere", "Great team and culture", "   ", "remote"]
@@ -55,6 +65,31 @@ def test_locations(text, want):
 def test_no_location(text):
     f = parse_locations(text, CTX)
     assert f.value is None or all(loc["country"] is None for loc in f.value)
+
+
+SECTIONS = [
+    ("About us\n\nAvailable Locations\n\n- Lisbon, PT\n\nAvailable Terms\n\n- Summer 2027", [("Lisbon", "PT")]),
+    ("Location: Bengaluru, India", [("Bengaluru", "IN")]),
+    ("**Locations**\n- London, UK\n- Berlin, Germany\n\nMore text", [("London", "GB"), ("Berlin", "DE")]),
+]
+NO_SECTION = [
+    "We have offices in many locations around the world. Bengaluru, India.",  # no heading
+    "Location\n\nRemote",                                                       # no place
+    "Locations across the globe make us strong",                                # not a heading
+    "",
+]
+
+
+@pytest.mark.parametrize("text,want", SECTIONS, ids=[repr(c[0][:30]) for c in SECTIONS])
+def test_location_section(text, want):
+    f = parse_location_section(text, CTX)
+    assert f.provenance == "rule"
+    assert [(loc["city"], loc["country"]) for loc in f.value] == want
+
+
+@pytest.mark.parametrize("text", NO_SECTION, ids=[repr(t[:30]) for t in NO_SECTION])
+def test_no_location_section(text):
+    assert parse_location_section(text, CTX).value is None
 
 
 def test_sentence_is_not_a_city():

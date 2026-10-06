@@ -81,6 +81,34 @@ def test_locations_not_parsed_from_long_description():
     assert out["locations"].value is None
 
 
+CLOUDFLARE_INTERN = (
+    "About Us\n\nAt Cloudflare, we are on a mission to help build a better Internet.\n\n"
+    "Available Locations\n\n- Lisbon, PT\n\nAvailable Terms\n\n- Summer (May - September 2027)\n\n"
+    "Desirable Skills\n\n- In office 3-5 days a week in Lisbon, PT.\n\n"
+    "Please note\n\n- We are not considering remote or part-time for either term. This is a "
+    "full-time (40hr/week internship) with in-person expectations.\n\n"
+    "- For Portugal based hires: the monthly salary is €2,450."
+)
+
+
+def test_board_work_mode_label_is_not_a_place():
+    f = empty_fields()
+    f["locations"] = Field([{"raw": "In-Office", "city": None, "region": None, "country": None}], "source")
+    out, conflicts = run(CLOUDFLARE_INTERN, title="Software Engineer Intern (2027)", fields=f)
+    assert out["remote_type"].value == "onsite"
+    assert [(loc["city"], loc["country"]) for loc in out["locations"].value] == [("Lisbon", "PT")]
+    assert out["seniority"].value == "intern"
+    assert any("work mode, not a place" in c for c in conflicts)
+
+
+def test_real_place_from_the_board_is_kept():
+    f = empty_fields()
+    f["locations"] = Field([{"raw": "Bengaluru", "city": "Bengaluru", "region": None, "country": "IN"}], "source")
+    out, _ = run(CLOUDFLARE_INTERN, fields=f)
+    assert out["locations"].provenance == "source"
+    assert out["locations"].value[0]["city"] == "Bengaluru"
+
+
 def test_funding_is_not_pay():
     out, _ = run("We raised $50M in Series B funding.")
     assert out["pay"].value is None

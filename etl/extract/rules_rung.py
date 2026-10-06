@@ -17,7 +17,7 @@ from etl.extract.rules.context import ParseContext
 from etl.extract.rules.dates import parse_deadline, parse_joining
 from etl.extract.rules.eligibility import parse_eligibility
 from etl.extract.rules.experience import parse_experience
-from etl.extract.rules.location import parse_locations, parse_remote_type
+from etl.extract.rules.location import parse_location_section, parse_locations, parse_remote_type
 from etl.extract.rules.pay import parse_pay
 from etl.extract.rules.workauth import parse_workauth
 
@@ -86,6 +86,32 @@ def _names_a_place(field: Field | None) -> bool:
     return False
 
 
+# Boards put the work mode in the location field ("In-Office", "Hybrid"). That is not a place.
+_WORK_MODE_LABELS = {
+    "in-office": "onsite", "in office": "onsite", "office": "onsite", "office-based": "onsite",
+    "on-site": "onsite", "onsite": "onsite", "on site": "onsite",
+    "in-person": "onsite", "in person": "onsite", "hybrid": "hybrid",
+}
+
+
+def _work_mode_label(field: Field | None) -> tuple[str, str] | None:
+    """(mode, label) when every known location is only a work-mode label, else None."""
+    if not _is_known(field) or not isinstance(field.value, list) or not field.value:
+        return None
+    modes: set[str] = set()
+    label = ""
+    for loc in field.value:
+        raw = loc.get("raw") if isinstance(loc, dict) else loc
+        if not isinstance(raw, str):
+            return None
+        mode = _WORK_MODE_LABELS.get(" ".join(raw.lower().split()))
+        if mode is None:
+            return None
+        modes.add(mode)
+        label = label or raw
+    return (modes.pop(), label) if len(modes) == 1 else None
+
+
 def apply_rules(
     fields: Mapping[str, Field],
     *,
@@ -135,6 +161,19 @@ def apply_rules(
         guarded(experience)
         guarded(lambda: offer("deadline_at", parse_deadline(description, ctx)))
         guarded(lambda: offer("joining", parse_joining(description, ctx)))
+        def work_mode_label() -> None:
+            found = _work_mode_label(out.get("locations"))
+            if found is None:
+                return
+            mode, label = found
+            # A label, not a place: free the field for the location rules below, and let the
+            # label stand as the work mode when nothing better is known.
+            out["locations"] = Field()
+            conflicts.append(f"locations: {_short(label)} is a work mode, not a place")
+            if not _is_known(out.get("remote_type")):
+                out["remote_type"] = Field(value=mode, provenance="rule", evidence=label[:_SHORT])
+
+        guarded(work_mode_label)
         guarded(lambda: offer("remote_type", parse_remote_type(text, ctx)))
 
         def locations() -> None:
@@ -142,6 +181,9 @@ def apply_rules(
                 return
             if title and len(title) <= MAX_LOCATION_SOURCE:
                 offer("locations", parse_locations(title, ctx))
+            if not _is_known(out.get("locations")):
+                # only places under an explicit "Location(s)" heading, never free text
+                offer("locations", parse_location_section(description, ctx))
 
         guarded(locations)
 

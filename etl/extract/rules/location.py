@@ -55,7 +55,19 @@ _HYBRID_PATTERNS = re.compile(
 
 _ONSITE_PATTERNS = re.compile(
     r"\b(?:on[-\s]?site|onsite|in[-\s]?office|work\s+from\s+office|office\s+based|"
-    r"must\s+work\s+(?:from|in)\s+office)\b",
+    r"must\s+work\s+(?:from|in)\s+office|"
+    # "in-person" only with a work word: "an in-person interview" says nothing about the job
+    r"in[-\s]?person\s+(?:role|position|job|work|expectations?|presence|attendance)|"
+    r"work(?:ing)?\s+in[-\s]?person)\b",
+    re.IGNORECASE,
+)
+
+# Remote mentioned only to rule it out: "not remote", "we are not considering remote",
+# "no remote work", "remote is not an option", "non-remote".
+_NOT_REMOTE = re.compile(
+    r"\b(?:not|no|never)\s+(?:[a-z]+\s+){0,3}?(?:fully\s+)?remote\b"
+    r"|\bremote\s+(?:work(?:ing)?\s+)?(?:is|are)\s+not\b"
+    r"|\bnon[-\s]?remote\b",
     re.IGNORECASE,
 )
 
@@ -130,7 +142,7 @@ def parse_remote_type(text: Any, ctx: ParseContext | None = None) -> Field:
     # "not remote" + "on-site" -> onsite
     # "not remote" alone -> UNKNOWN
     # "not hybrid" etc.
-    not_remote = bool(re.search(r"\bnot\s+remote\b", capped, re.IGNORECASE))
+    not_remote = bool(_NOT_REMOTE.search(capped))
     not_hybrid = bool(re.search(r"\bnot\s+hybrid\b", capped, re.IGNORECASE))
     not_onsite = bool(re.search(r"\bnot\s+(?:on[-\s]?site|onsite|in[-\s]?office)\b", capped, re.IGNORECASE))
 
@@ -223,8 +235,9 @@ def _infer_country_from_city_region(city: str | None, region: str | None) -> str
         # Check US states
         if region_lower in US_STATES:
             return "US"
-        # Check country table
-        country = resolve_country(region_lower)
+        # Check country table: as written first, so ISO codes like "PT" or "NL" resolve
+        # (US state codes were matched above, so "San Francisco, CA" stays US).
+        country = resolve_country(region.strip()) or resolve_country(region_lower)
         if country:
             return country
         # Check region keywords
@@ -322,4 +335,55 @@ def parse_locations(text: Any, ctx: ParseContext | None = None) -> Field:
     return Field(value=locations, provenance="rule", evidence=evidence)
 
 
-__all__ = ["parse_remote_type", "parse_locations"]
+# ---------------------------------------------------------------------------
+# Location sections in a description
+# ---------------------------------------------------------------------------
+
+# A line that is only a location heading ("Available Locations", "Location:"), or a heading with
+# the place on the same line after a colon ("Location: Lisbon, PT"). Free text is never scanned
+# for places (a long description names offices, customers and cities that are not the job's).
+_LOCATION_HEADING = re.compile(
+    r"^[ \t#*_>]*(?:available\s+|office\s+|job\s+|work\s+|hiring\s+)?locations?[ \t*_]*"
+    r"(?:(?P<colon>:)[ \t*_]*(?P<inline>[^\n]*))?$",
+    re.IGNORECASE | re.MULTILINE,
+)
+_MAX_SECTION_LINES = 8
+_MAX_SECTION_LINE = 60
+
+
+def _section_lines(after: str) -> list[str]:
+    """The short lines (list items) right under a heading, up to the first blank after them."""
+    lines: list[str] = []
+    for line in after.split("\n")[: _MAX_SECTION_LINES * 2]:
+        item = line.strip().lstrip("-•*·").strip()
+        if not item:
+            if lines:
+                break
+            continue
+        if len(item) > _MAX_SECTION_LINE or len(lines) >= _MAX_SECTION_LINES:
+            break
+        lines.append(item)
+    return lines
+
+
+def parse_location_section(text: Any, ctx: ParseContext | None = None) -> Field:
+    """Places listed under a location heading in a description, e.g.
+    "Available Locations\\n\\n- Lisbon, PT". Unknown when there is no such heading."""
+    if not isinstance(text, str) or not text.strip():
+        return _unknown()
+    capped = text[:MAX_SCAN]
+    for m in _LOCATION_HEADING.finditer(capped):
+        inline = (m.group("inline") or "").strip(" \t*_")
+        candidates = [inline] if inline else _section_lines(capped[m.end():])
+        found: list[dict] = []
+        for candidate in candidates:
+            parsed = parse_locations(candidate, ctx)
+            for loc in parsed.value or []:
+                if loc.get("country") and loc not in found:
+                    found.append(loc)
+        if found:
+            return Field(value=found, provenance="rule", evidence=m.group(0).strip()[:MAX_EVIDENCE])
+    return _unknown()
+
+
+__all__ = ["parse_remote_type", "parse_locations", "parse_location_section"]
