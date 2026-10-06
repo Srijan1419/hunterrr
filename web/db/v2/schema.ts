@@ -324,12 +324,21 @@ export const postings = hunterrr.table(
     ).notNull().default("unknown"),
     joining: jsonb("joining"),
     joiningProvenance: provenanceEnum("joining_provenance").notNull().default("unknown"),
+    // Stored decisions (0005): computed by etl/decide from the fields above, read by the web.
+    indiaEligible: text("india_eligible").notNull().default("unknown"),
+    indiaReason: text("india_reason"),
+    employmentKind: text("employment_kind").notNull().default("unknown"),
+    roleFamily: text("role_family"),
+    flags: text("flags").array().notNull().default(sql`'{}'::text[]`),
+    labels: text("labels").array().notNull().default(sql`'{}'::text[]`),
+    decisionKey: text("decision_key"),
   },
   (table) => [
     unique("postings_source_source_id_unique").on(
       table.source,
       table.sourceId
     ),
+    index("postings_feed_idx").on(table.status, table.indiaEligible, table.remoteType),
     index("postings_company_title_idx").on(
       table.companyId,
       table.titleNormalized

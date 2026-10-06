@@ -58,3 +58,9 @@ jobs:
       # a few runs bring the whole table up to date, then this finds nothing to do.
       - name: Recheck older postings
         run: python -m etl.run recheck --batch-size 500 --max-seconds 150
+
+      # Store the hard-rule decisions (can an Indian take it, full-time, scam flags, role family) on every
+      # open posting that is new, changed or decided under older rules. Rules only; a no-op until migration
+      # 0005 is applied.
+      - name: Decide
+        run: python -m etl.run decide --batch-size 500 --max-seconds 240

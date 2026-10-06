@@ -22,8 +22,8 @@ function loadMigrationStatements(): string[] {
     .filter((f) => /^\d+_.*\.sql$/.test(f))
     .sort();
   // 0000 schema, 0001 auth tables and grants, 0002 relaxed nullability, 0003 application posting link,
-  // 0004 account.password (Better Auth selects it on every sign-in lookup)
-  expect(files.length).toBe(5);
+  // 0004 account.password (Better Auth selects it on every sign-in lookup), 0005 stored decisions
+  expect(files.length).toBe(6);
   const allSql = files.map((f) => fs.readFileSync(path.join(MIGRATION_DIR, f), "utf8")).join("\n");
   const stmts = allSql
     .split("--> statement-breakpoint")
@@ -118,6 +118,40 @@ describe("hunterrr v2 migration", { timeout: 120_000 }, () => {
        where table_schema = 'hunterrr' and table_name = 'account' and column_name = 'password'`,
     );
     expect(r.rows).toHaveLength(1);
+  });
+
+  it("0005 adds the stored decisions with safe defaults, checks and the feed index", async () => {
+    const cols = await db.query<{ column_name: string; column_default: string | null; is_nullable: string }>(
+      `select column_name, column_default, is_nullable from information_schema.columns
+       where table_schema = 'hunterrr' and table_name = 'postings'
+         and column_name in ('india_eligible','india_reason','employment_kind','role_family','flags','labels','decision_key')`,
+    );
+    expect(cols.rows.map((c) => c.column_name).sort()).toEqual(
+      ["decision_key", "employment_kind", "flags", "india_eligible", "india_reason", "labels", "role_family"],
+    );
+    const byName = Object.fromEntries(cols.rows.map((c) => [c.column_name, c]));
+    expect(byName.india_eligible.column_default).toContain("unknown");
+    expect(byName.india_eligible.is_nullable).toBe("NO");
+    expect(byName.flags.is_nullable).toBe("NO");
+    // a bad value is refused by the database, not only by the code
+    await db.exec(
+      `insert into hunterrr.raw_documents (source, source_key, url, fetched_at, http_status, content_type, content_hash, fetch_meta)
+       values ('greenhouse', 'mig/1', 'u', now(), 200, 'application/json', 'mh1', '{}')`,
+    );
+    const raw = await db.query<{ id: number }>("select id from hunterrr.raw_documents where source_key = 'mig/1'");
+    const insert = (value: string) =>
+      db.exec(
+        `insert into hunterrr.postings (raw_document_id, source, source_id, title, title_normalized, content_hash, india_eligible)
+         values (${raw.rows[0].id}, 'greenhouse', 'mig-${value}', 't', 't', 'h', '${value}')`,
+      );
+    await expect(insert("maybe")).rejects.toThrow();
+    await insert("yes");
+    const row = await db.query<{ flags: string[]; employment_kind: string; decision_key: string | null }>(
+      "select flags, employment_kind, decision_key from hunterrr.postings where source_id = 'mig-yes'",
+    );
+    expect(row.rows[0]).toEqual({ flags: [], employment_kind: "unknown", decision_key: null });
+    const idx = await db.query<{ indexname: string }>("select indexname from pg_indexes where indexname = 'postings_feed_idx'");
+    expect(idx.rows).toHaveLength(1);
   });
 
   it("creates exactly the spec tables in schema hunterrr", async () => {

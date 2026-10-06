@@ -163,6 +163,30 @@ def recheck_cmd(batch_size: int, limit: int | None, max_seconds: float | None) -
     return 0
 
 
+def decide_cmd(batch_size: int, limit: int | None, max_seconds: float | None) -> int:
+    """Store the hard-rule decisions (India eligibility, full-time, flags, role family) on open postings."""
+    from etl.runner.decide import decide_pending
+
+    settings = Settings()
+    db_url = _secret(settings.DATABASE_URL) or os.environ.get("DATABASE_URL")
+    if not db_url:
+        print("DATABASE_URL is not set", file=sys.stderr)
+        return 2
+    engine = make_engine(db_url, pooled=True)
+    try:
+        result = decide_pending(engine, batch_size=batch_size, limit=limit, max_seconds=max_seconds)
+    except Exception as exc:
+        print(f"decide status=failed error={type(exc).__name__}")
+        return 1
+    finally:
+        engine.dispose()
+    if result.skipped_reason:
+        print(f"decide status=skipped reason={result.skipped_reason}")
+        return 0
+    print(f"decide status=ok seen={result.seen} india_yes={result.india_yes} flagged={result.flagged} batches={result.batches}")
+    return 0
+
+
 def seed_cmd(path: str) -> int:
     """Add the companies and boards in config/companies.yaml that the database does not have yet."""
     from etl.discovery.seed import SeedError, load_entries, sync
@@ -225,6 +249,16 @@ def main(argv: list[str] | None = None) -> int:
         except SystemExit:
             return 2
         return recheck_cmd(max(1, args.batch_size), args.limit, args.max_seconds)
+    if argv and argv[0] == "decide":
+        parser = argparse.ArgumentParser(prog="etl.run decide")
+        parser.add_argument("--batch-size", type=int, default=500)
+        parser.add_argument("--limit", type=int, default=None)
+        parser.add_argument("--max-seconds", type=float, default=None, help="wall-clock budget for the whole run")
+        try:
+            args = parser.parse_args(argv[1:])
+        except SystemExit:
+            return 2
+        return decide_cmd(max(1, args.batch_size), args.limit, args.max_seconds)
     print("Usage: python -m etl.run collect --shard i/N | process [--batch-size N] [--limit N]", file=sys.stderr)
     return 2
 
