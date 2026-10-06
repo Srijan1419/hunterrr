@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import InboxPage from "@/app/(app)/inbox/page";
-import CompaniesPage from "@/app/(app)/companies/page";
 
 const PAGES: Array<{
   name: string;
@@ -14,14 +13,10 @@ const PAGES: Array<{
     sentence:
       "Job emails from your connected Gmail will appear here, with anything uncertain waiting for your decision.",
   },
-  {
-    name: "Companies",
-    Page: CompaniesPage,
-    sentence: "Companies you watch or ignore will appear here. Boards are discovered automatically.",
-  },
 ];
 
-// Today and Profile are real screens now (tests/today, tests/profile); these two are still placeholders.
+// Today, Profile and Companies are real screens now (tests/today, tests/profile, tests/companies);
+// only Inbox is still a placeholder, until Gmail is connected.
 describe("empty-state pages", () => {
   for (const { name, Page, sentence } of PAGES) {
     it(`${name} renders its heading and its exact empty-state sentence`, () => {

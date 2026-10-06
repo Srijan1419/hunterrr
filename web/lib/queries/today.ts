@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { ENTRY_LEVEL, FEED_COLUMNS, toRow, type FeedRow } from "@/lib/queries/feed";
+import { ENTRY_LEVEL, FEED_COLUMNS, NOT_IGNORED, toRow, type FeedRow } from "@/lib/queries/feed";
 import {
   APPLICATION_STATES,
   CLOSED_STATES,
@@ -38,7 +38,7 @@ export function endOfTodayIST(now: Date): Date {
 
 export async function queryToday(db: TrackerTx, now: Date = new Date()): Promise<TodayData> {
   const since = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
-  const fresh = sql`p.status = 'open' AND ${ENTRY_LEVEL} AND p.first_seen_at >= ${since}`;
+  const fresh = sql`p.status = 'open' AND ${NOT_IGNORED} AND ${ENTRY_LEVEL} AND p.first_seen_at >= ${since}`;
 
   const [list, count, followUps, states] = await Promise.all([
     db.execute(sql`
@@ -47,7 +47,7 @@ export async function queryToday(db: TrackerTx, now: Date = new Date()): Promise
       WHERE ${fresh}
       ORDER BY p.first_seen_at DESC, p.posted_at DESC NULLS LAST, p.id DESC
       LIMIT ${NEW_JOBS_SHOWN}`),
-    db.execute(sql`SELECT count(*) AS n FROM hunterrr.postings p WHERE ${fresh}`),
+    db.execute(sql`SELECT count(*) AS n FROM hunterrr.postings p LEFT JOIN hunterrr.companies c ON c.id = p.company_id WHERE ${fresh}`),
     followUpsDue(db, endOfTodayIST(now)),
     db.execute(sql`SELECT current_state::text AS state, count(*) AS n FROM hunterrr.applications GROUP BY current_state`),
   ]);

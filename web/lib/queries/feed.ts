@@ -90,12 +90,16 @@ export const FEED_COLUMNS = sql`p.id, p.title, c.name AS company_name, p.source,
  * pass, whatever the years say. A posting that states nothing is not guessed into the list; the
  * page counts those separately.
  */
+/** Needs the company joined as `c`; a posting with no company row passes. */
+export const NOT_IGNORED = sql`c.watch IS DISTINCT FROM 'ignore'`;
+
 export const ENTRY_LEVEL = sql`(p.seniority IN ('intern', 'entry')
   OR (p.seniority IS NULL AND (p.experience_min_years <= 1 OR p.experience_max_years <= 2)))`;
 const LEVEL_UNSTATED = sql`(p.seniority IS NULL AND p.experience_min_years IS NULL AND p.experience_max_years IS NULL)`;
 
 function conditions(f: FeedFilters): SQL[] {
-  const out: SQL[] = [sql`p.status = 'open'`];
+  // A company the owner chose to ignore never shows (postings with no known company still do).
+  const out: SQL[] = [sql`p.status = 'open'`, NOT_IGNORED];
   const q = f.q?.trim();
   if (q) {
     const pat = likePattern(q.slice(0, 80));
