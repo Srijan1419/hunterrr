@@ -28,7 +28,7 @@ from etl.extract.ladder import StoredDocument, extract
 from etl.extract.llm_rung import apply_llm
 from etl.extract.model import FIELD_KEYS, Extracted
 
-EXTRACTION_VERSION = 6  # 6: Indian grade titles (Senior Associate) carry no level; "0-1 yrs + freshers" not a conflict; 5: negated work-auth ("no clearance required") and "worldwide except X" (2026-10-06); 4: fresher level v2 (trainee, campus, SDE-1, months, batch year); 3: board location text (2026-10-06)
+EXTRACTION_VERSION = 7  # 7: level hints only from the title or an explicit un-negated fresher statement (a description that mentions interns no longer makes an intern); 6: Indian grade titles (Senior Associate) carry no level; "0-1 yrs + freshers" not a conflict; 5: negated work-auth ("no clearance required") and "worldwide except X" (2026-10-06); 4: fresher level v2 (trainee, campus, SDE-1, months, batch year); 3: board location text (2026-10-06)
 
 PROVENANCE = {"jsonld", "source", "rule", "llm", "user", "unknown"}
 REMOTE_TYPES = {"remote", "hybrid", "onsite"}

@@ -19,7 +19,7 @@ YEARS = [
     ("freshers welcome", 0, None),
     ("entry level", 0, None),
     ("new grad 2026", 0, None),
-    ("recent graduate", 0, None),
+    ("seeking a recent graduate", 0, None),
     ("5+ years of experience in Python", 5, None),
     ("Requires 3-5 years experience", 3, 5),
     ("3 years of Python", 3, None),
@@ -67,7 +67,7 @@ def test_title_hints(title, hint):
     assert h.value == hint
 
 
-@pytest.mark.parametrize("text", ["fresher", "entry level", "new grad 2026", "recent graduate"])
+@pytest.mark.parametrize("text", ["fresher", "entry level", "new grad 2026", "seeking a recent graduate"])
 def test_entry_phrases_give_entry_hint(text):
     mn, _, h = parse_experience(text, CTX)
     assert mn.value == 0 and h.value == "entry"
@@ -115,3 +115,36 @@ LEVEL_CASES = [
 def test_level_v2(title, desc, level, lo, hi):
     min_f, max_f, hint = parse_experience(desc, ParseContext(), title)
     assert (hint.value, min_f.value, max_f.value) == (level, lo, hi)
+
+
+# Real wording found on 6,600 postings from 65 boards (2026-10-06): a description that merely MENTIONS interns or
+# new grads says nothing about this job, and used to label senior engineers as interns / entry level.
+@pytest.mark.parametrize("text", [
+    "While extensive tenure is not required, this is not an entry-level position.",
+    "It is not intended for internship, new graduate, or entry-level applicants.",
+    "Note: if you are an intern, new grad, or staff applicant, please do not apply using this link.",
+    "Manage a team of software engineers ranging from new grads to senior engineers.",
+    "Manage the full-cycle recruiting process for new graduate and intern candidates.",
+    "You will mentor interns and help them grow.",
+    "Our programme is designed to support new grads transition into their first roles.",
+])
+def test_a_description_that_only_mentions_interns_or_new_grads_gives_no_level(text):
+    mn, mx, hint = parse_experience(text, CTX)
+    assert hint.value is None
+    assert mn.value is None
+
+
+@pytest.mark.parametrize("text", [
+    "Qualified CA Fresher from 2025/2026 batch.",
+    "Freshers welcome to apply.",
+    "This is an entry-level role.",
+    "Looking for a new grad to join the team.",
+    "No prior experience required.",
+])
+def test_explicit_fresher_statements_in_a_description_still_work(text):
+    mn, _, hint = parse_experience(text, CTX)
+    assert mn.value == 0 and hint.value == "entry"
+
+
+def test_the_title_still_gives_the_level():
+    assert parse_experience("", CTX, title="Software Engineer Intern")[2].value == "intern"

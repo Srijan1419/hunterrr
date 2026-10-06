@@ -70,6 +70,35 @@ _FRESHER = re.compile(
     re.IGNORECASE,
 )
 
+# What a DESCRIPTION may say to make a job "for freshers". Stricter than `_FRESHER` (used on titles): the words
+# "new grad" and "recent graduate" are left out because descriptions use them for the company's programmes and
+# for who NOT to apply ("interns and new grads, do not apply here"; "a team from new grads to senior engineers").
+_FRESHER_DESC = re.compile(
+    r"\bfreshers?\b|\bentry[\s-]*level\b|\b(?:batch|class)\s+of\s+20[0-9]{2}\b|\b20[0-9]{2}\s+(?:batch|pass[\s-]?outs?)\b"
+    r"|\bnew\s+grad(?:uate)?s?\s+20[0-9]{2}\b"
+    # only a hiring verb makes "recent graduate / new grad" about THIS job ("seeking a recent graduate")
+    r"|\b(?:seeking|looking\s+for|hiring|ideal\s+for|suited\s+for|open\s+to|welcomes?)\s+(?:an?\s+)?(?:[a-z-]+\s+){0,2}?"
+    r"(?:recent\s+graduates?|new\s+grad(?:uate)?s?)\b"
+    r"|\bno\s+(?:prior\s+|previous\s+)?(?:work\s+)?experience\s+(?:is\s+)?(?:required|needed|necessary)\b",
+    re.IGNORECASE,
+)
+# A negation shortly before the cue, or "to senior" right after it, makes the cue not about this job.
+_NEGATED_BEFORE = re.compile(
+    r"(?:\bnot\b|\bno\b|\bnever\b|\bnor\b|\bexcept\b|\bexcluding\b|\bwithout\b|\bunless\b|n't\b)[^.\n]{0,60}$", re.IGNORECASE)
+_RANGE_AFTER = re.compile(r"^\s*(?:\w+\s+){0,2}(?:to|and|through)\s+(?:senior|experienced|staff|lead|principal)\b", re.IGNORECASE)
+
+
+def _fresher_in_description(text: str):
+    """The first fresher statement in a description that is about this job (not negated, not a range), or None."""
+    for m in _FRESHER_DESC.finditer(text or ""):
+        if _NEGATED_BEFORE.search(text[max(0, m.start() - 80):m.start()]):
+            continue
+        if _RANGE_AFTER.search(text[m.end():m.end() + 40]):
+            continue
+        return m
+    return None
+
+
 # Titles that say early career. Searched in the TITLE only: in a description the same words show up in
 # "we mentor early-career engineers" or "our trainee programme", which says nothing about THIS job.
 _FRESHER_TITLE = re.compile(
@@ -285,7 +314,7 @@ def parse_experience(
     # ("Senior Graduate Engineer", "Lead, Early Career Programme"): the level word decides.
     title_level = next((name for name, pat in _TITLE_PATS if tcap and pat.search(tcap)), None)
     vetoed = title_level in {"senior", "lead", "staff", "principal", "director", "mid"}
-    fm_cap = None if vetoed else _FRESHER.search(capped)
+    fm_cap = None if vetoed else _fresher_in_description(capped)
     fm_title = (None if vetoed else (_FRESHER.search(tcap) or _FRESHER_TITLE.search(tcap))) if tcap else None
     fm = fm_cap or fm_title
     if fm is not None:
@@ -317,22 +346,14 @@ def parse_experience(
                 hint = Field(value=name, provenance="rule",
                              evidence=_ev(pat.search(tcap).group(0)))  # type: ignore[union-attr]
                 break
+    # The level word comes from the TITLE. A description that merely mentions interns or new grads ("you will
+    # mentor interns", "not an entry-level position", "interns and new grads: do not apply here") says nothing
+    # about this job, and on real postings that guess mislabeled senior engineers as interns (2026-10-06).
+    # Only an explicit, un-negated fresher statement in the description gives "entry".
     if hint.value is None:
-        for src in (capped, tcap):
-            if not src:
-                continue
-            if _FRESHER.search(src):
-                m = _FRESHER.search(src)
-                assert m is not None
-                hint = Field(value="entry", provenance="rule",
-                             evidence=_ev(m.group(0)))
-                break
-            if re.search(r"\bintern(?:ship)?s?\b", src, re.IGNORECASE):
-                m = re.search(r"\bintern(?:ship)?s?\b", src, re.IGNORECASE)
-                assert m is not None
-                hint = Field(value="intern", provenance="rule",
-                             evidence=_ev(m.group(0)))
-                break
+        m = (_fresher_in_description(capped) if capped else None) or (_FRESHER.search(tcap) if tcap else None)
+        if m is not None:
+            hint = Field(value="entry", provenance="rule", evidence=_ev(m.group(0)))
 
     return (min_f, max_f, hint)
 
