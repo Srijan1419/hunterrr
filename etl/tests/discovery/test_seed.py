@@ -44,9 +44,9 @@ def test_bad_documents_are_refused_with_a_reason(bad, why):
 
 def test_the_shipped_company_list_is_valid_and_has_no_duplicates():
     entries = load_entries(ROOT / "config" / "companies.yaml")
-    assert len(entries) >= 20
+    assert len(entries) >= 40
     assert len({(e.ats, e.slug.lower()) for e in entries}) == len(entries)
-    assert {e.ats for e in entries} <= {"greenhouse", "lever", "ashby"}
+    assert {e.ats for e in entries} <= {"greenhouse", "lever", "ashby", "workable", "recruitee", "smartrecruiters"}
 
 
 def test_a_missing_or_broken_file_is_a_clear_error(tmp_path):

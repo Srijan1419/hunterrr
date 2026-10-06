@@ -41,3 +41,30 @@ companies:
   - {name: Notion,     ats: ashby,      slug: notion}                          # 135 jobs, 9 entry
   - {name: OpenAI,     ats: ashby,      slug: openai}                          # 823 jobs, 10 in India
   - {name: Coursera,   ats: greenhouse, slug: coursera}                        # 17 jobs, 5 in India
+
+  # Shopify ecosystem and remote-first software companies (added 2026-10-06; each board answered with live
+  # postings, count and remote share in the comment). Small teams: check the Companies page for how often they post.
+  - {name: Klaviyo,                ats: greenhouse,      slug: klaviyo}      # 141 jobs
+  - {name: Attentive,              ats: greenhouse,      slug: attentive}    # 31 jobs
+  - {name: Yotpo,                  ats: greenhouse,      slug: yotpo}        # 13 jobs
+  - {name: Postscript,             ats: greenhouse,      slug: postscript}   # 7 jobs, all remote
+  - {name: AfterShip,              ats: greenhouse,      slug: aftership}    # 20 jobs
+  - {name: Webflow,                ats: greenhouse,      slug: webflow}      # 24 jobs, 18 remote
+  - {name: Vercel,                 ats: greenhouse,      slug: vercel}       # 83 jobs
+  - {name: Netlify,                ats: greenhouse,      slug: netlify}      # 6 jobs, all remote
+  - {name: Omnisend,               ats: lever,           slug: omnisend}     # 15 jobs, 5 remote, 2 entry
+  - {name: Okendo,                 ats: lever,           slug: okendo}       # 9 jobs, all remote
+  - {name: Contentsquare (Hotjar), ats: lever,           slug: contentsquare} # 26 jobs
+  - {name: Gorgias,                ats: ashby,           slug: gorgias}      # 18 jobs, 11 remote
+  - {name: Tapcart,                ats: ashby,           slug: tapcart}      # 9 jobs, all remote
+  - {name: Recharge,               ats: ashby,           slug: recharge}     # 4 jobs, all remote
+  - {name: Rewind,                 ats: ashby,           slug: rewind}       # 2 jobs, all remote
+  - {name: Replo,                  ats: ashby,           slug: replo}        # 2 jobs
+  - {name: Gelato,                 ats: ashby,           slug: gelato}       # 1 job, remote
+  - {name: Oyster,                 ats: ashby,           slug: oyster}       # 20 jobs, 14 remote
+  - {name: Supabase,               ats: ashby,           slug: supabase}     # 49 jobs, all remote
+  - {name: Sentry,                 ats: ashby,           slug: sentry}       # 43 jobs, 42 remote
+  - {name: Freshworks,             ats: smartrecruiters, slug: Freshworks}   # 123 jobs (read 100 per page)
+  - {name: Judge.me,               ats: smartrecruiters, slug: judgeme}      # 1 job
+  - {name: Hextom,                 ats: smartrecruiters, slug: hextominc}    # 2 jobs
+  - {name: Hugging Face,           ats: workable,        slug: huggingface}  # remote-first, many EMEA/worldwide roles

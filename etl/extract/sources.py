@@ -101,6 +101,12 @@ def board_title(board: str, payload: dict) -> str | None:
         return None
     if board == "lever":
         return _str(payload.get("text"))
+    if board == "smartrecruiters":
+        return _str(payload.get("name"))
+    if board == "recruitee":
+        from etl.extract.sources_more import recruitee_title  # local import: sources_more imports this module
+
+        return recruitee_title(payload)
     return _str(payload.get("title"))
 
 

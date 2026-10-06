@@ -25,6 +25,7 @@ from etl.extract.jsonld import (
 )
 from etl.extract.model import FIELD_KEYS, Extracted, empty_fields
 from etl.extract.rules_rung import apply_rules
+from etl.extract.sources_more import fields_from_recruitee, fields_from_smartrecruiters, fields_from_workable
 from etl.extract.sources import (
     board_title,
     fields_from_ashby,
@@ -36,6 +37,9 @@ _BOARD_MAPPERS = {
     "greenhouse": fields_from_greenhouse,
     "lever": fields_from_lever,
     "ashby": fields_from_ashby,
+    "workable": fields_from_workable,
+    "recruitee": fields_from_recruitee,
+    "smartrecruiters": fields_from_smartrecruiters,
 }
 
 # Payload keys that may carry HTML containing embedded JSON-LD.

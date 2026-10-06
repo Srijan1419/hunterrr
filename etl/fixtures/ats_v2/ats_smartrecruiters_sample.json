@@ -1,0 +1,185 @@
+{
+ "offset": 0,
+ "limit": 3,
+ "totalFound": 123,
+ "content": [
+  {
+   "id": "744000153616609",
+   "name": "Vice President, Corporate Legal & Compliance ",
+   "uuid": "16410c5f-7c26-460c-b6e9-96f97102d865",
+   "jobAdId": "7348491f-84d3-40e6-b884-0e06e45314c4",
+   "defaultJobAd": true,
+   "refNumber": "P101530_1",
+   "company": {
+    "identifier": "Freshworks",
+    "name": "Freshworks"
+   },
+   "releasedDate": "2026-10-05T22:00:57.338Z",
+   "location": {
+    "city": "San Mateo",
+    "region": "CA",
+    "country": "us",
+    "postalCode": "94403",
+    "remote": false,
+    "hybrid": true,
+    "hybridDescription": "Tu-Th On-site (M/F WFH)",
+    "fullLocation": "San Mateo, CA, United States"
+   },
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "department": {},
+   "function": {
+    "id": "other",
+    "label": "Other"
+   },
+   "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+   },
+   "experienceLevel": {
+    "id": "executive",
+    "label": "Executive"
+   },
+   "customField": [
+    {
+     "fieldId": "618bba30fa9dfa25d877c58b",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "Freshworks"
+    },
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "us",
+     "valueLabel": "United States"
+    }
+   ],
+   "visibility": "PUBLIC",
+   "ref": "https://api.smartrecruiters.com/v1/companies/Freshworks/postings/744000153616609",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   }
+  },
+  {
+   "id": "744000153588867",
+   "name": "Lead - Program Management",
+   "uuid": "c55364e8-99f8-4530-8d2e-9aa05527cb3a",
+   "jobAdId": "277b81f6-7a7a-4daf-ab18-d25ad1cf966d",
+   "defaultJobAd": true,
+   "refNumber": "P102010_1",
+   "company": {
+    "identifier": "Freshworks",
+    "name": "Freshworks"
+   },
+   "releasedDate": "2026-10-05T18:30:07.592Z",
+   "location": {
+    "city": "San Mateo",
+    "country": "us",
+    "remote": false,
+    "hybrid": true,
+    "hybridDescription": "3x a week onsite Tue-Thur",
+    "fullLocation": "San Mateo, , United States"
+   },
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "department": {},
+   "function": {
+    "id": "other",
+    "label": "Other"
+   },
+   "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+   },
+   "experienceLevel": {
+    "id": "mid_senior_level",
+    "label": "Mid-Senior Level"
+   },
+   "customField": [
+    {
+     "fieldId": "618bba30fa9dfa25d877c58b",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "Freshworks"
+    },
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "us",
+     "valueLabel": "United States"
+    }
+   ],
+   "visibility": "PUBLIC",
+   "ref": "https://api.smartrecruiters.com/v1/companies/Freshworks/postings/744000153588867",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   }
+  },
+  {
+   "id": "744000153405839",
+   "name": "Lead - Sales Commission",
+   "uuid": "5cca9c63-d844-4d92-a2a8-9c1f3e9f273c",
+   "jobAdId": "104961c9-9cfd-4f92-9023-3774da60a7f7",
+   "defaultJobAd": true,
+   "refNumber": "P103164",
+   "company": {
+    "identifier": "Freshworks",
+    "name": "Freshworks"
+   },
+   "releasedDate": "2026-10-05T05:42:06.319Z",
+   "location": {
+    "city": "Bengaluru",
+    "country": "in",
+    "remote": false,
+    "hybrid": false,
+    "fullLocation": "Bengaluru, , India"
+   },
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "department": {},
+   "function": {
+    "id": "other",
+    "label": "Other"
+   },
+   "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+   },
+   "experienceLevel": {
+    "id": "mid_senior_level",
+    "label": "Mid-Senior Level"
+   },
+   "customField": [
+    {
+     "fieldId": "618bba30fa9dfa25d877c58b",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "Freshworks"
+    },
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "in",
+     "valueLabel": "India"
+    }
+   ],
+   "visibility": "PUBLIC",
+   "ref": "https://api.smartrecruiters.com/v1/companies/Freshworks/postings/744000153405839",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   }
+  }
+ ]
+}

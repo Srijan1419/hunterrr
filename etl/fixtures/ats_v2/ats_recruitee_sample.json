@@ -1,0 +1,715 @@
+{
+ "offers": [
+  {
+   "title": "API Job - Berlin - Musterstr 1, 10111",
+   "country": "Deutschland",
+   "department": "Produkt",
+   "education_code": "high_school_coursework",
+   "cover_image": null,
+   "position": 2,
+   "guid": "c5tkw",
+   "published_at": "2025-01-02 14:22:42 UTC",
+   "sharing_description": "Test",
+   "min_hours": 32,
+   "careers_url": "https://personio.recruitee.com/o/api-job-berlin-musterstr-1-10111",
+   "requirements": null,
+   "max_hours_per_week": "35",
+   "sharing_title": "API Job",
+   "employment_type_code": "fulltime_permanent",
+   "country_code": "DE",
+   "created_at": "2025-01-02 14:19:26 UTC",
+   "slug": "api-job-berlin-musterstr-1-10111",
+   "state_name": "Berlin",
+   "company_name": "FD Sandbox",
+   "postal_code": null,
+   "locations": [
+    {
+     "id": 185790,
+     "name": "Berlin",
+     "state": "Berlin",
+     "country": "Deutschland",
+     "city": "Berlin",
+     "translations": {
+      "de": {
+       "name": "Berlin",
+       "city": "Berlin",
+       "postal_code": null,
+       "street": null,
+       "note": null
+      }
+     },
+     "country_code": "DE",
+     "state_code": "BE",
+     "postal_code": null,
+     "street": null,
+     "note": null
+    }
+   ],
+   "close_at": null,
+   "locations_question_required": true,
+   "category_code": "accountancy",
+   "city": "Berlin",
+   "updated_at": "2025-01-02 18:53:43 UTC",
+   "state_code": "BE",
+   "options_salutation": "off",
+   "on_site": true,
+   "sharing_image": null,
+   "dynamic_fields": [],
+   "mailbox_email": "job.c5tkw@personio.recruitee.com",
+   "options_cv": "required",
+   "description": "<h3>Stellenangebot: API Job bei FD Sandbox in Berlin</h3><p>Wir suchen eine engagierte Person für die Position des API Jobs bei FD Sandbox in unserer Produktabteilung. Die Stelle befindet sich in Berlin, in der Musterstr 1, 10111.</p><ul><li><p><strong>Standort:</strong> Berlin, Musterstr 1, 10111</p></li><li><p><strong>Abteilung:</strong> Produkt</p></li><li><p><strong>Art der Anstellung:</strong> Vollzeit</p></li></ul><p>Als Teil unseres Teams wirst du an der Entwicklung und Implementierung von APIs arbeiten, um die Interaktion mit unseren Produkten zu verbessern. Du wirst eng mit unserem En",
+   "options_phone": "required",
+   "remote": false,
+   "salary": {
+    "max": null,
+    "min": null,
+    "period": null,
+    "currency": null
+   },
+   "locations_question": "Was ist dein bevorzugter Arbeitsort?",
+   "highlight": null,
+   "open_questions": [],
+   "translations": {
+    "de": {
+     "description": "<h3>Stellenangebot: API Job bei FD Sandbox in Berlin</h3><p>Wir suchen eine engagierte Person für die Position des API Jobs bei FD Sandbox in unserer Produktabteilung. Die Stelle befindet sich in Berlin, in der Musterstr 1, 10111.</p><ul><li><p><strong>Standort:</strong> Berlin, Musterstr 1, 10111</p></li><li><p><strong>Abteilung:</strong> Produkt</p></li><li><p><strong>Art der Anstellung:</strong> Vollzeit</p></li></ul><p>Als Teil unseres Teams wirst du an der Entwicklung und Implementierung von APIs arbeiten, um die Interaktion mit unseren Produkten zu verbessern. Du wirst eng mit unserem En",
+     "title": "API Job - Berlin - Musterstr 1, 10111",
+     "highlight": null,
+     "requirements": null,
+     "sharing_image": null,
+     "locations_question": "Was ist dein bevorzugter Arbeitsort?",
+     "sharing_description": "Test",
+     "sharing_title": "API Job"
+    }
+   },
+   "location_question_visible": false,
+   "id": 1968676,
+   "location": "Berlin, Berlin, Deutschland",
+   "options_photo": "off",
+   "experience_code": "experienced",
+   "locations_question_type": "multiple_choice",
+   "careers_apply_url": "https://personio.recruitee.com/o/api-job-berlin-musterstr-1-10111/c/new",
+   "options_cover_letter": "optional",
+   "hybrid": false,
+   "status": "published",
+   "min_hours_per_week": "32",
+   "options_title": "off",
+   "tags": [],
+   "max_hours": 35
+  },
+  {
+   "country": "Netherlands",
+   "position": 1633,
+   "cover_image": null,
+   "on_site": false,
+   "state_code": "NH",
+   "close_at": null,
+   "hybrid": true,
+   "dynamic_fields": [],
+   "careers_url": "https://careers.bunq.com/o/website-lead",
+   "sharing_image": null,
+   "location_question_visible": true,
+   "sharing_description": "Ready to Get Shit Done?At bunq, we're reshaping how people experience banking globally. Our website is the digital front door, where millions of potential users first discover who we are, what we offe",
+   "experience_code": "experienced",
+   "careers_apply_url": "https://careers.bunq.com/o/website-lead/c/new",
+   "locations": [
+    {
+     "id": 39979,
+     "name": "Amsterdam",
+     "state": "Noord-Holland",
+     "country": "Netherlands",
+     "city": "Amsterdam",
+     "translations": {
+      "en": {
+       "name": "Amsterdam",
+       "city": "Amsterdam",
+       "postal_code": null,
+       "street": null,
+       "note": null
+      }
+     },
+     "country_code": "NL",
+     "postal_code": null,
+     "state_code": "NH",
+     "street": null,
+     "note": null
+    },
+    {
+     "id": 39977,
+     "name": "Istanbul",
+     "state": "İstanbul",
+     "country": "Türkiye",
+     "city": "İstanbul",
+     "translations": {
+      "en": {
+       "name": "Istanbul",
+       "city": "İstanbul",
+       "postal_code": null,
+       "street": null,
+       "note": null
+      }
+     },
+     "country_code": "TR",
+     "postal_code": null,
+     "state_code": "34",
+     "street": null,
+     "note": null
+    },
+    {
+     "id": 39967,
+     "name": "Sofia",
+     "state": "Sofia (stolitsa)",
+     "country": "Bulgaria",
+     "city": "Sofia",
+     "translations": {
+      "en": {
+       "name": "Sofia",
+       "city": "Sofia",
+       "postal_code": null,
+       "street": null,
+       "note": null
+      }
+     },
+     "country_code": "BG",
+     "postal_code": null,
+     "state_code": "22",
+     "street": null,
+     "note": null
+    }
+   ],
+   "requirements": "<p><strong>Do You Have What It Takes?</strong></p><ul><li><p>Website strategy &amp; execution expertise: Proven track record building and optimizing high-traffic websites with focus on conversion, user experience, and measurable impact.</p></li><li><p>Technical depth: You understand site architecture, core web vitals, mobile optimization, and analytics; hands-on experience with web tech stack (front-end, performance tools, A/B testing platforms).</p></li><li><p>Data-driven mindset: You design experiments, interpret analytics (GA4, Looker), build conversion funnels, and use data to make decisio",
+   "salary": {
+    "max": null,
+    "min": null,
+    "period": null,
+    "currency": null
+   },
+   "department": "Growth",
+   "company_name": "bunq",
+   "locations_question": "What is your preferred work location?",
+   "slug": "website-lead",
+   "locations_question_type": "single_choice",
+   "education_code": "professional",
+   "locations_question_required": true,
+   "postal_code": null,
+   "options_phone": "required",
+   "city": "Amsterdam",
+   "updated_at": "2026-10-06 07:44:58 UTC",
+   "options_title": "off",
+   "employment_type_code": "fulltime_permanent",
+   "created_at": "2026-10-05 14:47:43 UTC",
+   "country_code": "NL",
+   "max_hours": 40,
+   "state_name": "Noord-Holland",
+   "options_cv": "off",
+   "description": "<p>Ready to Get Shit Done?</p><p>At bunq, we're reshaping how people experience banking globally. Our website is the digital front door, where millions of potential users first discover who we are, what we offer, and why they should trust us. As a Website Lead, your mission is to own the entire website experience from strategy through execution, making sure our digital presence converts visitors into loyal users and establishes bunq as the go-to fintech solution.</p><p>Your role is to build, optimize, and scale bunq.com into a high-performing, conversion-focused asset that tells our story comp",
+   "guid": "vgk5y",
+   "remote": false,
+   "sharing_title": "Website Lead",
+   "mailbox_email": "job.vgk5y@bunq.recruitee.com",
+   "translations": {
+    "en": {
+     "description": "<p>Ready to Get Shit Done?</p><p>At bunq, we're reshaping how people experience banking globally. Our website is the digital front door, where millions of potential users first discover who we are, what we offer, and why they should trust us. As a Website Lead, your mission is to own the entire website experience from strategy through execution, making sure our digital presence converts visitors into loyal users and establishes bunq as the go-to fintech solution.</p><p>Your role is to build, optimize, and scale bunq.com into a high-performing, conversion-focused asset that tells our story comp",
+     "title": "Website Lead",
+     "highlight": null,
+     "sharing_image": null,
+     "requirements": "<p><strong>Do You Have What It Takes?</strong></p><ul><li><p>Website strategy &amp; execution expertise: Proven track record building and optimizing high-traffic websites with focus on conversion, user experience, and measurable impact.</p></li><li><p>Technical depth: You understand site architecture, core web vitals, mobile optimization, and analytics; hands-on experience with web tech stack (front-end, performance tools, A/B testing platforms).</p></li><li><p>Data-driven mindset: You design experiments, interpret analytics (GA4, Looker), build conversion funnels, and use data to make decisio",
+     "sharing_title": "Website Lead",
+     "sharing_description": "Ready to Get Shit Done?At bunq, we're reshaping how people experience banking globally. Our website is the digital front door, where millions of potential users first discover who we are, what we offe",
+     "locations_question": "What is your preferred work location?"
+    }
+   },
+   "title": "Website Lead",
+   "published_at": "2026-10-05 15:07:51 UTC",
+   "location": "Amsterdam, Noord-Holland, Netherlands",
+   "id": 2771667,
+   "min_hours_per_week": "40",
+   "category_code": "banking",
+   "max_hours_per_week": "40",
+   "options_cover_letter": "off",
+   "options_photo": "off",
+   "open_questions": [
+    {
+     "id": 4415173,
+     "position": 1,
+     "options": {},
+     "required": true,
+     "body": "What country do you currently live in?",
+     "kind": "string",
+     "translations": {
+      "en": {
+       "body": "What country do you currently live in?"
+      }
+     },
+     "open_question_options": []
+    },
+    {
+     "id": 4415174,
+     "position": 2,
+     "options": {},
+     "required": false,
+     "body": "<p>💡 Each country has different rules for eligibility to work without requiring sponsorship.</p>\n<p><br />🇳🇱 <strong>Netherlands</strong>: You must be a Dutch/EU/EEA/Swiss citizen, or hold a valid Dutch residence permit with full work rights (e.g., refugee status, spousal visa, or permanent residence).</p>\n<p>🇧🇬 <strong>Bulgaria</strong>: You must have the legal right to work in Bulgaria without needing a company-sponsored visa.  </p>\n<p>🇹🇷 <strong>Turkey</strong>: You must be a Turkish citizen, hold a Turquoise Card, refugee status, or a permanent residency/work permit (student/family/tempora",
+     "kind": "infobox",
+     "translations": {
+      "en": {
+       "body": "<p>💡 Each country has different rules for eligibility to work without requiring sponsorship.</p>\n<p><br />🇳🇱 <strong>Netherlands</strong>: You must be a Dutch/EU/EEA/Swiss citizen, or hold a valid Dutch residence permit with full work rights (e.g., refugee status, spousal visa, or permanent residence).</p>\n<p>🇧🇬 <strong>Bulgaria</strong>: You must have the legal right to work in Bulgaria without needing a company-sponsored visa.  </p>\n<p>🇹🇷 <strong>Turkey</strong>: You must be a Turkish citizen, hold a Turquoise Card, refugee status, or a permanent residency/work permit (student/family/tempora"
+      }
+     },
+     "open_question_options": []
+    },
+    {
+     "id": 4415175,
+     "position": 3,
+     "options": {},
+     "required": true,
+     "body": "Which visa situation fits you best? Please choose according to the office you are applying for: Amsterdam (NL), Istanbul (TR), Sofia (BG).",
+     "kind": "single_choice",
+     "translations": {
+      "en": {
+       "body": "Which visa situation fits you best? Please choose according to the office you are applying for: Amsterdam (NL), Istanbul (TR), Sofia (BG)."
+      }
+     },
+     "open_question_options": [
+      {
+       "id": 6799112,
+       "position": 0,
+       "body": "NL: I am a EU/EEA/Swiss citizen",
+       "translations": {
+        "en": {
+         "body": "NL: I am a EU/EEA/Swiss citizen"
+        }
+       }
+      },
+      {
+       "id": 6799113,
+       "position": 1,
+       "body": "NL: I am on a spousal visa / search year visa / under the reduced salary criterion",
+       "translations": {
+        "en": {
+         "body": "NL: I am on a spousal visa / search year visa / under the reduced salary criterion"
+        }
+       }
+      },
+      {
+       "id": 6799114,
+       "position": 2,
+       "body": "NL: I require visa sponsorship and I am under 29 years of age",
+       "translations": {
+        "en": {
+         "body": "NL: I require visa sponsorship and I am under 29 years of age"
+        }
+       }
+      },
+      {
+       "id": 6799115,
+       "position": 3,
+       "body": "NL: I require visa sponsorship and I am over 29 years of age",
+       "translations": {
+        "en": {
+         "body": "NL: I require visa sponsorship and I am over 29 years of age"
+        }
+       }
+      },
+      {
+       "id": 6799116,
+       "position": 4,
+       "body": "TR: I am Turkish citizen",
+       "translations": {
+        "en": {
+         "body": "TR: I am Turkish citizen"
+        }
+       }
+      },
+      {
+       "id": 6799117,
+       "position": 5,
+       "body": "TR: I have a Turkish permanent residency / working permit / Turquoise Card / official refugee or subsidiary protection status",
+       "translations": {
+        "en": {
+         "body": "TR: I have a Turkish permanent residency / working permit / Turquoise Card / official refugee or subsidiary protection status"
+        }
+       }
+      }
+     ]
+    },
+    {
+     "id": 4415176,
+     "position": 4,
+     "options": {},
+     "required": false,
+     "body": "<p><strong>💡 Important Info: At bunq, our working language is English. Fluency in both writing and speaking English is a must for all roles in all locations.</strong></p>",
+     "kind": "infobox",
+     "translations": {
+      "en": {
+       "body": "<p><strong>💡 Important Info: At bunq, our working language is English. Fluency in both writing and speaking English is a must for all roles in all locations.</strong></p>"
+      }
+     },
+     "open_question_options": []
+    },
+    {
+     "id": 4415177,
+     "position": 5,
+     "options": {},
+     "required": true,
+     "body": "How do you assess your writing and speaking English skills?",
+     "kind": "single_choice",
+     "translations": {
+      "en": {
+       "body": "How do you assess your writing and speaking English skills?"
+      }
+     },
+     "open_question_options": [
+      {
+       "id": 6799121,
+       "position": 0,
+       "body": "Beginner",
+       "translations": {
+        "en": {
+         "body": "Beginner"
+        }
+       }
+      },
+      {
+       "id": 6799122,
+       "position": 1,
+       "body": "Intermediate",
+       "translations": {
+        "en": {
+         "body": "Intermediate"
+        }
+       }
+      },
+      {
+       "id": 6799123,
+       "position": 2,
+       "body": "Upper Intermediate",
+       "translations": {
+        "en": {
+         "body": "Upper Intermediate"
+        }
+       }
+      },
+      {
+       "id": 6799124,
+       "position": 3,
+       "body": "Advanced",
+       "translations": {
+        "en": {
+         "body": "Advanced"
+        }
+       }
+      },
+      {
+       "id": 6799125,
+       "position": 4,
+       "body": "Native",
+       "translations": {
+        "en": {
+         "body": "Native"
+        }
+       }
+      }
+     ]
+    },
+    {
+     "id": 4415178,
+     "position": 6,
+     "options": {},
+     "required": false,
+     "body": "<p><strong>💡 If successful in the hiring process, the contractual arrangement would look like this: <br /><br />🇳🇱 Netherlands: A first contract of 9 months, extended with a second contract of 12 months, followed by an indefinite contract. <br />🇹🇷 Turkey: A first contract of 9 months, extended with a second contract of 12 months, <strong>followed by</strong> an indefinite contract. <br />🇧🇬 Bulgaria: an indefinite contract. <br /><br />💡 For the first 3 months, all new hires are required to be in the office 5 days a week to complete the onboarding process, get to know everyone, and immerse <s",
+     "kind": "infobox",
+     "translations": {
+      "en": {
+       "body": "<p><strong>💡 If successful in the hiring process, the contractual arrangement would look like this: <br /><br />🇳🇱 Netherlands: A first contract of 9 months, extended with a second contract of 12 months, followed by an indefinite contract. <br />🇹🇷 Turkey: A first contract of 9 months, extended with a second contract of 12 months, <strong>followed by</strong> an indefinite contract. <br />🇧🇬 Bulgaria: an indefinite contract. <br /><br />💡 For the first 3 months, all new hires are required to be in the office 5 days a week to complete the onboarding process, get to know everyone, and immerse <s"
+      }
+     },
+     "open_question_options": []
+    }
+   ],
+   "min_hours": 40,
+   "status": "published",
+   "options_salutation": "off",
+   "highlight": null,
+   "tags": [
+    "E4",
+    "Enablers",
+    "L4"
+   ]
+  },
+  {
+   "country": "Netherlands",
+   "position": 1632,
+   "cover_image": null,
+   "on_site": false,
+   "state_code": "NH",
+   "close_at": null,
+   "hybrid": true,
+   "dynamic_fields": [],
+   "careers_url": "https://careers.bunq.com/o/internal-auditor-data-security-ai-1",
+   "sharing_image": null,
+   "location_question_visible": false,
+   "sharing_description": "Ready to Get Shit Done?At bunq, we're building a bank that lives in the cloud, handles billions of transactions, and now integrates AI into our operations—all while keeping our user's data and trust i",
+   "experience_code": "experienced",
+   "careers_apply_url": "https://careers.bunq.com/o/internal-auditor-data-security-ai-1/c/new",
+   "locations": [
+    {
+     "id": 39979,
+     "name": "Amsterdam",
+     "state": "Noord-Holland",
+     "country": "Netherlands",
+     "city": "Amsterdam",
+     "translations": {
+      "en": {
+       "name": "Amsterdam",
+       "city": "Amsterdam",
+       "postal_code": null,
+       "street": null,
+       "note": null
+      }
+     },
+     "country_code": "NL",
+     "postal_code": null,
+     "state_code": "NH",
+     "street": null,
+     "note": null
+    }
+   ],
+   "requirements": "<p><strong>Do You Have What It Takes?</strong></p><ul><li><p>Security audit expertise: Hands-on experience auditing cloud infrastructure (AWS/Azure/GCP), application security, or operational security in fintech/high-security environments.</p></li><li><p>AI governance basics: Familiarity with AI risk frameworks (NIST AI RMF), model risk management, or ML/AI system audits (emerging expertise is fine if you're ready to grow).</p></li><li><p>Technical understanding: You grasp encryption, APIs, cloud architecture, and data flows well enough to ask smart audit questions.</p></li><li><p>Risk prioriti",
+   "salary": {
+    "max": null,
+    "min": null,
+    "period": null,
+    "currency": null
+   },
+   "department": null,
+   "company_name": "bunq",
+   "locations_question": "What is your preferred work location?",
+   "slug": "internal-auditor-data-security-ai-1",
+   "locations_question_type": "single_choice",
+   "education_code": "professional",
+   "locations_question_required": true,
+   "postal_code": null,
+   "options_phone": "required",
+   "city": "Amsterdam",
+   "updated_at": "2026-10-06 07:45:04 UTC",
+   "options_title": "off",
+   "employment_type_code": "fulltime_permanent",
+   "created_at": "2026-10-05 14:25:18 UTC",
+   "country_code": "NL",
+   "max_hours": 40,
+   "state_name": "Noord-Holland",
+   "options_cv": "off",
+   "description": "<p><strong>Ready to Get Shit Done?</strong></p><p>At bunq, we're building a bank that lives in the cloud, handles billions of transactions, and now integrates AI into our operations—all while keeping our user's data and trust intact. To operate at this scale and speed without compromising security, we need an Internal Auditor focused on Data Security &amp; AI to audit our security controls, validate our AI governance, and ensure every system we build is resilient and trustworthy.</p><p>As an Internal Auditor – Data Security &amp; AI, your mission is to strengthen bunq's security and AI governa",
+   "guid": "msga1",
+   "remote": false,
+   "sharing_title": "Internal Auditor - Data Security & AI",
+   "mailbox_email": "job.msga1@bunq.recruitee.com",
+   "translations": {
+    "en": {
+     "description": "<p><strong>Ready to Get Shit Done?</strong></p><p>At bunq, we're building a bank that lives in the cloud, handles billions of transactions, and now integrates AI into our operations—all while keeping our user's data and trust intact. To operate at this scale and speed without compromising security, we need an Internal Auditor focused on Data Security &amp; AI to audit our security controls, validate our AI governance, and ensure every system we build is resilient and trustworthy.</p><p>As an Internal Auditor – Data Security &amp; AI, your mission is to strengthen bunq's security and AI governa",
+     "title": "Internal Auditor - Data Security & AI",
+     "highlight": null,
+     "sharing_image": null,
+     "requirements": "<p><strong>Do You Have What It Takes?</strong></p><ul><li><p>Security audit expertise: Hands-on experience auditing cloud infrastructure (AWS/Azure/GCP), application security, or operational security in fintech/high-security environments.</p></li><li><p>AI governance basics: Familiarity with AI risk frameworks (NIST AI RMF), model risk management, or ML/AI system audits (emerging expertise is fine if you're ready to grow).</p></li><li><p>Technical understanding: You grasp encryption, APIs, cloud architecture, and data flows well enough to ask smart audit questions.</p></li><li><p>Risk prioriti",
+     "sharing_title": "Internal Auditor - Data Security & AI",
+     "sharing_description": "Ready to Get Shit Done?At bunq, we're building a bank that lives in the cloud, handles billions of transactions, and now integrates AI into our operations—all while keeping our user's data and trust i",
+     "locations_question": "What is your preferred work location?"
+    }
+   },
+   "title": "Internal Auditor - Data Security & AI",
+   "published_at": "2026-10-05 14:44:47 UTC",
+   "location": "Amsterdam, Noord-Holland, Netherlands",
+   "id": 2771599,
+   "min_hours_per_week": "40",
+   "category_code": "banking",
+   "max_hours_per_week": "40",
+   "options_cover_letter": "off",
+   "options_photo": "off",
+   "open_questions": [
+    {
+     "id": 4415081,
+     "position": 1,
+     "options": {},
+     "required": true,
+     "body": "What country do you currently live in?",
+     "kind": "string",
+     "translations": {
+      "en": {
+       "body": "What country do you currently live in?"
+      }
+     },
+     "open_question_options": []
+    },
+    {
+     "id": 4415082,
+     "position": 2,
+     "options": {},
+     "required": false,
+     "body": "<p>💡 Each country has different rules for eligibility to work without requiring sponsorship.</p>\n<p><br />🇳🇱 <strong>Netherlands</strong>: You must be a Dutch/EU/EEA/Swiss citizen, or hold a valid Dutch residence permit with full work rights (e.g., refugee status, spousal visa, or permanent residence).<br /><br /><strong>For this role, we are able to sponsor visas in a few other situations, so feel free to apply.</strong> <strong><strong>🌈</strong></strong></p>\n\n\n",
+     "kind": "infobox",
+     "translations": {
+      "en": {
+       "body": "<p>💡 Each country has different rules for eligibility to work without requiring sponsorship.</p>\n<p><br />🇳🇱 <strong>Netherlands</strong>: You must be a Dutch/EU/EEA/Swiss citizen, or hold a valid Dutch residence permit with full work rights (e.g., refugee status, spousal visa, or permanent residence).<br /><br /><strong>For this role, we are able to sponsor visas in a few other situations, so feel free to apply.</strong> <strong><strong>🌈</strong></strong></p>\n\n\n"
+      }
+     },
+     "open_question_options": []
+    },
+    {
+     "id": 4415083,
+     "position": 3,
+     "options": {},
+     "required": true,
+     "body": "Which visa situation fits you best?",
+     "kind": "single_choice",
+     "translations": {
+      "en": {
+       "body": "Which visa situation fits you best?"
+      }
+     },
+     "open_question_options": [
+      {
+       "id": 6798951,
+       "position": 0,
+       "body": "NL: I am a EU/EEA/Swiss citizen",
+       "translations": {
+        "en": {
+         "body": "NL: I am a EU/EEA/Swiss citizen"
+        }
+       }
+      },
+      {
+       "id": 6798952,
+       "position": 1,
+       "body": "NL: I am on a spousal visa / search year visa / under the reduced salary criterion",
+       "translations": {
+        "en": {
+         "body": "NL: I am on a spousal visa / search year visa / under the reduced salary criterion"
+        }
+       }
+      },
+      {
+       "id": 6798953,
+       "position": 2,
+       "body": "NL: I require visa sponsorship and I am under 29 years of age",
+       "translations": {
+        "en": {
+         "body": "NL: I require visa sponsorship and I am under 29 years of age"
+        }
+       }
+      },
+      {
+       "id": 6798954,
+       "position": 3,
+       "body": "NL: I require visa sponsorship and I am over 29 years of age",
+       "translations": {
+        "en": {
+         "body": "NL: I require visa sponsorship and I am over 29 years of age"
+        }
+       }
+      }
+     ]
+    },
+    {
+     "id": 4415084,
+     "position": 4,
+     "options": {},
+     "required": false,
+     "body": "<p><strong>💡 Important Info: At bunq, our working language is English. Fluency in both writing and speaking English is a must for all roles in all locations.</strong></p>",
+     "kind": "infobox",
+     "translations": {
+      "en": {
+       "body": "<p><strong>💡 Important Info: At bunq, our working language is English. Fluency in both writing and speaking English is a must for all roles in all locations.</strong></p>"
+      }
+     },
+     "open_question_options": []
+    },
+    {
+     "id": 4415085,
+     "position": 5,
+     "options": {},
+     "required": true,
+     "body": "How do you assess your writing and speaking English skills?",
+     "kind": "single_choice",
+     "translations": {
+      "en": {
+       "body": "How do you assess your writing and speaking English skills?"
+      }
+     },
+     "open_question_options": [
+      {
+       "id": 6798955,
+       "position": 0,
+       "body": "Beginner",
+       "translations": {
+        "en": {
+         "body": "Beginner"
+        }
+       }
+      },
+      {
+       "id": 6798956,
+       "position": 1,
+       "body": "Intermediate",
+       "translations": {
+        "en": {
+         "body": "Intermediate"
+        }
+       }
+      },
+      {
+       "id": 6798957,
+       "position": 2,
+       "body": "Upper Intermediate",
+       "translations": {
+        "en": {
+         "body": "Upper Intermediate"
+        }
+       }
+      },
+      {
+       "id": 6798958,
+       "position": 3,
+       "body": "Advanced",
+       "translations": {
+        "en": {
+         "body": "Advanced"
+        }
+       }
+      },
+      {
+       "id": 6798959,
+       "position": 4,
+       "body": "Native",
+       "translations": {
+        "en": {
+         "body": "Native"
+        }
+       }
+      }
+     ]
+    },
+    {
+     "id": 4415086,
+     "position": 6,
+     "options": {},
+     "required": false,
+     "body": "<p><strong>💡 If successful in the hiring process, the contractual arrangement would look like this: <br /><br />🇳🇱 Netherlands: A first contract of 9 months, extended with a second contract of 12 months, followed by an indefinite contract. <br /><br />💡 For the first 3 months, all new hires are required to be in the office 5 days a week to complete the onboarding process, get to know everyone, and immerse <strong>themselves in the culture of bunq. After that, the work arrangement will be hybrid, with 3 days in the office and 2 days working from home.</strong></strong></p>\n<p><strong><strong><s",
+     "kind": "infobox",
+     "translations": {
+      "en": {
+       "body": "<p><strong>💡 If successful in the hiring process, the contractual arrangement would look like this: <br /><br />🇳🇱 Netherlands: A first contract of 9 months, extended with a second contract of 12 months, followed by an indefinite contract. <br /><br />💡 For the first 3 months, all new hires are required to be in the office 5 days a week to complete the onboarding process, get to know everyone, and immerse <strong>themselves in the culture of bunq. After that, the work arrangement will be hybrid, with 3 days in the office and 2 days working from home.</strong></strong></p>\n<p><strong><strong><s"
+      }
+     },
+     "open_question_options": []
+    }
+   ],
+   "min_hours": 40,
+   "status": "published",
+   "options_salutation": "off",
+   "highlight": null,
+   "tags": [
+    "E4",
+    "Enablers"
+   ]
+  }
+ ]
+}

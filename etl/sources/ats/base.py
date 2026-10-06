@@ -64,6 +64,8 @@ class AtsSource:
     name: str = ""
     #: Board endpoint with a `{slug}` placeholder.
     url_template: str = ""
+    #: The key of a posting's own id (Workable calls it `shortcode`).
+    id_key: str = "id"
 
     @classmethod
     def board_url(cls, slug: str) -> str:
@@ -163,7 +165,7 @@ class AtsSource:
         for posting in postings:
             if not self.is_listed(posting):
                 continue
-            raw_id = posting.get("id")
+            raw_id = posting.get(self.id_key)
             if raw_id is None or raw_id == "":
                 skipped_without_id += 1
                 continue

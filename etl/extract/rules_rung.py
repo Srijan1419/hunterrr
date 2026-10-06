@@ -8,6 +8,7 @@ a conflict. Pure code: no database, no network, no clock, no AI. Never raises.
 
 from __future__ import annotations
 
+import re
 from datetime import datetime
 from decimal import Decimal
 from typing import Any, Callable, Mapping
@@ -113,6 +114,23 @@ def _work_mode_label(field: Field | None) -> tuple[str, str] | None:
     return (modes.pop(), label) if len(modes) == 1 else None
 
 
+_TITLE_REMOTE_SEGMENT = re.compile(r"[\(\[]([^\)\]]{3,60})[\)\]]|\s[-–—|]\s([^()\[\]|]{3,60})$")
+
+
+def title_location_segments(title: str) -> list[str]:
+    """Parts of a title that state a remote place: "(Remote - India)", "[Remote, APAC]", "- EMEA Remote".
+
+    Only a segment that literally contains the word "remote" counts, so "Virtual Assistant" or
+    "Remote Sensing Engineer" (the word inside a role) is not read as a work mode.
+    """
+    out: list[str] = []
+    for m in _TITLE_REMOTE_SEGMENT.finditer(title or ""):
+        seg = (m.group(1) or m.group(2) or "").strip()
+        if re.search(r"\bremote\b", seg, re.IGNORECASE) and seg not in out:
+            out.append(seg)
+    return out
+
+
 def apply_rules(
     fields: Mapping[str, Field],
     *,
@@ -193,6 +211,21 @@ def apply_rules(
                     offer("eligible_countries", Field(value=list(reading.countries), provenance="rule", evidence="location text"))
 
         guarded(location_text)
+
+        def title_text() -> None:
+            """"Data Analyst (Remote - India)": the title can state the place when the location field does not."""
+            segments = title_location_segments(title)
+            if not segments:
+                return
+            reading = combine(read_location(seg) for seg in segments)
+            if reading.remote_type:
+                offer("remote_type", Field(value=reading.remote_type, provenance="rule", evidence="title"))
+            if reading.remote_type is not None and reading.scope:
+                offer("eligibility_scope", Field(value=reading.scope, provenance="rule", evidence="title"))
+                if reading.countries:
+                    offer("eligible_countries", Field(value=list(reading.countries), provenance="rule", evidence="title"))
+
+        guarded(title_text)
         guarded(lambda: offer("remote_type", parse_remote_type(text, ctx)))
 
         def locations() -> None:

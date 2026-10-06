@@ -23,12 +23,15 @@ from sqlalchemy import text
 from etl.core.db import session_scope
 
 #: Job-board systems the collector can read today (the `ats` enum has more; they are not wired yet).
-SUPPORTED_ATS = ("greenhouse", "lever", "ashby")
+SUPPORTED_ATS = ("greenhouse", "lever", "ashby", "workable", "recruitee", "smartrecruiters")
 _SLUG = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$")
 _BOARD_URL = {
     "greenhouse": "https://boards.greenhouse.io/{slug}",
     "lever": "https://jobs.lever.co/{slug}",
     "ashby": "https://jobs.ashbyhq.com/{slug}",
+    "workable": "https://apply.workable.com/{slug}",
+    "recruitee": "https://{slug}.recruitee.com",
+    "smartrecruiters": "https://careers.smartrecruiters.com/{slug}",
 }
 MAX_ENTRIES = 2000
 
