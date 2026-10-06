@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import InboxPage from "@/app/(app)/inbox/page";
 import CompaniesPage from "@/app/(app)/companies/page";
-import ProfilePage from "@/app/(app)/profile/page";
 
 const PAGES: Array<{
   name: string;
@@ -20,14 +19,9 @@ const PAGES: Array<{
     Page: CompaniesPage,
     sentence: "Companies you watch or ignore will appear here. Boards are discovered automatically.",
   },
-  {
-    name: "Profile",
-    Page: ProfilePage,
-    sentence: "Your skills, locations and pay floor will appear here and decide how jobs are ranked.",
-  },
 ];
 
-// Today is a real screen now (tests/today); these three are still placeholders.
+// Today and Profile are real screens now (tests/today, tests/profile); these two are still placeholders.
 describe("empty-state pages", () => {
   for (const { name, Page, sentence } of PAGES) {
     it(`${name} renders its heading and its exact empty-state sentence`, () => {

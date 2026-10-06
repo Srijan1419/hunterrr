@@ -1,16 +1,24 @@
 import type { Metadata } from "next";
+import { ProfileEditor } from "@/components/profile/ProfileEditor";
+import { db } from "@/lib/db/client.v2";
+import { EMPTY_PROFILE } from "@/lib/profile/schema";
+import { getActiveProfile } from "@/lib/queries/profile";
 
 export const metadata: Metadata = {
   title: "Profile | hunterrr",
-  description: "Your skills, locations and pay floor — what decides how jobs are ranked.",
+  description: "What you are looking for: roles, skills, locations, pay floor and work authorisation.",
 };
+export const dynamic = "force-dynamic";
+// Reading a résumé calls one AI service (up to ~25 s each, two at most); the Hobby plan allows 60 s.
+export const maxDuration = 60;
 
-export default function ProfilePage() {
+export default async function ProfilePage() {
+  const stored = await getActiveProfile(db as never);
   return (
-    <div>
-      <h1>Profile</h1>
-      <p>Your skills, locations and pay floor will appear here and decide how jobs are ranked.</p>
-      <p>Nothing here yet — your profile details will show up here.</p>
-    </div>
+    <ProfileEditor
+      initial={stored?.data ?? EMPTY_PROFILE}
+      version={stored?.version ?? null}
+      savedAt={stored?.savedAt ?? null}
+    />
   );
 }
