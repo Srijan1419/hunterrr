@@ -161,6 +161,35 @@ def recheck_cmd(batch_size: int, limit: int | None, max_seconds: float | None) -
     return 0
 
 
+def seed_cmd(path: str) -> int:
+    """Add the companies and boards in config/companies.yaml that the database does not have yet."""
+    from etl.discovery.seed import SeedError, load_entries, sync
+
+    settings = Settings()
+    db_url = _secret(settings.DATABASE_URL) or os.environ.get("DATABASE_URL")
+    if not db_url:
+        print("DATABASE_URL is not set", file=sys.stderr)
+        return 2
+    try:
+        entries = load_entries(path)
+    except SeedError as exc:
+        print(f"seed status=failed error={exc}")
+        return 1
+    engine = make_engine(db_url, pooled=True)
+    try:
+        result = sync(engine, entries)
+    except Exception as exc:
+        print(f"seed status=failed error={type(exc).__name__}")
+        return 1
+    finally:
+        engine.dispose()
+    print(
+        f"seed status=ok entries={result.entries} companies_added={result.companies_added} "
+        f"boards_added={result.boards_added} boards_existing={result.boards_existing}"
+    )
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     argv = sys.argv[1:] if argv is None else argv
     if len(argv) == 3 and argv[0] == "collect" and argv[1] == "--shard":
@@ -176,6 +205,14 @@ def main(argv: list[str] | None = None) -> int:
         except SystemExit:
             return 2
         return asyncio.run(process_cmd(max(1, args.batch_size), args.limit, max(0, args.llm_budget), args.max_seconds))
+    if argv and argv[0] == "seed":
+        parser = argparse.ArgumentParser(prog="etl.run seed")
+        parser.add_argument("--file", default="config/companies.yaml")
+        try:
+            args = parser.parse_args(argv[1:])
+        except SystemExit:
+            return 2
+        return seed_cmd(args.file)
     if argv and argv[0] == "recheck":
         parser = argparse.ArgumentParser(prog="etl.run recheck")
         parser.add_argument("--batch-size", type=int, default=500)

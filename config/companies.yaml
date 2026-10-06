@@ -1,0 +1,43 @@
+# Companies Hunterrr follows. Edit this file, push, and the next process run adds anything new
+# (it never removes or changes a board that is already there).
+#
+# One line per job board:   - {name: Company, ats: greenhouse|lever|ashby, slug: board-slug}
+#
+# How to find the slug: open the company's careers page and look at the job-board link.
+#   greenhouse   boards.greenhouse.io/<slug>          (or job-boards.greenhouse.io/<slug>)
+#   lever        jobs.lever.co/<slug>
+#   ashby        jobs.ashbyhq.com/<slug>
+# Check one before adding it (it must answer with jobs, not 404):
+#   greenhouse   https://boards-api.greenhouse.io/v1/boards/<slug>/jobs
+#   lever        https://api.lever.co/v0/postings/<slug>?mode=json
+#   ashby        https://api.ashbyhq.com/posting-api/job-board/<slug>
+#
+# Every board below answered with live postings when it was added (2026-10-06). The comment shows
+# the job count and how many titles said intern/fresher/graduate/junior at that time.
+
+companies:
+  # India-based or India-heavy hiring
+  - {name: Razorpay,   ats: greenhouse, slug: razorpaysoftwareprivatelimited}  # 21 jobs, 18 in India
+  - {name: Groww,      ats: greenhouse, slug: groww}                           # 7 jobs, 7 in India, 3 entry
+  - {name: CRED,       ats: lever,      slug: cred}                            # 8 jobs, 8 in India
+  - {name: InMobi,     ats: greenhouse, slug: inmobi}                          # 70 jobs, 36 in India, 7 entry
+  - {name: Druva,      ats: greenhouse, slug: druva}                           # 35 jobs, 12 in India
+  - {name: Zeta,       ats: lever,      slug: zeta}                            # 25 jobs, 23 in India, 3 entry
+  - {name: Meesho,     ats: lever,      slug: meesho}                          # 59 jobs, 56 in India, 6 entry
+  - {name: Zenoti,     ats: greenhouse, slug: zenoti}                          # 50 jobs, 28 in India
+
+  # Global companies with large India teams or many early-career roles
+  - {name: Okta,       ats: greenhouse, slug: okta}                            # 366 jobs, 112 in India
+  - {name: Zscaler,    ats: greenhouse, slug: zscaler}                         # 367 jobs, 70 in India
+  - {name: MongoDB,    ats: greenhouse, slug: mongodb}                         # 393 jobs, 80 in India, 15 entry
+  - {name: Databricks, ats: greenhouse, slug: databricks}                      # 886 jobs, 91 in India, 23 entry
+  - {name: Rubrik,     ats: greenhouse, slug: rubrik}                          # 130 jobs, 33 in India
+  - {name: GitLab,     ats: greenhouse, slug: gitlab}                          # 210 jobs, 28 in India
+  - {name: Elastic,    ats: greenhouse, slug: elastic}                         # 398 jobs, 16 in India
+  - {name: Twilio,     ats: greenhouse, slug: twilio}                          # 133 jobs, 15 in India
+  - {name: Stripe,     ats: greenhouse, slug: stripe}                          # 718 jobs, 53 entry
+  - {name: Datadog,    ats: greenhouse, slug: datadog}                         # 433 jobs, 18 entry
+  - {name: Ramp,       ats: ashby,      slug: ramp}                            # 159 jobs, 13 entry
+  - {name: Notion,     ats: ashby,      slug: notion}                          # 135 jobs, 9 entry
+  - {name: OpenAI,     ats: ashby,      slug: openai}                          # 823 jobs, 10 in India
+  - {name: Coursera,   ats: greenhouse, slug: coursera}                        # 17 jobs, 5 in India

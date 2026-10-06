@@ -46,6 +46,11 @@ jobs:
       - name: Install dependencies
         run: pip install -r etl/requirements.txt
 
+      # Boards listed in config/companies.yaml that the database lacks are added (never changed or
+      # removed); the next collect run starts polling them.
+      - name: Sync company list
+        run: python -m etl.run seed
+
       - name: Run process
         run: python -m etl.run process --batch-size 100 --llm-budget 40 --max-seconds 600
 
