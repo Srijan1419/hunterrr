@@ -48,3 +48,8 @@ jobs:
 
       - name: Run process
         run: python -m etl.run process --batch-size 100 --llm-budget 40 --max-seconds 600
+
+      # Postings extracted by an older rule version get the current rules (no network, no AI);
+      # a few runs bring the whole table up to date, then this finds nothing to do.
+      - name: Recheck older postings
+        run: python -m etl.run recheck --batch-size 500 --max-seconds 150

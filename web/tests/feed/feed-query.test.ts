@@ -111,17 +111,46 @@ describe("queryFeed", () => {
     expect(p1.pages).toBe(2);
     expect(new Set([...p1.rows, ...p2.rows].map((x) => x.id)).size).toBe(p1.total);
   });
+
+  it("entry level keeps postings that say intern, entry or fresher-level years, and counts the silent ones", async () => {
+    const before = await queryFeed(db as never, { entryLevel: true });
+    expect(before.rows).toHaveLength(0); // everything so far states no level
+    expect(before.levelUnknown).toBe(before.openTotal);
+
+    await add(101, { title: "Software Engineer Intern", seniority: "intern" });
+    await add(102, { title: "Junior Analyst", seniority: "entry" });
+    await add(103, { title: "Graduate Engineer", experience_min_years: 0, experience_max_years: 1 });
+    await add(104, { title: "Analyst", experience_min_years: 1, experience_max_years: 5 });
+    await add(105, { title: "Senior Engineer", seniority: "senior", experience_min_years: 0 });
+    await add(106, { title: "Platform Engineer", experience_min_years: 3 });
+    await add(107, { title: "Closed Intern", seniority: "intern", status: "closed" });
+
+    const r = await queryFeed(db as never, { entryLevel: true });
+    expect(r.rows.map((x) => x.title).sort()).toEqual(
+      ["Analyst", "Graduate Engineer", "Junior Analyst", "Software Engineer Intern"],
+    );
+    // the silent ones are counted, the ones that state a non-entry level are not
+    expect(r.levelUnknown).toBe(before.levelUnknown);
+    expect((await queryFeed(db as never, {})).levelUnknown).toBe(0); // filter off: nothing hidden
+  });
 });
 
 describe("filtersFromSearchParams", () => {
   it("accepts good values and ignores bad ones", () => {
     expect(filtersFromSearchParams({ q: "go", remote: "1", country: "in", pay: "1", days: "7", page: "3" })).toEqual({
-      q: "go", remote: true, country: "IN", hasPay: true, postedWithinDays: 7, page: 3,
+      q: "go", remote: true, country: "IN", hasPay: true, postedWithinDays: 7, entryLevel: true, page: 3,
     });
     expect(filtersFromSearchParams({ q: "a\u0000b" }).q).toBe("ab");
     expect(filtersFromSearchParams({ country: "India", days: "-1", page: "0", remote: "yes" })).toEqual({
-      q: undefined, remote: undefined, country: undefined, hasPay: undefined, postedWithinDays: undefined, page: undefined,
+      q: undefined, remote: undefined, country: undefined, hasPay: undefined, postedWithinDays: undefined,
+      entryLevel: true, page: undefined,
     });
+  });
+
+  it("entry level is on by default and only level=all turns it off", () => {
+    expect(filtersFromSearchParams({}).entryLevel).toBe(true);
+    expect(filtersFromSearchParams({ level: "junk" }).entryLevel).toBe(true);
+    expect(filtersFromSearchParams({ level: "all" }).entryLevel).toBeUndefined();
   });
 });
 

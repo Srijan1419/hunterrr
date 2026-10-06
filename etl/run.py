@@ -140,6 +140,27 @@ async def process_cmd(batch_size: int, limit: int | None, llm_budget: int = 0, m
         engine.dispose()
 
 
+def recheck_cmd(batch_size: int, limit: int | None, max_seconds: float | None) -> int:
+    """Re-run the fixed rules over postings extracted by an older EXTRACTION_VERSION."""
+    from etl.runner.recheck import recheck
+
+    settings = Settings()
+    db_url = _secret(settings.DATABASE_URL) or os.environ.get("DATABASE_URL")
+    if not db_url:
+        print("DATABASE_URL is not set", file=sys.stderr)
+        return 2
+    engine = make_engine(db_url, pooled=True)
+    try:
+        result = recheck(engine, batch_size=batch_size, limit=limit, max_seconds=max_seconds)
+    except Exception as exc:
+        print(f"recheck status=failed error={type(exc).__name__}")
+        return 1
+    finally:
+        engine.dispose()
+    print(f"recheck status=ok seen={result.seen} changed={result.changed} batches={result.batches}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     argv = sys.argv[1:] if argv is None else argv
     if len(argv) == 3 and argv[0] == "collect" and argv[1] == "--shard":
@@ -155,6 +176,16 @@ def main(argv: list[str] | None = None) -> int:
         except SystemExit:
             return 2
         return asyncio.run(process_cmd(max(1, args.batch_size), args.limit, max(0, args.llm_budget), args.max_seconds))
+    if argv and argv[0] == "recheck":
+        parser = argparse.ArgumentParser(prog="etl.run recheck")
+        parser.add_argument("--batch-size", type=int, default=500)
+        parser.add_argument("--limit", type=int, default=None)
+        parser.add_argument("--max-seconds", type=float, default=None, help="wall-clock budget for the whole run")
+        try:
+            args = parser.parse_args(argv[1:])
+        except SystemExit:
+            return 2
+        return recheck_cmd(max(1, args.batch_size), args.limit, args.max_seconds)
     print("Usage: python -m etl.run collect --shard i/N | process [--batch-size N] [--limit N]", file=sys.stderr)
     return 2
 

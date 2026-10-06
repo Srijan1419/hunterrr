@@ -47,6 +47,12 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
           {result.eligibilityUnknown.toLocaleString("en-US")} other postings do not say whether {filters.country} may apply and are not shown here.
         </p>
       ) : null}
+      {filters.entryLevel && result.levelUnknown > 0 ? (
+        <p className={styles.note}>
+          Entry level only: {result.levelUnknown.toLocaleString("en-US")} other postings state no level or years of experience and are not shown.{" "}
+          <a href={pageHref({ ...params, level: "all" }, 1)}>Show all levels</a>
+        </p>
+      ) : null}
 
       {result.rows.length === 0 ? (
         <div className={styles.empty}>

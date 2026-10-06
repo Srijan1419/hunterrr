@@ -19,6 +19,8 @@ export type FeedFilters = {
   country?: string;
   hasPay?: boolean;
   postedWithinDays?: number;
+  /** Only intern, fresher and entry-level postings (the default on the page; `?level=all` turns it off). */
+  entryLevel?: boolean;
   page?: number;
 };
 
@@ -49,6 +51,8 @@ export type FeedResult = {
   openTotal: number;
   /** Postings a country filter hides because they do not say whether that country may apply. */
   eligibilityUnknown: number;
+  /** Postings the entry-level filter hides because they state neither a level nor years of experience. */
+  levelUnknown: number;
   page: number;
   pages: number;
 };
@@ -59,6 +63,17 @@ export type FeedDb = { execute: (query: SQL) => Promise<{ rows: Record<string, u
 function likePattern(q: string): string {
   return "%" + q.replace(/[\\%_]/g, (c) => "\\" + c) + "%";
 }
+
+/**
+ * Entry level = the posting SAYS so: an intern/entry seniority (from the title: intern, junior,
+ * associate, fresher, new grad), or no seniority and stated experience that a fresher meets
+ * (minimum at most 1 year, or maximum at most 2). Senior, lead, staff, principal and director never
+ * pass, whatever the years say. A posting that states nothing is not guessed into the list; the
+ * page counts those separately.
+ */
+const ENTRY_LEVEL = sql`(p.seniority IN ('intern', 'entry')
+  OR (p.seniority IS NULL AND (p.experience_min_years <= 1 OR p.experience_max_years <= 2)))`;
+const LEVEL_UNSTATED = sql`(p.seniority IS NULL AND p.experience_min_years IS NULL AND p.experience_max_years IS NULL)`;
 
 function conditions(f: FeedFilters): SQL[] {
   const out: SQL[] = [sql`p.status = 'open'`];
@@ -75,6 +90,7 @@ function conditions(f: FeedFilters): SQL[] {
   if (f.postedWithinDays && f.postedWithinDays > 0) {
     out.push(sql`p.posted_at >= now() - make_interval(days => ${Math.floor(f.postedWithinDays)})`);
   }
+  if (f.entryLevel) out.push(ENTRY_LEVEL);
   return out;
 }
 
@@ -148,7 +164,10 @@ export async function queryFeed(db: FeedDb, filters: FeedFilters = {}): Promise<
       (SELECT count(*) FROM hunterrr.postings WHERE status = 'open') AS open_total,
       (SELECT count(*) FROM hunterrr.postings p LEFT JOIN hunterrr.companies c ON c.id = p.company_id
         WHERE ${sql.join(conditions({ ...filters, country: undefined }), sql` AND `)}
-          AND (p.eligibility_scope IS NULL OR p.eligibility_scope = 'regions')) AS eligibility_unknown`);
+          AND (p.eligibility_scope IS NULL OR p.eligibility_scope = 'regions')) AS eligibility_unknown,
+      (SELECT count(*) FROM hunterrr.postings p LEFT JOIN hunterrr.companies c ON c.id = p.company_id
+        WHERE ${sql.join(conditions({ ...filters, entryLevel: undefined }), sql` AND `)}
+          AND ${LEVEL_UNSTATED}) AS level_unknown`);
 
   const c = counts.rows[0] ?? {};
   const total = num(c.total) ?? 0;
@@ -170,12 +189,16 @@ export async function queryFeed(db: FeedDb, filters: FeedFilters = {}): Promise<
     total,
     openTotal: num(c.open_total) ?? 0,
     eligibilityUnknown: filters.country ? (num(c.eligibility_unknown) ?? 0) : 0,
+    levelUnknown: filters.entryLevel ? (num(c.level_unknown) ?? 0) : 0,
     page,
     pages,
   };
 }
 
-/** `?q=&remote=1&country=IN&pay=1&days=7&page=2` -> filters (unknown or bad values are ignored). */
+/**
+ * `?q=&remote=1&country=IN&pay=1&days=7&level=all&page=2` -> filters (unknown or bad values are ignored).
+ * Entry level is ON unless `level=all`: the owner is looking for fresher and entry-level roles.
+ */
 export function filtersFromSearchParams(
   params: Record<string, string | string[] | undefined>,
 ): FeedFilters {
@@ -192,6 +215,7 @@ export function filtersFromSearchParams(
     country: /^[A-Z]{2}$/.test(country) ? country : undefined,
     hasPay: one("pay") === "1" || undefined,
     postedWithinDays: Number.isInteger(days) && days > 0 && days <= 365 ? days : undefined,
+    entryLevel: one("level") === "all" ? undefined : true,
     page: Number.isInteger(page) && page > 0 && page < 10_000 ? page : undefined,
   };
 }

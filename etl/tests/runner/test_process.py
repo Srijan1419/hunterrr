@@ -174,7 +174,7 @@ def test_real_fixtures_end_to_end(db, name, key):
     assert scalar(db, "SELECT count(*) FROM hunterrr.postings") == n
     assert scalar(db, "SELECT count(*) FROM hunterrr.postings WHERE title <> '' AND title_normalized <> ''") == n
     assert scalar(db, "SELECT count(*) FROM hunterrr.raw_documents WHERE clean_text_gz IS NOT NULL") == 0
-    assert scalar(db, "SELECT count(*) FROM hunterrr.postings WHERE extraction_version = 1 AND status = 'open'") == n
+    assert scalar(db, f"SELECT count(*) FROM hunterrr.postings WHERE extraction_version = {P.EXTRACTION_VERSION} AND status = 'open'") == n
 
 
 @pg

@@ -54,6 +54,11 @@ export function FeedFilters() {
         placeholder="Search title or company"
         aria-label="Search title or company"
       />
+      <FilterToggle
+        label="Entry level"
+        pressed={params.get("level") !== "all"}
+        onPressedChange={(on) => push((n) => (on ? n.delete("level") : n.set("level", "all")))}
+      />
       <FilterToggle label="Remote" pressed={params.get("remote") === "1"} onPressedChange={(on) => setFlag("remote", on)} />
       <FilterToggle label="Pay stated" pressed={params.get("pay") === "1"} onPressedChange={(on) => setFlag("pay", on)} />
       <FilterToggle label="Last 7 days" pressed={params.get("days") === "7"} onPressedChange={(on) => setFlag("days", on, "7")} />

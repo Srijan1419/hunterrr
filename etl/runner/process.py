@@ -28,7 +28,7 @@ from etl.extract.ladder import StoredDocument, extract
 from etl.extract.llm_rung import apply_llm
 from etl.extract.model import FIELD_KEYS, Extracted
 
-EXTRACTION_VERSION = 1
+EXTRACTION_VERSION = 2  # 2: work-mode labels, location headings, "not considering remote" (2026-10-06)
 
 PROVENANCE = {"jsonld", "source", "rule", "llm", "user", "unknown"}
 REMOTE_TYPES = {"remote", "hybrid", "onsite"}
