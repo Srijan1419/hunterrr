@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { DESTINATIONS } from "@/components/shell/destinations";
 
 describe("destinations", () => {
-  it("is exactly seven (more than seven is a navigation smell)", () => {
-    expect(DESTINATIONS).toHaveLength(7);
+  it("is exactly six (more than seven is a navigation smell)", () => {
+    expect(DESTINATIONS).toHaveLength(6);
   });
 
   it("is in the required order with the required hrefs", () => {
@@ -11,16 +11,15 @@ describe("destinations", () => {
       "Today /today",
       "Jobs /jobs",
       "Tracker /tracker",
-      "Inbox /inbox",
       "Companies /companies",
       "Sources /sources",
       "Profile /profile",
     ]);
   });
 
-  it("shows Today, Jobs and Tracker as tabs and the other four under More", () => {
+  it("shows Today, Jobs and Tracker as tabs and the other three under More", () => {
     expect(DESTINATIONS.filter((d) => d.group === "main").map((d) => d.label)).toEqual(["Today", "Jobs", "Tracker"]);
-    expect(DESTINATIONS.filter((d) => d.group === "more").map((d) => d.label)).toEqual(["Inbox", "Companies", "Sources", "Profile"]);
+    expect(DESTINATIONS.filter((d) => d.group === "more").map((d) => d.label)).toEqual(["Companies", "Sources", "Profile"]);
   });
 
   it("gives every destination a one-line description for the palette", () => {

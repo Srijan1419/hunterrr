@@ -62,13 +62,13 @@ describe("TopBar", () => {
     }
   });
 
-  it("keeps Inbox, Companies, Sources and Profile under More, closed until opened", () => {
+  it("keeps Companies, Sources and Profile under More, closed until opened", () => {
     render(<TopBar />);
     expect(more().getAttribute("aria-expanded")).toBe("false");
-    expect(screen.queryByRole("link", { name: /Inbox/ })).toBeNull();
+    expect(screen.queryByRole("link", { name: /Companies/ })).toBeNull();
     fireEvent.click(more());
     expect(more().getAttribute("aria-expanded")).toBe("true");
-    for (const name of ["Inbox", "Companies", "Sources", "Profile"]) {
+    for (const name of ["Companies", "Sources", "Profile"]) {
       expect(screen.getByRole("link", { name: new RegExp(name) })).toBeInTheDocument();
     }
   });

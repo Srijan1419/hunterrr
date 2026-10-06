@@ -12,18 +12,6 @@ data sources imposes a condition on how its data may be displayed.
 THIRD-PARTY LIBRARIES
 =====================
 
-dlt — Apache License 2.0
-  https://github.com/dlt-hub/dlt
-  Code-first data-injection library; used for the ETL layer instead of hand-rolling
-  schema inference, incremental loading, and retries.
-  Status: adopted. Pinned to dlt>=1.27.2; 1.27.0 and 1.27.1 were yanked by the
-  maintainers over a data-loss bug in incremental merge, which is the exact operation
-  this pipeline performs. The pin is enforced by a test.
-  Apache-2.0 obligations: the dlt copyright notice and license text ship with the
-  dependency and are reproduced by its own distribution. This project links dlt
-  unmodified and makes no changes to it, so there is nothing further to state here. If
-  we ever vendor or patch dlt, this file must record that and describe the change.
-
 Crawl4AI — Apache License 2.0
   https://github.com/unclecode/crawl4ai
   LLM-ready web crawler. Considered for browser-rendering of JS-heavy listing pages.

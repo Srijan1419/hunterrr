@@ -1,28 +1,16 @@
-# ETL dependencies for hunterrr.
-#
-# dlt 1.27.0 and 1.27.1 were yanked: their incremental merge truncates the destination
-# table. The pin below is non-negotiable, and `etl/tests/test_dependencies.py` fails the
-# build if the installed dlt is one of those releases.
-#
-# Verified on Python 3.11.9 with dlt 1.30.0. ADR-001 specifies Python 3.12; the floor
-# here is what was actually run, not what the ADR asks for.
-dlt>=1.27.2
+# ETL dependencies for hunterrr (verified on Python 3.11).
 
-# Required by dlt's SQLAlchemy destination (ADR-005) and used directly by
-# `etl/pipeline/schema.py` to create the contract's tables and indexes.
+# Database access: SQLAlchemy core + psycopg 3.
 sqlalchemy>=2.0
-
-# h2-03b: database access with psycopg 3
 psycopg[binary]>=3.2
 
-# Test dependencies. The ETL's whole reason for writing to a local SQLite file is that
-# `pytest` runs with no network and no API key (ADR-005), so these are the only things
-# needed to run the suite offline.
-pytest>=8.0
-
-# h2-03a core foundation.
+# HTTP, settings, validation.
 httpx>=0.27
 pydantic>=2.0
 pydantic-settings>=2.0
-pytest-asyncio>=0.23
 PyYAML
+
+# Tests run offline against committed fixtures and an in-memory Postgres (PGlite),
+# so these are the only things the suite needs.
+pytest>=8.0
+pytest-asyncio>=0.23

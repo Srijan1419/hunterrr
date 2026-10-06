@@ -23,7 +23,6 @@ export const PROTECTED_ROUTES = [
   "/jobs",
   "/jobs/**",
   "/tracker",
-  "/inbox",
   "/companies",
   "/sources",
   "/profile",

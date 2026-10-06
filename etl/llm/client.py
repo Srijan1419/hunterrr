@@ -125,8 +125,8 @@ def http_transport(
     """POST one chat-completions request and return the decoded response.
 
     The only place in the package that touches the network. `urllib` rather than `requests`
-    because the ETL's dependency list is dlt and SQLAlchemy, and the whole reason the suite
-    runs offline is that there are as few moving parts as possible (ADR-005).
+    because the ETL's dependency list is kept short, and the whole reason the suite runs
+    offline is that there are as few moving parts as possible.
 
     **`Authorization` is added only when there is a key.** A local provider (`needs_key=False`,
     ollama) has no credential, and `Authorization: Bearer ` with an empty token is a header some

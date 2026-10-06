@@ -64,8 +64,8 @@ describe("route classification", () => {
     expect(classify("/definitely-not-a-page")).toBe("none");
   });
 
-  it("the six signed-in pages are protected", () => {
-    for (const route of ["/today", "/tracker", "/inbox", "/companies", "/sources", "/profile"]) {
+  it("the five signed-in pages are protected", () => {
+    for (const route of ["/today", "/tracker", "/companies", "/sources", "/profile"]) {
       expect(classify(route)).toBe("protected");
       expect(isPublicRoute(route)).toBe(false);
     }

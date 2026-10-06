@@ -74,7 +74,7 @@ flowchart LR
 Two deployables, one database. The ETL is the only writer; the web app is a pure read
 path plus two small, auth-gated writes (saved searches, shortlist). Neither runtime
 guesses at the other's schema — both code against the same documented data contract
-(`etl/contract/schema.md`), and if the contract and a task ever disagreed, the contract
+(`docs/data-model.md` and `web/db/v2/schema.ts`), and if the contract and a task ever disagreed, the contract
 won.
 
 **Normalization is a fixed ladder, not a model call.** For every field: try the source's
@@ -152,7 +152,7 @@ deferring `Crawl4AI` are in [`NOTICE`](./NOTICE).
 Fixtures are small, real captured payloads from all three sources, including the
 degenerate cases actually observed (blank location, `salary_min == 0`, multi-country
 strings, Himalayas' numeric timezone-offset lists). LLM calls in tests run against a
-recorded cassette.
+scripted transport, never the network.
 
 `web/`: Vitest is the only default gate. Playwright is available but deliberately not
 required — browser tests on a free CI tier are too slow to keep the build loop fast, and

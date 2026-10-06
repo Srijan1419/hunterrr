@@ -57,12 +57,12 @@ describe("CommandPalette", () => {
     expect(onOpenChange).not.toHaveBeenCalled();
   });
 
-  it("focuses the input on open and lists seven destinations plus two actions", () => {
+  it("focuses the input on open and lists six destinations plus two actions", () => {
     render(<CommandPalette open onOpenChange={() => {}} />);
     expect(screen.getByLabelText("Search pages and actions")).toHaveFocus();
     const options = screen.getAllByRole("option");
-    expect(options).toHaveLength(9);
-    for (const label of ["Today", "Jobs", "Tracker", "Inbox", "Companies", "Sources", "Profile", "Switch theme", "Sign out"]) {
+    expect(options).toHaveLength(8);
+    for (const label of ["Today", "Jobs", "Tracker", "Companies", "Sources", "Profile", "Switch theme", "Sign out"]) {
       expect(screen.getByRole("option", { name: new RegExp(label) })).toBeInTheDocument();
     }
   });
@@ -89,8 +89,8 @@ describe("CommandPalette", () => {
     expect(options()[0]).toHaveAttribute("aria-selected", "true");
     // Up from the first wraps to the last (Sign out).
     fireEvent.keyDown(input, { key: "ArrowUp" });
-    expect(options()[8]).toHaveAttribute("aria-selected", "true");
-    expect(options()[8]).toHaveTextContent("Sign out");
+    expect(options()[7]).toHaveAttribute("aria-selected", "true");
+    expect(options()[7]).toHaveTextContent("Sign out");
     // Down from the last wraps to the first (Today).
     fireEvent.keyDown(input, { key: "ArrowDown" });
     expect(options()[0]).toHaveAttribute("aria-selected", "true");
