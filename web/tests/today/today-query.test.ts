@@ -55,19 +55,21 @@ beforeAll(async () => {
   await pg.exec("INSERT INTO hunterrr.companies (name, normalized_name) VALUES ('Acme Corp', 'acme')");
   db = drizzle(pg);
 
-  await posting(1, { title: "Intern, found 2 h ago", seniority: "intern", first_seen_at: hoursAgo(2) });
+  await posting(1, { title: "Fresher, found 2 h ago", seniority: "entry", first_seen_at: hoursAgo(2) });
   await posting(2, { title: "Junior, found 20 h ago", seniority: "entry", first_seen_at: hoursAgo(20) });
-  await posting(3, { title: "Intern, found 30 h ago", seniority: "intern", first_seen_at: hoursAgo(30) });
+  await posting(3, { title: "Fresher, found 30 h ago", seniority: "entry", first_seen_at: hoursAgo(30) });
   await posting(4, { title: "Senior, found 1 h ago", seniority: "senior", first_seen_at: hoursAgo(1) });
   await posting(5, { title: "No level, found 1 h ago", first_seen_at: hoursAgo(1) });
-  await posting(6, { title: "Closed intern", seniority: "intern", status: "closed", first_seen_at: hoursAgo(1) });
-  // entry level and new, but not what the owner wants: on-site, remote for the US only, remote with no stated eligibility
-  await posting(7, { title: "On-site intern", seniority: "intern", remote_type: "onsite", first_seen_at: hoursAgo(1) });
-  await posting(8, { title: "US-only remote intern", seniority: "intern", eligibility_scope: "countries", first_seen_at: hoursAgo(1) });
+  await posting(6, { title: "Closed fresher", seniority: "entry", status: "closed", first_seen_at: hoursAgo(1) });
+  // entry level and new, but not what the owner wants: on-site, remote for the US only, remote with no stated
+  // eligibility, an internship (the owner wants a full-time job)
+  await posting(7, { title: "On-site fresher", seniority: "entry", remote_type: "onsite", first_seen_at: hoursAgo(1) });
+  await posting(8, { title: "US-only remote fresher", seniority: "entry", eligibility_scope: "countries", first_seen_at: hoursAgo(1) });
   await pg.query("UPDATE hunterrr.postings SET eligible_countries = ARRAY['US'] WHERE source_id = '8'");
-  await posting(9, { title: "Remote, eligibility unstated", seniority: "intern", eligibility_scope: null, first_seen_at: hoursAgo(1) });
-  await posting(10, { title: "APAC remote intern", seniority: "intern", eligibility_scope: "regions", first_seen_at: hoursAgo(3) });
+  await posting(9, { title: "Remote, eligibility unstated", seniority: "entry", eligibility_scope: null, first_seen_at: hoursAgo(1) });
+  await posting(10, { title: "APAC remote fresher", seniority: "entry", eligibility_scope: "regions", first_seen_at: hoursAgo(3) });
   await pg.query("UPDATE hunterrr.postings SET eligible_countries = ARRAY['IN','SG','VN'] WHERE source_id = '10'");
+  await posting(11, { title: "Remote intern", seniority: "intern", first_seen_at: hoursAgo(1) });
 
   await application("Due later today (IST)", "applied", "2026-10-06T17:00:00Z"); // 22:30 IST today
   await application("Overdue", "interview", "2026-10-03T05:00:00Z");
@@ -90,7 +92,7 @@ describe("queryToday", () => {
     // remote + open to India + entry level only: worldwide and APAC (which contains India) count;
     // on-site, US-only and "eligibility not stated" do not
     expect(t.newJobsCount).toBe(3);
-    expect(t.newJobs.map((r) => r.title)).toEqual(["Intern, found 2 h ago", "APAC remote intern", "Junior, found 20 h ago"]);
+    expect(t.newJobs.map((r) => r.title)).toEqual(["Fresher, found 2 h ago", "APAC remote fresher", "Junior, found 20 h ago"]);
   });
 
   it("lists open applications due today or overdue (IST), soonest first, never closed ones", async () => {

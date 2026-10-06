@@ -59,12 +59,12 @@ beforeAll(async () => {
   acme = await company("Acme Corp");
   const beta = await company("Beta Labs");
   quiet = await company("Quiet Co");
-  await posting(1, acme, { seniority: "intern" });
+  await posting(1, acme, { seniority: "entry" });
   await posting(2, acme, { seniority: "entry" });
   await posting(3, acme, { seniority: "senior" });
   await posting(4, beta, { seniority: "senior" });
   await posting(5, beta, { seniority: "senior", status: "closed" });
-  await posting(6, null, { seniority: "intern" }); // a posting with no company row
+  await posting(6, null, { seniority: "entry" }); // a posting with no company row
   await pg.query("INSERT INTO hunterrr.boards (company_id, ats, slug, url) VALUES ($1, 'greenhouse', 'acme', 'u')", [acme]);
   await pg.query("UPDATE hunterrr.postings SET pay_min = 10, pay_max = 20 WHERE source_id = '1'");
   await pg.query("UPDATE hunterrr.postings SET status = 'closed', last_seen_at = now() - interval '3 days' WHERE source_id = '3'");

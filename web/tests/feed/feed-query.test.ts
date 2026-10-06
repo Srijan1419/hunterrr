@@ -113,7 +113,7 @@ describe("queryFeed", () => {
     expect(new Set([...p1.rows, ...p2.rows].map((x) => x.id)).size).toBe(p1.total);
   });
 
-  it("entry level keeps postings that say intern, entry or fresher-level years, and counts the silent ones", async () => {
+  it("entry level keeps full-time entry or fresher-level postings, never interns, and counts the silent ones", async () => {
     const before = await queryFeed(db as never, { entryLevel: true });
     expect(before.rows).toHaveLength(0); // everything so far states no level
     expect(before.levelUnknown).toBe(before.openTotal);
@@ -125,10 +125,14 @@ describe("queryFeed", () => {
     await add(105, { title: "Senior Engineer", seniority: "senior", experience_min_years: 0 });
     await add(106, { title: "Platform Engineer", experience_min_years: 3 });
     await add(107, { title: "Closed Intern", seniority: "intern", status: "closed" });
+    await add(108, { title: "Associate, 3-5 yrs", seniority: "entry", experience_min_years: 3, experience_max_years: 5 });
+    await add(109, { title: "Part-time Support Associate", seniority: "entry", employment_type: "PART_TIME" });
+    await add(110, { title: "Summer Internship", employment_type: "INTERN", experience_min_years: 0 });
+    await add(111, { title: "Support Engineer, 2 yrs", experience_min_years: 2 });
 
     const r = await queryFeed(db as never, { entryLevel: true });
     expect(r.rows.map((x) => x.title).sort()).toEqual(
-      ["Analyst", "Graduate Engineer", "Junior Analyst", "Software Engineer Intern"],
+      ["Analyst", "Graduate Engineer", "Junior Analyst", "Support Engineer, 2 yrs"],
     );
     // the silent ones are counted, the ones that state a non-entry level are not
     expect(r.levelUnknown).toBe(before.levelUnknown);

@@ -21,7 +21,7 @@ export type FeedFilters = {
   country?: string;
   hasPay?: boolean;
   postedWithinDays?: number;
-  /** Only intern, fresher and entry-level postings (the default on the page; `?level=all` turns it off). */
+  /** Only full-time fresher and entry-level postings, no internships (the default; `?level=all` turns it off). */
   entryLevel?: boolean;
   /** "match" ranks by fit with the profile (needs one); "newest" is date order. Default: match. */
   sort?: "match" | "newest";
@@ -89,11 +89,9 @@ export const FEED_COLUMNS = sql`p.id, p.title, c.name AS company_name, p.source,
   LEFT(p.description_md, 4000) AS description_snippet, p.experience_min_years, p.experience_max_years`;
 
 /**
- * Entry level = the posting SAYS so: an intern/entry seniority (from the title: intern, junior,
- * associate, fresher, new grad), or no seniority and stated experience that a fresher meets
- * (minimum at most 1 year, or maximum at most 2). Senior, lead, staff, principal and director never
- * pass, whatever the years say. A posting that states nothing is not guessed into the list; the
- * page counts those separately.
+ * Entry level = the posting SAYS so (see ENTRY_LEVEL below). Senior, lead, staff, principal and
+ * director never pass, whatever the years say. A posting that states nothing is not guessed into the
+ * list; the page counts those separately.
  */
 /** Needs the company joined as `c`; a posting with no company row passes. */
 export const NOT_IGNORED = sql`c.watch IS DISTINCT FROM 'ignore'`;
@@ -123,8 +121,18 @@ export function remoteFor(country: string): SQL {
   return sql`(p.remote_type = 'remote' AND ${eligibleFor(country)})`;
 }
 
-export const ENTRY_LEVEL = sql`(p.seniority IN ('intern', 'entry')
-  OR (p.seniority IS NULL AND (p.experience_min_years <= 1 OR p.experience_max_years <= 2)))`;
+/** Hard rule: a full-time (or contract) job. Internships, part-time, volunteer and temporary roles never show. */
+export const NOT_INTERNSHIP = sql`(p.seniority IS DISTINCT FROM 'intern'
+  AND COALESCE(p.employment_type, '') !~* '(intern|part[ _-]?time|volunteer|temporary)')`;
+
+/**
+ * Entry level for a fresher with up to ~6 months: an entry title whose stated minimum (if any) is at most
+ * 2 years, or no title level and stated years a fresher can stretch to (minimum at most 2, or maximum at
+ * most 2). 3+ years never passes, even under an "Associate" title. Always also NOT_INTERNSHIP.
+ */
+export const ENTRY_LEVEL = sql`(${NOT_INTERNSHIP} AND (
+  (p.seniority = 'entry' AND (p.experience_min_years IS NULL OR p.experience_min_years <= 2))
+  OR (p.seniority IS NULL AND (p.experience_min_years <= 2 OR p.experience_max_years <= 2))))`;
 const LEVEL_UNSTATED = sql`(p.seniority IS NULL AND p.experience_min_years IS NULL AND p.experience_max_years IS NULL)`;
 
 function conditions(f: FeedFilters): SQL[] {

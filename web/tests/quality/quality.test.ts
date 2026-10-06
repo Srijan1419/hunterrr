@@ -34,8 +34,8 @@ beforeAll(async () => {
   await pg.exec("INSERT INTO hunterrr.companies (name, normalized_name) VALUES ('Acme', 'acme')");
   await pg.exec("INSERT INTO hunterrr.boards (company_id, ats, slug, url) VALUES (1, 'greenhouse', 'acme', 'u')");
   db = drizzle(pg);
-  await posting(1, { remote_type: "remote", eligibility_scope: "worldwide", seniority: "intern", pay_min: 1 });
-  await posting(2, { remote_type: "remote", eligibility_scope: "countries", seniority: "intern" });
+  await posting(1, { remote_type: "remote", eligibility_scope: "worldwide", seniority: "entry", pay_min: 1 });
+  await posting(2, { remote_type: "remote", eligibility_scope: "countries", seniority: "entry" });
   await pg.query("UPDATE hunterrr.postings SET eligible_countries = ARRAY['US'] WHERE source_id = '2'");
   await posting(3, { remote_type: "onsite", seniority: "entry" });
   await posting(4, { experience_min_years: 0 });
@@ -52,7 +52,7 @@ describe("queryQuality", () => {
     expect(q.levelKnown).toBe(4);
     expect(q.eligibilityKnown).toBe(2);
     expect(q.payKnown).toBe(1);
-    expect(q.inDefaultFeed).toBe(1); // only posting 1: remote + worldwide + intern (2 is US-only, 3 is on-site)
+    expect(q.inDefaultFeed).toBe(1); // only posting 1: remote + worldwide + entry (2 is US-only, 3 is on-site)
     expect(q.noBoard).toBe(1);
   });
 });
