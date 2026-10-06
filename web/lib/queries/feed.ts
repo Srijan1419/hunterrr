@@ -98,9 +98,29 @@ export const FEED_COLUMNS = sql`p.id, p.title, c.name AS company_name, p.source,
 /** Needs the company joined as `c`; a posting with no company row passes. */
 export const NOT_IGNORED = sql`c.watch IS DISTINCT FROM 'ignore'`;
 
-/** Remote AND open to this country: worldwide, or the country named (regions are already expanded to countries). */
+/** Work-authorisation labels (stored by the extractor) that keep a person in this country out of the job. */
+const AUTH_LABEL_COUNTRY: Record<string, string> = { us_work_authorization: "US", uk_right_to_work: "GB", india_work_permit: "IN" };
+const AUTH_ALWAYS_BLOCKS = ["security_clearance", "citizenship", "eu_work_permit"];
+
+export function blockingAuthLabels(country: string): string[] {
+  const own = Object.entries(AUTH_LABEL_COUNTRY).filter(([, c]) => c !== country).map(([label]) => label);
+  return country === "IN" ? [...own, ...AUTH_ALWAYS_BLOCKS] : [...own, "security_clearance", "citizenship"];
+}
+
+/**
+ * Hard rule: a person in `country` can take the job. The posting names the country, or says worldwide AND
+ * asks for no work authorisation, clearance or citizenship a person there cannot have. A posting that says
+ * nothing about who may apply is NOT eligible (never guessed in).
+ */
+export function eligibleFor(country: string): SQL {
+  const blocking = sql`ARRAY[${sql.join(blockingAuthLabels(country).map((l) => sql`${l}`), sql`, `)}]::text[]`;
+  return sql`(p.eligible_countries @> ARRAY[${country}]::text[]
+    OR (p.eligibility_scope = 'worldwide' AND NOT (COALESCE(p.work_auth_required, ARRAY[]::text[]) && ${blocking})))`;
+}
+
+/** Remote AND a person in this country can take it. */
 export function remoteFor(country: string): SQL {
-  return sql`(p.remote_type = 'remote' AND (p.eligibility_scope = 'worldwide' OR p.eligible_countries @> ARRAY[${country}]::text[]))`;
+  return sql`(p.remote_type = 'remote' AND ${eligibleFor(country)})`;
 }
 
 export const ENTRY_LEVEL = sql`(p.seniority IN ('intern', 'entry')
@@ -117,7 +137,7 @@ function conditions(f: FeedFilters): SQL[] {
   }
   if (f.remote) out.push(sql`p.remote_type = 'remote'`);
   if (f.country && /^[A-Z]{2}$/.test(f.country)) {
-    out.push(sql`(p.eligibility_scope = 'worldwide' OR p.eligible_countries @> ARRAY[${f.country}]::text[])`);
+    out.push(eligibleFor(f.country));
   }
   if (f.hasPay) out.push(sql`(p.pay_min IS NOT NULL OR p.pay_max IS NOT NULL)`);
   if (f.postedWithinDays && f.postedWithinDays > 0) {
