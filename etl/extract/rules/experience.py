@@ -98,6 +98,8 @@ _MONTH_SINGLE = re.compile(
 )
 _LESS_THAN_YEAR = re.compile(r"\b(?:less\s+than|under|below)\s+(?:a|1|one)\s+year\b", re.IGNORECASE)
 
+_GRADE = "grade"  # a title pattern that names no level
+
 _TITLE_PATS = [
     ("intern", re.compile(r"\bintern(?:s|ship)?\b", re.IGNORECASE)),
     ("director", re.compile(
@@ -106,6 +108,12 @@ _TITLE_PATS = [
     ("principal", re.compile(r"\bprincipal\b", re.IGNORECASE)),
     ("staff", re.compile(r"\bstaff\b", re.IGNORECASE)),
     ("lead", re.compile(r"\blead\b", re.IGNORECASE)),
+    # Indian corporate grades: "Senior Associate", "Sr. Executive", "Senior Process Associate" are often
+    # 0-2 year roles. The title says nothing about level, so the stated years decide (never "senior").
+    (_GRADE, re.compile(
+        r"\b(?:senior|sr\.?)\s+(?:(?:process|customer\s+(?:support|service|care|success)|sales|operations|ops|"
+        r"support|hr|accounts?|admin\w*|tele\w*|voice|non-voice|business\s+development|content|marketing)\s+)?"
+        r"(?:associate|executive)s?\b", re.IGNORECASE)),
     ("senior", re.compile(r"\bsenior\b|\bsr\.?(?!\w)", re.IGNORECASE)),
     ("lead", re.compile(r"\b(?:engineering|software|data|product\s+design|design)\s+manager\b", re.IGNORECASE)),
     ("senior", _LEVEL_THREE_UP),
@@ -284,6 +292,11 @@ def parse_experience(
         add(0, None, fm.group(0), -1, -2)
 
     distinct = {(lo, hi) for lo, hi, _ in cands}
+    # A fresher cue (0, open) agrees with any stated range that starts at 0 ("0-1 years. Freshers welcome"):
+    # the stated range is the more precise reading, not a conflict.
+    if (0, None) in distinct and any(lo == 0 and hi is not None for lo, hi in distinct):
+        distinct.discard((0, None))
+        cands = [c for c in cands if (c[0], c[1]) != (0, None)]
     if len(distinct) > 1:
         min_f, max_f = _unknown(), _unknown()  # ambiguous is unknown
     elif len(distinct) == 1:
@@ -299,6 +312,8 @@ def parse_experience(
     if tcap.strip():
         for name, pat in _TITLE_PATS:
             if pat.search(tcap):
+                if name == _GRADE:
+                    break  # no level from the title; the fresher cues below may still give one
                 hint = Field(value=name, provenance="rule",
                              evidence=_ev(pat.search(tcap).group(0)))  # type: ignore[union-attr]
                 break

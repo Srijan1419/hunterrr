@@ -58,6 +58,33 @@ def test_plain_worldwide_still_worldwide():
     assert scope.value == "worldwide"
 
 
+def _level(title, description):
+    from etl.extract.rules_rung import apply_rules
+    out, _ = apply_rules({}, title=title, description=description, posted_at=None)
+    g = lambda k: getattr(out.get(k), "value", None)
+    return g("seniority"), g("experience_min_years"), g("experience_max_years")
+
+
+@pytest.mark.parametrize("title", [
+    "Senior Associate - Customer Success", "Senior Executive, Operations", "Sr. Process Associate",
+    "Senior Customer Support Executive",
+])
+def test_indian_grade_title_is_not_senior(title):
+    seniority, lo, _ = _level(title, "0-1 years of experience. Freshers welcome.")
+    assert seniority != "senior"
+    assert lo == 0
+
+
+def test_indian_grade_title_with_real_years_stays_out_of_entry():
+    seniority, lo, hi = _level("Senior Associate", "Experience: 3-5 years in operations.")
+    assert seniority != "entry" and (lo, hi) == (3, 5)
+
+
+@pytest.mark.parametrize("title", ["Senior Software Engineer", "Senior Data Analyst", "Sr. Product Designer"])
+def test_real_senior_titles_still_senior(title):
+    assert _level(title, "Freshers welcome.")[0] == "senior"
+
+
 def test_recheck_rederives_work_auth_from_rules():
     row = {
         "id": 1, "title": "Support Engineer", "description_md": "No security clearance required.", "posted_at": None,
