@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Chip } from "@/components/atlas/Chip";
+import { MatchDial } from "@/components/atlas/MatchDial";
+import { ScoreBar } from "@/components/atlas/ScoreBar";
 import { SaveButton } from "@/components/tracker/SaveButton";
 import type { FeedRow } from "@/lib/queries/feed";
 import { formatEligibility, formatLocation, formatPay, formatPosted } from "@/lib/feed-format";
@@ -34,6 +36,27 @@ export function JobRow({ row, now, saved = false }: { row: FeedRow; now?: Date; 
           {location ? <span>{location}</span> : null}
           {row.seniority ? <span>{row.seniority}</span> : null}
         </div>
+        {row.match ? (
+          <details className={styles.fit}>
+            <summary className={styles.fitSummary}>
+              <MatchDial score={row.match.score} size={36} />
+              <span>
+                {row.match.blocked ? <span className={styles.fitBlocked}>{row.match.blocked}</span> : "Why this score"}
+              </span>
+            </summary>
+            <div className={styles.fitBody}>
+              {row.match.parts.map((p) => (
+                <div key={p.key} className={styles.fitPart}>
+                  <ScoreBar label={p.label} points={p.points} max={p.max} />
+                  <span className={styles.fitNote}>{p.note}</span>
+                </div>
+              ))}
+              {row.match.flags.length > 0 ? (
+                <p className={styles.fitFlags}>Not counted (not stated): {row.match.flags.join(" · ")}</p>
+              ) : null}
+            </div>
+          </details>
+        ) : null}
         <div className={styles.chips}>
           {row.remoteType ? (
             <Chip tone={row.remoteType === "remote" ? "ok" : "default"}>{REMOTE_LABEL[row.remoteType]}</Chip>

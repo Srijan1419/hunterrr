@@ -7,6 +7,7 @@ const base: FeedRow = {
   id: 1, title: "Backend Engineer", companyName: "Acme", source: "greenhouse", locations: [],
   remoteType: null, eligibilityScope: null, eligibleCountries: [], payMin: null, payMax: null,
   payCurrency: null, payPeriod: null, payProvenance: "unknown", postedAt: null, applyUrl: null, seniority: null,
+  descriptionSnippet: "", experienceMin: null, experienceMax: null,
 };
 
 describe("JobRow", () => {
@@ -39,6 +40,28 @@ describe("JobRow", () => {
     const { container } = render(<ul><JobRow row={{ ...base, companyName: "Acme Corp" }} /></ul>);
     const mark = container.querySelector('[aria-hidden="true"]');
     expect(mark?.textContent).toBe("AC");
+  });
+});
+
+describe("JobRow fit breakdown", () => {
+  it("shows the score dial and why, only when the row was scored", () => {
+    const { rerender } = render(<ul><JobRow row={base} /></ul>);
+    expect(screen.queryByText("Why this score")).toBeNull();
+    const match = {
+      score: 82, blocked: null, flags: ["Level not stated"],
+      parts: [{ key: "skills", label: "Skills", points: 30, max: 40, note: "Names SQL, Python" }],
+    };
+    rerender(<ul><JobRow row={{ ...base, match }} /></ul>);
+    expect(screen.getByRole("img", { name: "Match score 82 out of 100" })).toBeTruthy();
+    expect(screen.getByText("Why this score")).toBeTruthy();
+    expect(screen.getByText("Names SQL, Python")).toBeTruthy();
+    expect(screen.getByText(/Not counted \(not stated\): Level not stated/)).toBeTruthy();
+  });
+
+  it("says plainly why a blocked job is held back", () => {
+    const match = { score: 20, blocked: "Only open to US", flags: [], parts: [] };
+    render(<ul><JobRow row={{ ...base, match }} /></ul>);
+    expect(screen.getByText("Only open to US")).toBeTruthy();
   });
 });
 

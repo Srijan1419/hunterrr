@@ -4,8 +4,10 @@ import { FeedFilters } from "@/components/feed/FeedFilters";
 import { JobRow } from "@/components/feed/JobRow";
 import styles from "@/components/feed/feed.module.css";
 import { db } from "@/lib/db/client.v2";
-import { FEED_PAGE_SIZE, filtersFromSearchParams, queryFeed } from "@/lib/queries/feed";
+import Link from "next/link";
+import { FEED_PAGE_SIZE, MATCH_CANDIDATES, filtersFromSearchParams, queryFeed } from "@/lib/queries/feed";
 import { savedPostingIds } from "@/lib/queries/tracker";
+import { getActiveProfile } from "@/lib/queries/profile";
 
 export const metadata: Metadata = { title: "Jobs | hunterrr" };
 export const dynamic = "force-dynamic";
@@ -26,7 +28,9 @@ function pageHref(params: SearchParams, page: number): string {
 export default async function JobsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const params = await searchParams;
   const filters = filtersFromSearchParams(params);
-  const result = await queryFeed(db as never, filters);
+  const stored = await getActiveProfile(db as never);
+  const result = await queryFeed(db as never, filters, stored?.data ?? null);
+  const ranking = stored !== null && filters.sort !== "newest";
   const saved = await savedPostingIds(db as never, result.rows.map((r) => r.id));
   const from = result.total === 0 ? 0 : (result.page - 1) * FEED_PAGE_SIZE + 1;
   const to = Math.min(result.total, result.page * FEED_PAGE_SIZE);
@@ -42,6 +46,19 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
       <Suspense fallback={null}>
         <FeedFilters />
       </Suspense>
+      {stored ? (
+        <div className={styles.sort} role="group" aria-label="Sort jobs">
+          <a className={`${styles.sortOption} ${ranking ? styles.sortOn : ""}`} aria-current={ranking ? "true" : undefined} href={pageHref({ ...params, sort: "match" }, 1)}>Best match</a>
+          <a className={`${styles.sortOption} ${ranking ? "" : styles.sortOn}`} aria-current={ranking ? undefined : "true"} href={pageHref({ ...params, sort: "newest" }, 1)}>Newest</a>
+        </div>
+      ) : (
+        <p className={styles.note}>
+          <Link href="/profile">Add your profile</Link> and the best fits for you come first, with the reasons shown.
+        </p>
+      )}
+      {ranking && result.total > MATCH_CANDIDATES ? (
+        <p className={styles.note}>Best match ranks the {MATCH_CANDIDATES} newest of {result.total.toLocaleString("en-US")} matching jobs.</p>
+      ) : null}
       {filters.country && result.eligibilityUnknown > 0 ? (
         <p className={styles.note}>
           {result.eligibilityUnknown.toLocaleString("en-US")} other postings do not say whether {filters.country} may apply and are not shown here.

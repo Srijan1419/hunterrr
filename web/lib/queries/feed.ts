@@ -1,5 +1,7 @@
 import { sql, type SQL } from "drizzle-orm";
 import { toIso } from "@/lib/queries/time";
+import { scoreMatch, type MatchResult } from "@/lib/match/score";
+import type { Profile } from "@/lib/profile/schema";
 
 /**
  * The Jobs feed: open postings from the v2 database, newest first.
@@ -21,8 +23,13 @@ export type FeedFilters = {
   postedWithinDays?: number;
   /** Only intern, fresher and entry-level postings (the default on the page; `?level=all` turns it off). */
   entryLevel?: boolean;
+  /** "match" ranks by fit with the profile (needs one); "newest" is date order. Default: match. */
+  sort?: "match" | "newest";
   page?: number;
 };
+
+/** Ranking by fit scores this many of the newest matching postings, then pages through them. */
+export const MATCH_CANDIDATES = 400;
 
 export type FeedLocation = { raw: string; city: string | null; region: string | null; country: string | null };
 
@@ -43,6 +50,12 @@ export type FeedRow = {
   postedAt: string | null;
   applyUrl: string | null;
   seniority: string | null;
+  /** Inputs for scoring only; blanked before rows leave `queryFeed`. */
+  descriptionSnippet: string;
+  experienceMin: number | null;
+  experienceMax: number | null;
+  /** Present when the owner has a saved profile. */
+  match?: MatchResult;
 };
 
 export type FeedResult = {
@@ -67,7 +80,8 @@ function likePattern(q: string): string {
 /** The columns `toRow` reads (posting `p`, company `c`). */
 export const FEED_COLUMNS = sql`p.id, p.title, c.name AS company_name, p.source, p.locations, p.remote_type,
   p.eligibility_scope, p.eligible_countries, p.pay_min, p.pay_max, p.pay_currency, p.pay_period,
-  p.pay_provenance, p.posted_at, p.apply_url_raw, p.seniority`;
+  p.pay_provenance, p.posted_at, p.apply_url_raw, p.seniority,
+  LEFT(p.description_md, 4000) AS description_snippet, p.experience_min_years, p.experience_max_years`;
 
 /**
  * Entry level = the posting SAYS so: an intern/entry seniority (from the title: intern, junior,
@@ -156,10 +170,24 @@ export function toRow(r: Record<string, unknown>): FeedRow {
     postedAt: toIso(posted),
     applyUrl: safeHttpUrl(r.apply_url_raw),
     seniority: typeof r.seniority === "string" ? r.seniority : null,
+    descriptionSnippet: typeof r.description_snippet === "string" ? r.description_snippet : "",
+    experienceMin: num(r.experience_min_years),
+    experienceMax: num(r.experience_max_years),
   };
 }
 
-export async function queryFeed(db: FeedDb, filters: FeedFilters = {}): Promise<FeedResult> {
+/** The row with its fit score for `profile`; the scoring input (description text) is dropped. */
+export function withMatch(row: FeedRow, profile: Profile): FeedRow {
+  const match = scoreMatch(profile, {
+    title: row.title, description: row.descriptionSnippet, seniority: row.seniority,
+    experienceMin: row.experienceMin, experienceMax: row.experienceMax, remoteType: row.remoteType,
+    locations: row.locations, eligibilityScope: row.eligibilityScope, eligibleCountries: row.eligibleCountries,
+    payMin: row.payMin, payMax: row.payMax, payCurrency: row.payCurrency, payPeriod: row.payPeriod,
+  });
+  return { ...row, match, descriptionSnippet: "" };
+}
+
+export async function queryFeed(db: FeedDb, filters: FeedFilters = {}, profile: Profile | null = null): Promise<FeedResult> {
   const where = sql.join(conditions(filters), sql` AND `);
   const requested = Math.max(1, Math.floor(filters.page ?? 1));
 
@@ -176,19 +204,37 @@ export async function queryFeed(db: FeedDb, filters: FeedFilters = {}): Promise<
 
   const c = counts.rows[0] ?? {};
   const total = num(c.total) ?? 0;
-  const pages = Math.max(1, Math.ceil(total / FEED_PAGE_SIZE));
+  const byFit = profile !== null && filters.sort !== "newest";
+  const reachable = byFit ? Math.min(total, MATCH_CANDIDATES) : total; // ranking pages through the scored candidates only
+  const pages = Math.max(1, Math.ceil(reachable / FEED_PAGE_SIZE));
   const page = Math.min(requested, pages); // ?page=9999 shows the last page, not an empty one
   const offset = (page - 1) * FEED_PAGE_SIZE;
-  const list = await db.execute(sql`
-    SELECT ${FEED_COLUMNS}
-    FROM hunterrr.postings p
-    LEFT JOIN hunterrr.companies c ON c.id = p.company_id
-    WHERE ${where}
-    ORDER BY p.posted_at DESC NULLS LAST, p.id DESC
-    LIMIT ${FEED_PAGE_SIZE} OFFSET ${offset}`);
+  let rows: FeedRow[];
+  if (byFit) {
+    // Fit is computed in code, so score the newest candidates and page through the ranked list.
+    const candidates = await db.execute(sql`
+      SELECT ${FEED_COLUMNS}
+      FROM hunterrr.postings p
+      LEFT JOIN hunterrr.companies c ON c.id = p.company_id
+      WHERE ${where}
+      ORDER BY p.posted_at DESC NULLS LAST, p.id DESC
+      LIMIT ${MATCH_CANDIDATES}`);
+    const ranked = candidates.rows.map((r) => withMatch(toRow(r), profile))
+      .sort((a, b) => (b.match?.score ?? 0) - (a.match?.score ?? 0)); // stable: ties keep newest first
+    rows = ranked.slice(offset, offset + FEED_PAGE_SIZE);
+  } else {
+    const list = await db.execute(sql`
+      SELECT ${FEED_COLUMNS}
+      FROM hunterrr.postings p
+      LEFT JOIN hunterrr.companies c ON c.id = p.company_id
+      WHERE ${where}
+      ORDER BY p.posted_at DESC NULLS LAST, p.id DESC
+      LIMIT ${FEED_PAGE_SIZE} OFFSET ${offset}`);
+    rows = list.rows.map((r) => (profile ? withMatch(toRow(r), profile) : { ...toRow(r), descriptionSnippet: "" }));
+  }
 
   return {
-    rows: list.rows.map(toRow),
+    rows,
     total,
     openTotal: num(c.open_total) ?? 0,
     eligibilityUnknown: filters.country ? (num(c.eligibility_unknown) ?? 0) : 0,
@@ -219,6 +265,7 @@ export function filtersFromSearchParams(
     hasPay: one("pay") === "1" || undefined,
     postedWithinDays: Number.isInteger(days) && days > 0 && days <= 365 ? days : undefined,
     entryLevel: one("level") === "all" ? undefined : true,
+    sort: one("sort") === "newest" ? "newest" : "match",
     page: Number.isInteger(page) && page > 0 && page < 10_000 ? page : undefined,
   };
 }

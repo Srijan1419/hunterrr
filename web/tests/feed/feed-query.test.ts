@@ -10,6 +10,7 @@ import { PGlite } from "@electric-sql/pglite";
 import { vector } from "@electric-sql/pglite-pgvector";
 import { drizzle } from "drizzle-orm/pglite";
 import { FEED_PAGE_SIZE, filtersFromSearchParams, queryFeed, safeHttpUrl } from "@/lib/queries/feed";
+import { ProfileSchema } from "@/lib/profile/schema";
 
 const DIR = path.join(__dirname, "..", "..", "drizzle-v2");
 let pg: PGlite;
@@ -135,16 +136,43 @@ describe("queryFeed", () => {
   });
 });
 
+describe("queryFeed with a profile", () => {
+  const profile = ProfileSchema.parse({ skills: ["SQL"], targetRoles: ["Data Analyst"], experienceYears: 0 });
+
+  it("ranks by fit, keeps the date order for ties, and scores every row", async () => {
+    await add(201, { title: "Data Analyst", description_md: "We use SQL.", posted_at: "2020-01-01T00:00:00Z" });
+    await add(202, { title: "Warehouse Associate", description_md: "Lifting.", posted_at: "2026-10-05T00:00:00Z" });
+    const fit = await queryFeed(db as never, { sort: "match" }, profile);
+    expect(fit.rows[0].title).toBe("Data Analyst"); // best fit first even though it is the oldest
+    expect(fit.rows.every((r) => r.match && typeof r.match.score === "number")).toBe(true);
+    expect(fit.rows.every((r) => r.descriptionSnippet === "")).toBe(true); // scoring input never leaves the query
+    const newest = await queryFeed(db as never, { sort: "newest" }, profile);
+    expect(newest.rows[0].title).toBe("Warehouse Associate");
+    expect(newest.rows[0].match).toBeDefined(); // newest order still shows the score
+  });
+
+  it("without a profile there is no score and nothing changes", async () => {
+    const r = await queryFeed(db as never, { sort: "match" }, null);
+    expect(r.rows.every((x) => x.match === undefined)).toBe(true);
+  });
+});
+
 describe("filtersFromSearchParams", () => {
   it("accepts good values and ignores bad ones", () => {
     expect(filtersFromSearchParams({ q: "go", remote: "1", country: "in", pay: "1", days: "7", page: "3" })).toEqual({
-      q: "go", remote: true, country: "IN", hasPay: true, postedWithinDays: 7, entryLevel: true, page: 3,
+      q: "go", remote: true, country: "IN", hasPay: true, postedWithinDays: 7, entryLevel: true, sort: "match", page: 3,
     });
     expect(filtersFromSearchParams({ q: "a\u0000b" }).q).toBe("ab");
     expect(filtersFromSearchParams({ country: "India", days: "-1", page: "0", remote: "yes" })).toEqual({
       q: undefined, remote: undefined, country: undefined, hasPay: undefined, postedWithinDays: undefined,
-      entryLevel: true, page: undefined,
+      entryLevel: true, sort: "match", page: undefined,
     });
+  });
+
+  it("sort defaults to match and only sort=newest changes it", () => {
+    expect(filtersFromSearchParams({}).sort).toBe("match");
+    expect(filtersFromSearchParams({ sort: "junk" }).sort).toBe("match");
+    expect(filtersFromSearchParams({ sort: "newest" }).sort).toBe("newest");
   });
 
   it("entry level is on by default and only level=all turns it off", () => {

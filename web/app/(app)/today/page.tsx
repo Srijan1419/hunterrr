@@ -5,6 +5,8 @@ import { JobRow } from "@/components/feed/JobRow";
 import styles from "@/components/today/today.module.css";
 import { db } from "@/lib/db/client.v2";
 import { queryToday } from "@/lib/queries/today";
+import { getActiveProfile } from "@/lib/queries/profile";
+import { withMatch } from "@/lib/queries/feed";
 import { OPEN_STATES, savedPostingIds, type ApplicationState } from "@/lib/queries/tracker";
 
 export const metadata: Metadata = {
@@ -33,6 +35,8 @@ function dueLabel(iso: string, now: Date): { text: string; overdue: boolean } {
 export default async function TodayPage() {
   const now = new Date();
   const data = await queryToday(db as never, now);
+  const stored = await getActiveProfile(db as never);
+  if (stored) data.newJobs = data.newJobs.map((r) => withMatch(r, stored.data));
   const saved = await savedPostingIds(db as never, data.newJobs.map((r) => r.id));
   const due = data.followUps.length;
 

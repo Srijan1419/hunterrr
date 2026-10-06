@@ -15,6 +15,23 @@
 /* Company mark: initials on the soft accent, one colour for every company (identity, not decoration). */
 .mark { width: 40px; height: 40px; border-radius: var(--r-sm, 8px); display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-family: var(--font-display), system-ui, sans-serif; font-weight: 700; font-size: var(--fs-2); letter-spacing: -0.02em; align-self: start; }
 .actions { display: flex; gap: 8px; align-items: center; }
+
+/* Fit: a small dial that opens to the score breakdown (native <details>, no script). */
+.fit { margin-top: 2px; }
+.fitSummary { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; list-style: none; font-size: var(--fs-1); color: var(--fg-2); border-radius: var(--r-sm, 8px); }
+.fitSummary::-webkit-details-marker { display: none; }
+.fitSummary:hover { color: var(--fg); }
+.fitSummary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.fitBlocked { color: var(--hot); font-weight: 600; }
+.fitBody { display: grid; gap: 8px; margin-top: 10px; padding: 12px 14px; background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-md, 14px); max-width: 520px; }
+.fitPart { display: grid; gap: 2px; }
+.fitNote { font-size: var(--fs-1); color: var(--fg-3); padding-left: 2px; }
+.fitFlags { margin: 0; font-size: var(--fs-1); color: var(--fg-3); }
+
+.sort { display: inline-flex; padding: 3px; border: 1px solid var(--line-strong); border-radius: 999px; gap: 2px; }
+.sortOption { display: inline-flex; align-items: center; height: 30px; padding: 0 14px; border-radius: 999px; font-size: var(--fs-1); font-weight: 600; color: var(--fg-2); text-decoration: none; }
+.sortOption:hover { color: var(--fg); }
+.sortOn { background: var(--accent-soft); color: var(--accent); }
 .main { min-width: 0; display: grid; gap: 6px; }
 .jobTitle { font-family: var(--font-display), system-ui, sans-serif; font-weight: 700; font-size: var(--fs-3); letter-spacing: -0.01em; color: var(--ink); margin: 0; overflow-wrap: anywhere; }
 .meta { font-size: var(--fs-1); color: var(--fg-2); display: flex; flex-wrap: wrap; gap: 4px 12px; }
