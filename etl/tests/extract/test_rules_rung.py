@@ -168,4 +168,10 @@ def test_worldwide_dropped_when_the_location_names_a_place(raw, dropped):
     f = empty_fields()
     f["locations"] = Field([{"raw": raw, "city": None, "region": None, "country": None}], "source")
     out, _ = run("We are hiring engineers anywhere in the world.", fields=f)
-    assert (out["eligibility_scope"].value is None) == dropped
+    if dropped:
+        # a named place or region is never "worldwide" (a region is now stated as such: "Remote, EMEA" -> regions)
+        assert out["eligibility_scope"].value != "worldwide"
+    else:
+        assert out["eligibility_scope"].value == "worldwide"
+    if raw == "Remote, EMEA":
+        assert out["eligibility_scope"].value == "regions" and "DE" in out["eligible_countries"].value

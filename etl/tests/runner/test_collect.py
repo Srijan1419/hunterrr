@@ -296,3 +296,34 @@ async def test_two_shards_running_one_after_the_other_touch_disjoint_boards(engi
     assert scalar(engine, "SELECT count(*) FROM hunterrr.raw_documents") == 30
     assert scalar(engine, "SELECT count(DISTINCT board_id) FROM hunterrr.board_poll_state") == 30
     assert scalar(engine, "SELECT count(*) FROM hunterrr.board_poll_state WHERE shard = 0") +         scalar(engine, "SELECT count(*) FROM hunterrr.board_poll_state WHERE shard = 1") == 30
+
+
+def add_postings(engine, board_id: int, source_ids):
+    with session_scope(engine) as conn:
+        raw = conn.execute(text(
+            "INSERT INTO hunterrr.raw_documents (source, source_key, url, fetched_at, http_status, content_type, content_hash, fetch_meta) "
+            "VALUES ('fake', 'seed/0', 'u', now(), 200, 'application/json', 'seedhash', '{}') RETURNING id")).scalar()
+        for sid in source_ids:
+            conn.execute(text(
+                "INSERT INTO hunterrr.postings (raw_document_id, source, source_id, board_id, title, title_normalized, content_hash) "
+                "VALUES (:r, 'fake', :s, :b, 't', 't', :h)"), {"r": raw, "s": sid, "b": board_id, "h": f"h{sid}"})
+
+
+async def test_a_job_removed_from_the_board_closes_after_two_good_polls_and_a_failed_poll_never_counts(engine, tmp_path):
+    (board,) = seed_boards(engine, 1)
+    ids = ["1", "2", "3", "4", "5", "6"]
+    add_postings(engine, board, ids)
+    listing = lambda t: result(t, ids=tuple(i for i in ids if i != "6"), body="v-without-6")  # job 6 was taken down
+
+    rep1 = await run(engine, [FakeSource(engine, listing)], LocalArchive(tmp_path))
+    assert rep1.counts["postings_closed"] == 0
+    assert scalar(engine, "SELECT missing_polls FROM hunterrr.postings WHERE source_id = '6'") == 1
+
+    failed = await run(engine, [FakeSource(engine, raises=("b0",))], LocalArchive(tmp_path))
+    assert failed.status == "failed"  # an outage: no list, so nothing may be counted or closed
+    assert scalar(engine, "SELECT missing_polls FROM hunterrr.postings WHERE source_id = '6'") == 1
+
+    rep2 = await run(engine, [FakeSource(engine, listing)], LocalArchive(tmp_path))
+    assert rep2.counts["postings_closed"] == 1
+    assert scalar(engine, "SELECT status::text FROM hunterrr.postings WHERE source_id = '6'") == "closed"
+    assert scalar(engine, "SELECT count(*) FROM hunterrr.postings WHERE status = 'open'") == 5

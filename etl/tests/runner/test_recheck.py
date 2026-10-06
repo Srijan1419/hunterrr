@@ -38,11 +38,28 @@ def test_old_posting_gets_work_mode_place_and_level():
     assert params["v"] == EXTRACTION_VERSION
 
 
-def test_known_values_are_never_replaced():
+def test_known_board_values_are_never_replaced_and_stale_rule_values_are_rederived():
     params, _ = recheck_row(stored(remote_type="remote", remote_type_provenance="source",
                                    seniority="senior", seniority_provenance="rule"))
     assert params["remote_type"] == "remote" and params["remote_type_provenance"] == "source"
-    assert params["seniority"] == "senior"
+    # the title says "Intern": the old rule guess ("senior") is recomputed, not kept
+    assert params["seniority"] == "intern"
+    kept, _ = recheck_row(stored(seniority="senior", seniority_provenance="source"))
+    assert kept["seniority"] == "senior"
+
+
+def test_a_rule_guess_is_rederived_but_board_and_ai_values_stay():
+    # an old rule guessed on-site from boilerplate; the board's own location text says remote in India
+    row = stored(title="Engineer", description_md="Great team.",
+                 locations=[{"raw": "Remote - India", "city": None, "region": None, "country": "IN"}], locations_provenance="source",
+                 remote_type="onsite", remote_type_provenance="rule")
+    params, changed = recheck_row(row)
+    assert changed and params["remote_type"] == "remote" and params["remote_type_provenance"] == "rule"
+    assert params["eligibility_scope"] == "countries" and params["eligible_countries"] == ["IN"]
+    # the same posting with the on-site value coming from the board or the AI is left alone
+    for prov in ("source", "llm", "user"):
+        kept, _ = recheck_row({**row, "remote_type_provenance": prov})
+        assert kept["remote_type"] == "onsite" and kept["remote_type_provenance"] == prov
 
 
 def test_nothing_new_is_reported_unchanged():

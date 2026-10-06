@@ -94,9 +94,13 @@ def _field(value: Any, provenance: Any) -> Field:
 def recheck_row(row: Mapping[str, Any]) -> tuple[dict[str, Any], bool]:
     """Return (update params, changed) for one stored posting. Never raises."""
     before = {k: _field(row.get(k), row.get(f"{k}_provenance")) for k in _KEYS}
+    # A value the rules produced can be re-derived exactly, so it is recomputed with the current rules
+    # (an old wrong guess from description boilerplate must not outrank the board's location text).
+    # Values from the board itself ("source", "jsonld"), the AI step ("llm") or the owner ("user") stay.
+    start = {k: (Field() if f.provenance == "rule" else f) for k, f in before.items()}
     try:
         after, _ = apply_rules(
-            dict(before),
+            dict(start),
             title=row.get("title") or "",
             description=row.get("description_md") or "",
             posted_at=row.get("posted_at"),

@@ -33,6 +33,7 @@ from etl.core.ids import content_hash
 from etl.core.logging import log_event
 from etl.core.storage import ArchiveError
 from etl.core.types import FetchResult, FetchTask, RawDocument
+from etl.liveness.board import update_board
 from etl.runner.source import Shard, Source
 
 #: A board that drops below this fraction of its previous posting count in one poll is flagged
@@ -231,6 +232,7 @@ async def run_collect(
 
     # ---- classify, hash, archive (still no database) ---------------------------------------
     board_updates: list[dict[str, Any]] = []
+    live_polls: list[tuple[int, frozenset[str]]] = []  # successful polls with a full job list: liveness input
     poll_states: list[dict[str, Any]] = []
     raw_rows: list[dict[str, Any]] = []
     health: dict[str, dict[str, Any]] = defaultdict(
@@ -290,6 +292,8 @@ async def run_collect(
                 "id": board_id, "ok": ok, "dead": res.status == "dead", "blocked": res.status == "blocked",
                 "count": count, "hash": new_hash, "failures_before": before.get("failures", 0),
             })
+            if ok and not suspect and res.posting_ids is not None:
+                live_polls.append((board_id, res.posting_ids))
             if ok:
                 poll_states.append({
                     "board_id": board_id, "shard": shard.index, "last_poll_at": now,
@@ -357,6 +361,15 @@ async def run_collect(
                     ),
                     [{**u, "now": now, "dead_after": DEAD_AFTER} for u in board_updates],
                 )
+            closed = reopened = suspect_boards = 0
+            for live_board_id, listed in live_polls:
+                lv = update_board(conn, live_board_id, listed, now)
+                closed += lv.closed
+                reopened += lv.reopened
+                suspect_boards += lv.suspect_boards
+            report.counts["postings_closed"] = closed
+            report.counts["postings_reopened"] = reopened
+            report.counts["liveness_suspect_boards"] = suspect_boards
             if health:
                 today = now.date()
                 conn.execute(

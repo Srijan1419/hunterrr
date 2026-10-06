@@ -17,6 +17,7 @@ from etl.extract.rules.context import ParseContext
 from etl.extract.rules.dates import parse_deadline, parse_joining
 from etl.extract.rules.eligibility import parse_eligibility
 from etl.extract.rules.experience import parse_experience
+from etl.extract.rules.locstring import combine, read_location
 from etl.extract.rules.location import parse_location_section, parse_locations, parse_remote_type
 from etl.extract.rules.pay import parse_pay
 from etl.extract.rules.workauth import parse_workauth
@@ -174,6 +175,24 @@ def apply_rules(
                 out["remote_type"] = Field(value=mode, provenance="rule", evidence=label[:_SHORT])
 
         guarded(work_mode_label)
+
+        def location_text() -> None:
+            """The board's own location text ("Remote - India", "Remote, APAC") states mode and who may apply."""
+            locs = out.get("locations")
+            if not _is_known(locs) or not isinstance(locs.value, list):
+                return
+            reading = combine(read_location(loc.get("raw") if isinstance(loc, dict) else loc) for loc in locs.value)
+            if reading.remote_type:
+                offer("remote_type", Field(value=reading.remote_type, provenance="rule", evidence="location text"))
+            # Who may apply is claimed only when the text states a work mode (a plain city says where the
+            # office is, not who is eligible), or says worldwide.
+            if reading.remote_type is not None or reading.scope == "worldwide":
+                if reading.scope:
+                    offer("eligibility_scope", Field(value=reading.scope, provenance="rule", evidence="location text"))
+                if reading.countries:
+                    offer("eligible_countries", Field(value=list(reading.countries), provenance="rule", evidence="location text"))
+
+        guarded(location_text)
         guarded(lambda: offer("remote_type", parse_remote_type(text, ctx)))
 
         def locations() -> None:

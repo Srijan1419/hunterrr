@@ -88,6 +88,8 @@ async def collect(shard_spec: str) -> int:
         print(
             f"collect shard={index}/{count} status={report.status} planned={c.get('tasks_planned', 0)} "
             f"fetched={c.get('tasks_fetched', 0)} documents={c.get('documents', 0)} errors={c.get('errors', 0)} "
+            f"closed={c.get('postings_closed', 0)} reopened={c.get('postings_reopened', 0)} "
+            f"liveness_suspect={c.get('liveness_suspect_boards', 0)} "
             f"db_active_seconds={c.get('db_active_seconds', 0.0):.3f} plan_s={d.get('plan', 0.0):.2f} "
             f"fetch_s={d.get('fetch', 0.0):.2f} write_s={d.get('write', 0.0):.2f}"
         )
