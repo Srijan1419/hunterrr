@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Hanken_Grotesk, DM_Mono } from "next/font/google";
 import "./globals.css";
-import { SiteHeader } from "@/components/SiteHeader";
-import { LegacyOnly } from "@/components/LegacyOnly";
 
 // Atlas fonts: display (logo, titles, big numbers), body/UI, and mono
 // (scores, pay, dates, small labels). No external stylesheet link.
@@ -36,40 +34,14 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+/**
+ * The bare document. Every screen draws its own frame: the signed-in shell (top bar and the
+ * Remote OK attribution footer its API terms require, see NOTICE) or the sign-in frame.
+ */
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable}`}>
-      <body className="min-h-screen bg-background font-sans antialiased flex flex-col">
-        <LegacyOnly>
-          <SiteHeader />
-        </LegacyOnly>
-        <div className="flex-1">{children}</div>
-        {/*
-          Remote OK's public API terms (see NOTICE) require a visible attribution
-          link on every page that shows its data, with follow and without nofollow,
-          as a condition of API access - not optional styling. The v2 screens carry
-          the link in their own shell footer (components/shell/AppShell.tsx); this
-          one covers the legacy v1 pages until h2-73 removes them.
-        */}
-        <LegacyOnly>
-          <footer className="border-t py-4 px-4 text-center text-xs text-muted-foreground">
-            Job data from{" "}
-            <a
-              href="https://remoteok.com"
-              target="_blank"
-              rel="noopener"
-              className="underline hover:text-foreground"
-            >
-              Remote OK
-            </a>
-            , Jobicy, and Himalayas.
-          </footer>
-        </LegacyOnly>
-      </body>
+      <body className="min-h-screen bg-background font-sans antialiased">{children}</body>
     </html>
   );
 }

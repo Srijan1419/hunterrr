@@ -38,12 +38,14 @@ function currentTabs() {
     .map((a) => ({ name: a.textContent, current: a.getAttribute("aria-current") }));
 }
 
+const more = () => screen.getByRole("button", { name: /^More/ });
+
 describe("TopBar", () => {
   it("marks the Tracker tab current on /tracker", () => {
     nav.path.current = "/tracker";
     render(<TopBar />);
     const tabs = currentTabs();
-    expect(tabs).toHaveLength(7);
+    expect(tabs.map((t) => t.name)).toEqual(["Today", "Jobs", "Tracker"]); // the rest sit under More
     expect(tabs.find((t) => t.name === "Tracker")).toMatchObject({ current: "page" });
     for (const t of tabs.filter((t) => t.name !== "Tracker")) {
       expect(t.current).toBeNull();
@@ -58,6 +60,35 @@ describe("TopBar", () => {
     for (const t of tabs.filter((t) => t.name !== "Jobs")) {
       expect(t.current).toBeNull();
     }
+  });
+
+  it("keeps Inbox, Companies, Sources and Profile under More, closed until opened", () => {
+    render(<TopBar />);
+    expect(more().getAttribute("aria-expanded")).toBe("false");
+    expect(screen.queryByRole("link", { name: /Inbox/ })).toBeNull();
+    fireEvent.click(more());
+    expect(more().getAttribute("aria-expanded")).toBe("true");
+    for (const name of ["Inbox", "Companies", "Sources", "Profile"]) {
+      expect(screen.getByRole("link", { name: new RegExp(name) })).toBeInTheDocument();
+    }
+  });
+
+  it("closes More on Escape and on an outside click", () => {
+    render(<TopBar />);
+    fireEvent.click(more());
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(more().getAttribute("aria-expanded")).toBe("false");
+    fireEvent.click(more());
+    fireEvent.mouseDown(document.body);
+    expect(more().getAttribute("aria-expanded")).toBe("false");
+  });
+
+  it("marks More current when the page is one of its destinations, and that item inside it", () => {
+    nav.path.current = "/profile";
+    render(<TopBar />);
+    expect(more().getAttribute("aria-current")).toBe("page");
+    fireEvent.click(more());
+    expect(screen.getByRole("link", { name: /Profile/ }).getAttribute("aria-current")).toBe("page");
   });
 
   it("marks nothing current on /", () => {

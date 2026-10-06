@@ -52,6 +52,14 @@ describe("route classification", () => {
     expect(both, `In both lists: ${both.join(", ")}`).toEqual([]);
   });
 
+  it("the old v1 pages are gone, and the front door needs the session", () => {
+    const routes = pageRoutes();
+    for (const gone of ["/skills", "/trends", "/coverage"]) expect(routes).not.toContain(gone);
+    expect(classify("/")).toBe("protected");
+    expect(isPublicRoute("/")).toBe(false);
+    expect(isPublicRoute("/skills")).toBe(false);
+  });
+
   it("an unclassified page would be caught (the check really can fail)", () => {
     expect(classify("/definitely-not-a-page")).toBe("none");
   });

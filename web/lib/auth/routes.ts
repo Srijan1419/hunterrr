@@ -10,19 +10,15 @@
 /** Reachable without signing in. */
 export const PUBLIC_ROUTES = [
   "/signin",
-  "/signup", // dead end: sign-up is disabled, kept only until the sign-in screen is rebuilt
+  "/signup", // redirects to /signin: sign-up is disabled (one Google account only)
   "/not-allowed",
   "/demo/**", // the public demo mode shows synthetic data only
   "/api/auth/**", // Better Auth's own endpoints
-  // Legacy v1 read-only pages: public ONLY until task h2-73 removes them.
-  "/",
-  "/skills",
-  "/trends",
-  "/coverage",
 ] as const;
 
 /** Pages that require the session. Add new pages here (or to PUBLIC_ROUTES) when you create them. */
 export const PROTECTED_ROUTES = [
+  "/", // redirects to /today once signed in
   "/today",
   "/jobs",
   "/jobs/**",

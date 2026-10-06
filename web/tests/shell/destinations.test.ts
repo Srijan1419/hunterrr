@@ -18,6 +18,11 @@ describe("destinations", () => {
     ]);
   });
 
+  it("shows Today, Jobs and Tracker as tabs and the other four under More", () => {
+    expect(DESTINATIONS.filter((d) => d.group === "main").map((d) => d.label)).toEqual(["Today", "Jobs", "Tracker"]);
+    expect(DESTINATIONS.filter((d) => d.group === "more").map((d) => d.label)).toEqual(["Inbox", "Companies", "Sources", "Profile"]);
+  });
+
   it("gives every destination a one-line description for the palette", () => {
     for (const d of DESTINATIONS) {
       expect(d.description.trim().length).toBeGreaterThan(0);
