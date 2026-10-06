@@ -15,6 +15,8 @@ describe("WatchControl", () => {
     fireEvent.click(screen.getByRole("button", { name: "Watch Acme" }));
     expect(screen.getByRole("button", { name: "Watch Acme" }).getAttribute("aria-pressed")).toBe("true");
     await waitFor(() => expect(act.setCompanyWatch).toHaveBeenCalledWith(7, "watch"));
+    // the buttons are disabled while a save is in flight (no double clicks): wait for it to finish
+    await waitFor(() => expect((screen.getByRole("button", { name: "Watch Acme" }) as HTMLButtonElement).disabled).toBe(false));
     fireEvent.click(screen.getByRole("button", { name: "Watch Acme" }));
     await waitFor(() => expect(act.setCompanyWatch).toHaveBeenLastCalledWith(7, "none"));
   });

@@ -79,7 +79,8 @@ describe("SaveButton", () => {
     render(<SaveButton postingId={42} />);
     fireEvent.click(screen.getByRole("button", { name: "Save" }));
     expect(await screen.findByRole("alert")).toHaveTextContent("That job no longer exists.");
-    expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
+    // The error shows one render before the pending flag clears ("Saving…" -> "Save"), so wait for it.
+    expect(await screen.findByRole("button", { name: "Save" })).toBeInTheDocument();
   });
 
   it("an already-saved job starts as Saved with no button", () => {
