@@ -7,8 +7,21 @@ const base: FeedRow = {
   id: 1, title: "Backend Engineer", companyName: "Acme", source: "greenhouse", locations: [],
   remoteType: null, eligibilityScope: null, eligibleCountries: [], payMin: null, payMax: null,
   payCurrency: null, payPeriod: null, payProvenance: "unknown", postedAt: null, applyUrl: null, seniority: null,
-  descriptionSnippet: "", experienceMin: null, experienceMax: null,
+  descriptionSnippet: "", experienceMin: null, experienceMax: null, indiaReason: null, labels: [],
 };
+
+describe("JobRow reasons", () => {
+  it("says why an Indian can take the job and shows soft labels", () => {
+    render(<ul><JobRow row={{ ...base, indiaReason: "Names India", labels: ["night_shift", "lang_nice:french"] }} /></ul>);
+    expect(screen.getByText("Open to India: Names India")).toBeTruthy();
+    expect(screen.getByText("US-hours overlap")).toBeTruthy();
+    expect(screen.getByText("French is a plus")).toBeTruthy();
+  });
+  it("shows no reason or label chips for an undecided posting", () => {
+    render(<ul><JobRow row={base} /></ul>);
+    expect(screen.queryByText(/Open to India/)).toBeNull();
+  });
+});
 
 describe("JobRow", () => {
   it("shows only what is known and says when there is no apply link", () => {

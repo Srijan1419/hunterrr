@@ -53,6 +53,10 @@ export type FeedRow = {
   postedAt: string | null;
   applyUrl: string | null;
   seniority: string | null;
+  /** Why the stored decision says an Indian can (or cannot) take the job; null until the posting is decided. */
+  indiaReason: string | null;
+  /** Soft labels from the decision layer (night_shift, freelance, lang_nice:german ...). */
+  labels: string[];
   /** Inputs for scoring only; blanked before rows leave `queryFeed`. */
   descriptionSnippet: string;
   experienceMin: number | null;
@@ -85,7 +89,7 @@ function likePattern(q: string): string {
 /** The columns `toRow` reads (posting `p`, company `c`). */
 export const FEED_COLUMNS = sql`p.id, p.title, c.name AS company_name, p.source, p.locations, p.remote_type,
   p.eligibility_scope, p.eligible_countries, p.pay_min, p.pay_max, p.pay_currency, p.pay_period,
-  p.pay_provenance, p.posted_at, p.apply_url_raw, p.seniority,
+  p.pay_provenance, p.posted_at, p.apply_url_raw, p.seniority, p.india_reason, p.labels,
   LEFT(p.description_md, 4000) AS description_snippet, p.experience_min_years, p.experience_max_years`;
 
 /**
@@ -112,9 +116,16 @@ export function blockingAuthLabels(country: string): string[] {
  */
 export function eligibleFor(country: string): SQL {
   const blocking = sql`ARRAY[${sql.join(blockingAuthLabels(country).map((l) => sql`${l}`), sql`, `)}]::text[]`;
-  return sql`(p.eligible_countries @> ARRAY[${country}]::text[]
+  const fromFields = sql`(p.eligible_countries @> ARRAY[${country}]::text[]
     OR (p.eligibility_scope = 'worldwide' AND NOT (COALESCE(p.work_auth_required, ARRAY[]::text[]) && ${blocking})))`;
+  if (country !== "IN") return fromFields;
+  // India: the stored decision (etl/decide, with its reason) once the posting has been decided; until then the
+  // same rule computed from the extracted fields, so nothing vanishes while the table is being filled.
+  return sql`(CASE WHEN p.decision_key IS NOT NULL THEN p.india_eligible = 'yes' ELSE ${fromFields} END)`;
 }
+
+/** A decided posting that carries a hard flag (scam, unpaid, language needed, not an open job ...) never shows. */
+export const NO_HARD_FLAGS = sql`(p.decision_key IS NULL OR cardinality(p.flags) = 0)`;
 
 /** Remote AND a person in this country can take it. */
 export function remoteFor(country: string): SQL {
@@ -123,7 +134,9 @@ export function remoteFor(country: string): SQL {
 
 /** Hard rule: a full-time (or contract) job. Internships, part-time, volunteer and temporary roles never show. */
 export const NOT_INTERNSHIP = sql`(p.seniority IS DISTINCT FROM 'intern'
-  AND COALESCE(p.employment_type, '') !~* '(intern|part[ _-]?time|volunteer|temporary)')`;
+  AND COALESCE(p.employment_type, '') !~* '(intern|part[ _-]?time|volunteer|temporary)'
+  AND (p.decision_key IS NULL OR p.employment_kind NOT IN ('internship', 'part_time', 'volunteer', 'temporary'))
+  AND ${NO_HARD_FLAGS})`;
 
 /**
  * Entry level for a fresher with up to ~6 months: an entry title whose stated minimum (if any) is at most
@@ -137,7 +150,7 @@ const LEVEL_UNSTATED = sql`(p.seniority IS NULL AND p.experience_min_years IS NU
 
 function conditions(f: FeedFilters): SQL[] {
   // A company the owner chose to ignore never shows (postings with no known company still do).
-  const out: SQL[] = [sql`p.status = 'open'`, NOT_IGNORED];
+  const out: SQL[] = [sql`p.status = 'open'`, NOT_IGNORED, NO_HARD_FLAGS];
   const q = f.q?.trim();
   if (q) {
     const pat = likePattern(q.slice(0, 80));
@@ -204,6 +217,8 @@ export function toRow(r: Record<string, unknown>): FeedRow {
     remoteType: (r.remote_type as FeedRow["remoteType"]) ?? null,
     eligibilityScope: (r.eligibility_scope as FeedRow["eligibilityScope"]) ?? null,
     eligibleCountries: Array.isArray(r.eligible_countries) ? (r.eligible_countries as string[]) : [],
+    indiaReason: typeof r.india_reason === "string" && r.india_reason ? r.india_reason : null,
+    labels: Array.isArray(r.labels) ? (r.labels as string[]) : [],
     payMin: num(r.pay_min),
     payMax: num(r.pay_max),
     payCurrency: typeof r.pay_currency === "string" ? r.pay_currency : null,

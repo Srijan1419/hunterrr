@@ -32,6 +32,11 @@ export type PostingDetail = {
   visaSponsorship: "yes" | "no" | null;
   visaProvenance: string;
   workAuthRequired: string[];
+  /** The stored decision: can a person in India take this job, and why (null until decided). */
+  indiaEligible: "yes" | "no" | "unknown" | null;
+  indiaReason: string | null;
+  flags: string[];
+  labels: string[];
   payMin: number | null;
   payMax: number | null;
   payCurrency: string | null;
@@ -106,6 +111,10 @@ export async function queryPosting(db: FeedDb, id: number): Promise<PostingDetai
     visaSponsorship: (str(r.visa_sponsorship) as PostingDetail["visaSponsorship"]) ?? null,
     visaProvenance: prov(r.visa_sponsorship_provenance),
     workAuthRequired: list(r.work_auth_required),
+    indiaEligible: r.decision_key ? ((str(r.india_eligible) as PostingDetail["indiaEligible"]) ?? null) : null,
+    indiaReason: r.decision_key ? str(r.india_reason) : null,
+    flags: list(r.flags),
+    labels: list(r.labels),
     payMin: num(r.pay_min),
     payMax: num(r.pay_max),
     payCurrency: str(r.pay_currency),

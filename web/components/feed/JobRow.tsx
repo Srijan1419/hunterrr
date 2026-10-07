@@ -9,6 +9,16 @@ import styles from "./feed.module.css";
 
 const REMOTE_LABEL = { remote: "Remote", hybrid: "Hybrid", onsite: "On-site" } as const;
 
+/** Soft labels from the decision layer, in plain words. Unknown labels are not shown. */
+export function labelText(label: string): string | null {
+  const fixed: Record<string, string> = {
+    night_shift: "US-hours overlap", freelance: "Freelance / contract", occasional_office: "Occasional office visits",
+  };
+  if (fixed[label]) return fixed[label];
+  const m = /^lang_nice:([a-z]+)$/.exec(label);
+  return m ? `${m[1][0].toUpperCase()}${m[1].slice(1)} is a plus` : null;
+}
+
 /** Up to two initials from the company name ("Acme Corp" -> "AC"); "?" when the company is unknown. */
 export function initials(name: string | null): string {
   const words = (name ?? "").replace(/[^\p{L}\p{N}\s]/gu, " ").split(/\s+/).filter(Boolean);
@@ -62,6 +72,11 @@ export function JobRow({ row, now, saved = false }: { row: FeedRow; now?: Date; 
             <Chip tone={row.remoteType === "remote" ? "ok" : "default"}>{REMOTE_LABEL[row.remoteType]}</Chip>
           ) : null}
           {eligibility ? <Chip tone={row.eligibilityScope === "worldwide" ? "ok" : "default"}>{eligibility}</Chip> : null}
+          {row.indiaReason ? <Chip tone="ok">{`Open to India: ${row.indiaReason}`}</Chip> : null}
+          {row.labels.map((l) => {
+            const text = labelText(l);
+            return text ? <Chip key={l}>{text}</Chip> : null;
+          })}
         </div>
       </div>
       <div className={styles.side}>

@@ -11,6 +11,7 @@ import styles from "@/components/feed/detail.module.css";
 import { db } from "@/lib/db/client.v2";
 import { SaveButton } from "@/components/tracker/SaveButton";
 import { WrongButton } from "@/components/feed/WrongButton";
+import { labelText } from "@/components/feed/JobRow";
 import { formatEligibility, formatLocation, formatPay } from "@/lib/feed-format";
 import { scoreMatch } from "@/lib/match/score";
 import { getActiveProfile } from "@/lib/queries/profile";
@@ -66,6 +67,8 @@ export default async function JobDetailPage({ params }: { params: Params }) {
           {posting.remoteType ? <Chip tone={posting.remoteType === "remote" ? "ok" : "default"}>{REMOTE_LABEL[posting.remoteType]}</Chip> : null}
           {location ? <Chip>{location}</Chip> : null}
           {eligibility ? <Chip tone={posting.eligibilityScope === "worldwide" ? "ok" : "default"}>{eligibility}</Chip> : null}
+          {posting.indiaReason ? <Chip tone={posting.indiaEligible === "yes" ? "ok" : "default"}>{`India: ${posting.indiaReason}`}</Chip> : null}
+          {posting.labels.map((l) => { const text = labelText(l); return text ? <Chip key={l}>{text}</Chip> : null; })}
           {pay ? <Chip>{pay}</Chip> : null}
           {posting.seniority ? <Chip>{posting.seniority}</Chip> : null}
           {posting.status !== "open" ? <span className={styles.closed}>No longer listed</span> : null}
