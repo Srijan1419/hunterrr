@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ProfileEditor } from "@/components/profile/ProfileEditor";
+import { EraseData } from "@/components/profile/EraseData";
 import { SkillGap } from "@/components/profile/SkillGap";
 import { requireSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/client.v2";
@@ -27,6 +28,7 @@ export default async function ProfilePage() {
         savedAt={stored?.savedAt ?? null}
       />
       {gap ? <SkillGap gap={gap} /> : null}
+      <EraseData />
     </>
   );
 }

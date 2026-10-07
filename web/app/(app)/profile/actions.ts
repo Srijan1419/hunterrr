@@ -5,6 +5,7 @@ import { db } from "@/lib/db/client.v2";
 import { requireSession } from "@/lib/auth/session";
 import { MAX_PDF_BYTES, ResumeError, pdfText, readResumeText } from "@/lib/profile/resume";
 import type { ResumeFields } from "@/lib/profile/schema";
+import { eraseUserData } from "@/lib/queries/erase";
 import { saveProfile } from "@/lib/queries/profile";
 
 export type ResumeResult =
@@ -35,4 +36,22 @@ export async function saveProfileAction(input: unknown): Promise<SaveResult> {
   revalidatePath("/profile");
   revalidatePath("/today");
   return { ok: true, version: saved.version };
+}
+
+export type EraseResult = { ok: true; profiles: number; applications: number; checkins: number } | { ok: false; error: string };
+
+/** Delete the signed-in person's profile, tracker and check-ins. The word DELETE must be sent back as typed. */
+export async function eraseMyData(confirmation: string): Promise<EraseResult> {
+  const { user } = await requireSession();
+  if (confirmation !== "DELETE") return { ok: false, error: "Type DELETE exactly to confirm." };
+  try {
+    const erased = await eraseUserData(db as never, user.id);
+    if (!erased) return { ok: false, error: "That request was not valid." };
+    revalidatePath("/profile");
+    revalidatePath("/tracker");
+    revalidatePath("/today");
+    return { ok: true, ...erased };
+  } catch {
+    return { ok: false, error: "Could not delete right now. Ask the owner to delete your data." };
+  }
 }
