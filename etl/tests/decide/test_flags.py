@@ -142,3 +142,26 @@ def test_postings_that_are_not_an_open_job_are_flagged(title, text):
 ])
 def test_normal_postings_are_not_flagged_as_not_a_job(title, text):
     assert "not_a_job" not in scan_flags({"title": title, "description_md": text, "source": "greenhouse"}).flags
+
+
+# --- false alarms found on production (2026-10-07): 60 Peloton postings and two payments roles --------------------
+@pytest.mark.parametrize("text", [
+    "Members who cancel may have to pay a fee, depending on their plan.",
+    "You will own payments reliability, including card processing fees and settlement.",
+    "Experience reducing processing fees for merchants at scale.",
+    "Design the pricing for payment processing fees across markets.",
+    "There is an application fee waiver for students.",
+])
+def test_ordinary_fee_wording_is_not_a_scam_signal(text):
+    assert "fee_requested" not in flags(text)
+
+
+@pytest.mark.parametrize("text", [
+    "You will have to pay a fee before joining.",
+    "Candidates must pay a processing fee to apply.",
+    "A non-refundable application fee is payable at registration.",
+    "Registration fee Rs 500 required.",
+    "Pay Rs 2000 to apply and secure your seat.",
+])
+def test_fee_asked_of_the_candidate_is_still_flagged(text):
+    assert "fee_requested" in flags(text)

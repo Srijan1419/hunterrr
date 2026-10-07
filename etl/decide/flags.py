@@ -43,12 +43,25 @@ _NEGATION_AFTER = re.compile(
     _I,
 )
 
-_FEE = re.compile(
-    r"\b(?:registration|training|joining|security|refundable|processing|onboarding|certification|enrol+ment|admission|"
-    r"application|verification|uniform|kit|laptop|equipment|id[- ]?card|placement|course|software|documentation)\s+"
-    r"(?:fees?|charges?|deposit|amount)\b"
-    r"|\b(?:pay|deposit|transfer|send|remit)\s+(?:an?\s+)?(?:(?:refundable|small|one[- ]time|nominal|initial)\s+)?(?:fee|deposit|amount)\b"
+# Fee words that, on their own, are a scam signal in a job posting.
+_FEE_STRONG = re.compile(
+    r"\b(?:registration|training|joining|security|refundable|onboarding|certification|enrol+ment|admission|"
+    r"uniform|kit|laptop|id[- ]?card|placement|course)\s+(?:fees?|charges?|deposit|amount)\b"
     r"|\b(?:pay|deposit|transfer)\s+(?:rs\.?|₹|inr|usd|\$)\s*[\d,]+\s+(?:to|for|as)\s+(?:apply|join|register|start|secure|confirm|get)\b",
+    _I,
+)
+# Words that are ordinary in payments / fintech / SaaS postings ("processing fees", "application fee waived",
+# "pay a fee for membership"): they count only when the text asks THE CANDIDATE to pay (found on production:
+# 60 Peloton postings and two payments roles were flagged by the broad version).
+_FEE_WEAK = re.compile(
+    r"\b(?:processing|application|verification|equipment|software|documentation|interview|background[- ]check)\s+(?:fees?|charges?|deposit|amount)\b"
+    r"|\b(?:pay|deposit|transfer|send|remit)\s+(?:an?\s+)?(?:(?:refundable|small|one[- ]time|nominal|initial)\s+)?(?:fee|deposit|amount)\b",
+    _I,
+)
+_CANDIDATE_PAYS = re.compile(
+    r"\b(?:you\s+(?:will\s+|would\s+)?(?:have\s+to|need\s+to|must|should)\s+pay|candidates?\s+(?:must|need\s+to|have\s+to|will\s+have\s+to)\s+pay"
+    r"|applicants?\s+(?:must|need\s+to|have\s+to)\s+pay|before\s+(?:joining|you\s+start|your\s+interview)|to\s+(?:apply|join|register)\b|upfront|up[- ]front"
+    r"|non[- ]?refundable|payable\s+(?:at|before|to\s+us|upon)|pay\s+us)\b",
     _I,
 )
 _UNPAID = re.compile(
@@ -139,7 +152,12 @@ def scan_flags(view: Mapping[str, Any]) -> FlagResult:
             out.flags.append(name)
             out.evidence[name] = _quote(m)
 
-    hard("fee_requested", _first_unguarded(_FEE, text))
+    fee = _first_unguarded(_FEE_STRONG, text)
+    if fee is None:
+        weak = _first_unguarded(_FEE_WEAK, text)
+        if weak is not None and _CANDIDATE_PAYS.search(text[max(0, weak.start() - 120):weak.end() + 120]):
+            fee = weak
+    hard("fee_requested", fee)
     hard("unpaid", _first_unguarded(_UNPAID, cleaned))
     hard("commission_only", _first_unguarded(_COMMISSION_ONLY, text))
     hard("too_good", _first_unguarded(_TOO_GOOD, text))

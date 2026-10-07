@@ -27,7 +27,7 @@ from etl.decide.india import india_eligible
 from etl.decide.language import is_non_english, required_languages
 from etl.decide.role_family import FAMILIES, role_family
 
-DECISION_VERSION = 1
+DECISION_VERSION = 2  # 2: fee_requested only when the candidate is asked to pay (production false alarms); 1: first version
 
 #: Languages a candidate is assumed to read until profiles carry languages (Loop 3/5).
 ASSUMED_LANGUAGES = frozenset({"english", "hindi"})
