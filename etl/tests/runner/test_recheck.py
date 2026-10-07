@@ -135,3 +135,23 @@ def test_the_ashby_reset_touches_only_old_ashby_board_values():
     assert recheck_row(_ashby_row(source="lever", **base))[0]["remote_type"] == "remote"                 # another board
     assert recheck_row(_ashby_row(remote_type="hybrid", **base))[0]["remote_type"] == "hybrid"           # not a remote claim
     assert recheck_row(_ashby_row(remote_type_provenance="user", **base))[0]["remote_type"] == "remote"  # the owner's own value
+
+
+def _himalayas_row(**cols):
+    row = stored(title="Claims Processor", description_md="Location: Remote. US medical billing company.", remote_type="remote",
+                 remote_type_provenance="source", eligibility_scope="worldwide", eligibility_scope_provenance="source")
+    row.update({"source": "himalayas", "extraction_version": 8})
+    row.update(cols)
+    return row
+
+
+def test_himalayas_worldwide_from_an_empty_country_list_is_reset_but_a_stated_one_comes_back():
+    params, changed = recheck_row(_himalayas_row())
+    assert changed and params["eligibility_scope"] is None
+    # the description itself says worldwide: the rules bring it back with rule provenance
+    params, _ = recheck_row(_himalayas_row(description_md="We hire globally. Our team works across 30 countries."))
+    assert params["eligibility_scope"] == "worldwide" and params["eligibility_scope_provenance"] == "rule"
+    # already current, another source, or the owner's own value: untouched
+    assert recheck_row(_himalayas_row(extraction_version=9))[0]["eligibility_scope"] == "worldwide"
+    assert recheck_row(_himalayas_row(source="remotive"))[0]["eligibility_scope"] == "worldwide"
+    assert recheck_row(_himalayas_row(eligibility_scope_provenance="user"))[0]["eligibility_scope"] == "worldwide"

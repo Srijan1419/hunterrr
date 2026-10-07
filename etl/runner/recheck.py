@@ -107,6 +107,12 @@ def recheck_row(row: Mapping[str, Any]) -> tuple[dict[str, Any], bool]:
     if (row.get("source") == "ashby" and before["remote_type"].provenance == "source"
             and before["remote_type"].value == "remote" and int(row.get("extraction_version") or 0) < 8):
         start["remote_type"] = Field()
+    # Until extraction version 9 a Himalayas job with an empty country list was stored as `worldwide` (provenance
+    # "source"), but an empty list is silence: 4 of 17 such jobs were wrong. Reset it so only a description that says
+    # worldwide itself can bring it back.
+    if (row.get("source") == "himalayas" and before["eligibility_scope"].provenance == "source"
+            and before["eligibility_scope"].value == "worldwide" and int(row.get("extraction_version") or 0) < 9):
+        start["eligibility_scope"] = Field()
     try:
         after, _ = apply_rules(
             dict(start),
