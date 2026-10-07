@@ -211,6 +211,29 @@ def linkcheck_cmd(limit: int, max_seconds: float | None) -> int:
     return 0
 
 
+def health_cmd() -> int:
+    """Exit 1 (so GitHub sends the owner an e-mail) when the feed is empty, boards went stale or nothing is polled."""
+    from etl.runner.health import check
+
+    settings = Settings()
+    db_url = _secret(settings.DATABASE_URL) or os.environ.get("DATABASE_URL")
+    if not db_url:
+        print("DATABASE_URL is not set", file=sys.stderr)
+        return 2
+    engine = make_engine(db_url, pooled=True)
+    try:
+        h = check(engine)
+    except Exception as exc:
+        print(f"health status=failed error={type(exc).__name__}")
+        return 1
+    finally:
+        engine.dispose()
+    print(f"health {h.summary()}")
+    for problem in h.problems:
+        print(f"PROBLEM: {problem}")
+    return 1 if h.problems else 0
+
+
 def eval_cmd(show_misses: bool) -> int:
     """Score the extraction + decisions against the hand-labelled gold set (no database, no network, no AI)."""
     from etl.eval.gold import evaluate, format_report
@@ -306,6 +329,8 @@ def main(argv: list[str] | None = None) -> int:
         from etl.discovery.probe import run as discover_run
 
         return discover_run(args.names, args.config, args.add)
+    if argv and argv[0] == "health":
+        return health_cmd()
     if argv and argv[0] == "linkcheck":
         parser = argparse.ArgumentParser(prog="etl.run linkcheck")
         parser.add_argument("--limit", type=int, default=150)
