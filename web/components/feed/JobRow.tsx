@@ -16,6 +16,7 @@ export const SOURCE_VIA: Record<string, string> = { himalayas: "Himalayas" };
 export function labelText(label: string): string | null {
   const fixed: Record<string, string> = {
     night_shift: "US-hours overlap", freelance: "Freelance / contract", occasional_office: "Occasional office visits",
+    remote_unverified: "Remote per Himalayas; the posting does not say so",
   };
   if (fixed[label]) return fixed[label];
   const m = /^lang_nice:([a-z]+)$/.exec(label);

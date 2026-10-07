@@ -23,7 +23,7 @@ from dataclasses import dataclass, field
 from typing import Any, Mapping
 
 HARD_FLAGS = ("fee_requested", "unpaid", "commission_only", "suspicious_contact", "too_good", "not_a_job")
-SOFT_LABELS = ("night_shift", "freelance", "occasional_office")
+SOFT_LABELS = ("night_shift", "freelance", "occasional_office", "remote_unverified")
 
 MAX_SCAN = 20_000
 _I = re.IGNORECASE
@@ -95,14 +95,19 @@ _TOO_GOOD = re.compile(
 _NOT_A_JOB_TITLE = re.compile(
     r"\btalent\s+(?:community|network|pool)\b|\bopen\s+(?:application|sollicitatie)\b|\b(?:general|spontaneous)\s+application\b"
     r"|\bfuture\s+(?:opportunities|openings|roles|positions?|\w+\s+roles)\b|\bexpression\s+of\s+interest\b|\bapply\s+here\b|\bsollicitatie\b"
-    r"|\bjoin\s+our\s+(?:talent|team)\s+(?:community|network|pool)\b|\btemp\s+to\s+(?:full[- ]?time|perm\w*)\b",
+    r"|\bjoin\s+our\s+(?:talent|team)\s+(?:community|network|pool)\b|\btemp\s+to\s+(?:full[- ]?time|perm\w*)\b"
+    r"|\b(?:campus|student|college)\s+ambassador\b",
     _I,
 )
 _NOT_A_JOB_TEXT = re.compile(
     r"\bonly\s+(?:\w+\s+){0,3}(?:may|can)\s+apply\b|\bconversion\s+program\b|\bnot\s+every\s+(?:\w+\s+)?role\s+is\s+open\b"
-    r"|\bwe(?:'|’)re\s+always\s+interested\s+(?:in\s+meeting|to\s+meet)\b|\bno\s+(?:current|open)\s+(?:positions|openings|vacancies)\b",
+    r"|\bwe(?:'|’)re\s+always\s+interested\s+(?:in\s+meeting|to\s+meet)\b|\bno\s+(?:current|open)\s+(?:positions|openings|vacancies)\b"
+    r"|\b(?:campus|student|college)\s+ambassador\b",
     _I,
 )
+
+# A posting that says remote anywhere in its text; tells an aggregator's blanket "remote" from a stated one.
+_SAYS_REMOTE = re.compile(r"\bremote(?:ly)?\b|\bwork(?:ing)?\s+(?:from\s+(?:home|anywhere)|virtually)\b|\bwfh\b|\bdistributed\s+team\b|\banywhere\b", _I)
 
 _NIGHT_SHIFT = re.compile(
     r"\b(?:overlap|work|working|available|availability)\b[^.\n]{0,50}\b(?:us|u\.s\.|pacific|eastern|central|mountain|north\s+american?)\b[^.\n]{0,20}\b(?:hours?|time\s*zones?)\b"
@@ -172,6 +177,10 @@ def scan_flags(view: Mapping[str, Any]) -> FlagResult:
     for name, pattern in (("night_shift", _NIGHT_SHIFT), ("freelance", _FREELANCE), ("occasional_office", _OCCASIONAL_OFFICE)):
         if pattern.search(text if name != "freelance" else f"{title}\n{view.get('employment_type') or ''}\n{description[:600]}"):
             out.labels.append(name)
+    # Himalayas lists remote jobs only, but some postings never say so themselves (an office employer's text): keep
+    # the job and say on the card that only the aggregator claims it.
+    if source == "himalayas" and view.get("remote_type") == "remote" and not _SAYS_REMOTE.search(text):
+        out.labels.append("remote_unverified")
     return out
 
 

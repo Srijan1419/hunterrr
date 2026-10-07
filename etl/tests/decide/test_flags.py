@@ -165,3 +165,23 @@ def test_ordinary_fee_wording_is_not_a_scam_signal(text):
 ])
 def test_fee_asked_of_the_candidate_is_still_flagged(text):
     assert "fee_requested" in flags(text)
+
+
+# --- found on the Himalayas check (2026-10-07) ----------------------------------------------------------------
+def test_a_campus_ambassador_registration_is_not_a_job():
+    r = scan_flags({"title": "RVCE - EBA (January, 2027)", "source": "himalayas",
+                    "description_md": "RVCE - EBA registration form. Twilio Campus Ambassador programme for students."})
+    assert "not_a_job" in r.flags
+
+
+def test_a_normal_posting_that_mentions_ambassadors_in_passing_is_not_flagged_by_title():
+    assert "not_a_job" not in scan_flags({"title": "Customer Success Associate", "source": "greenhouse", "description_md": "Work with our partners."}).flags
+
+
+def test_himalayas_remote_that_the_text_never_says_gets_a_soft_label_and_stays_visible():
+    quiet = scan_flags({"title": "Analyst", "source": "himalayas", "remote_type": "remote", "description_md": "Review claims in our offices."})
+    assert "remote_unverified" in quiet.labels and not quiet.flags
+    stated = scan_flags({"title": "Analyst", "source": "himalayas", "remote_type": "remote", "description_md": "This is a remote role."})
+    assert "remote_unverified" not in stated.labels
+    other = scan_flags({"title": "Analyst", "source": "greenhouse", "remote_type": "remote", "description_md": "Review claims."})
+    assert "remote_unverified" not in other.labels

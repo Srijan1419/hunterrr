@@ -1,7 +1,7 @@
 # DEV (was a holdout until its misses were read) for the Himalayas aggregator source, batch C (2026-10-07). See 09_himalayas_a.yaml.
 - {gid: "abad5f0574", remote: remote, india: unknown, employment: full_time, entry: "no", flags: [], why: "no restriction listed, but 'PHP de minimis' benefits point to a Philippines team; title says Entry Level yet asks a minimum of 3 years"}
 - {gid: "7a2e1cc435", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict ['India'], 'Please only apply if you are located in India', 'This is a remote job', graveyard shift; asks at least 1 year"}
-- {gid: "2a84520b68", remote: remote, india: unknown, employment: full_time, entry: "yes", flags: [], why: "restrict ['India'] but the title 'RVCE - EBA (January, 2027)' is a campus programme for one college, so most people cannot apply"}
+- {gid: "2a84520b68", remote: remote, india: unknown, employment: full_time, entry: "yes", flags: [not_a_job], why: "restrict ['India'] but the title 'RVCE - EBA (January, 2027)' is a campus programme for one college, so most people cannot apply"}
 - {gid: "af6bc31320", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict ['India'], 'Work From Anywhere Culture'; junior SRE asking 2+ years"}
 - {gid: "99aebbb5a9", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict ['India'], trainee, level Entry-level"}
 - {gid: "7eedc179f4", remote: remote, india: "yes", employment: full_time, entry: "no", flags: [], why: "no restriction, remote team; 'Assistant' title but asks at least 3 years of Premiere Pro"}
