@@ -37,6 +37,9 @@ export type PostingDetail = {
   indiaReason: string | null;
   flags: string[];
   labels: string[];
+  roleFamily: string | null;
+  /** Skills the skills pass found (config/skills.yaml ids), for the fit score. */
+  skills: { skill: string; importance: "must" | "nice" }[];
   payMin: number | null;
   payMax: number | null;
   payCurrency: string | null;
@@ -82,6 +85,7 @@ export async function queryPosting(db: FeedDb, id: number): Promise<PostingDetai
     WHERE p.id = ${id}`);
   const r = res.rows[0];
   if (!r) return null;
+  const skillRows = await db.execute(sql`SELECT skill, importance FROM hunterrr.posting_skills WHERE posting_id = ${id} ORDER BY skill`);
   return {
     id: Number(r.id),
     title: String(r.title),
@@ -115,6 +119,8 @@ export async function queryPosting(db: FeedDb, id: number): Promise<PostingDetai
     indiaReason: r.decision_key ? str(r.india_reason) : null,
     flags: list(r.flags),
     labels: list(r.labels),
+    roleFamily: str(r.role_family),
+    skills: skillRows.rows.map((k) => ({ skill: String(k.skill), importance: k.importance === "nice" ? "nice" as const : "must" as const })),
     payMin: num(r.pay_min),
     payMax: num(r.pay_max),
     payCurrency: str(r.pay_currency),

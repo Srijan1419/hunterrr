@@ -1,0 +1,2305 @@
+[
+ {
+  "id": "python",
+  "label": "Python",
+  "family": "software-engineering",
+  "terms": [
+   "python",
+   "python 3",
+   "python3"
+  ]
+ },
+ {
+  "id": "javascript",
+  "label": "JavaScript",
+  "family": "software-engineering",
+  "terms": [
+   "ecmascript",
+   "es6",
+   "java script",
+   "javascript",
+   "js"
+  ]
+ },
+ {
+  "id": "typescript",
+  "label": "TypeScript",
+  "family": "software-engineering",
+  "terms": [
+   "typescript"
+  ]
+ },
+ {
+  "id": "java",
+  "label": "Java",
+  "family": "software-engineering",
+  "terms": [
+   "core java",
+   "java",
+   "java 11",
+   "java 17",
+   "java 8"
+  ]
+ },
+ {
+  "id": "kotlin",
+  "label": "Kotlin",
+  "family": "software-engineering",
+  "terms": [
+   "kotlin"
+  ]
+ },
+ {
+  "id": "swift",
+  "label": "Swift",
+  "family": "software-engineering",
+  "terms": [
+   "swift",
+   "swiftui"
+  ]
+ },
+ {
+  "id": "golang",
+  "label": "Go",
+  "family": "software-engineering",
+  "terms": [
+   "go lang",
+   "golang"
+  ]
+ },
+ {
+  "id": "rust",
+  "label": "Rust",
+  "family": "software-engineering",
+  "terms": [
+   "rust"
+  ]
+ },
+ {
+  "id": "cpp",
+  "label": "C++",
+  "family": "software-engineering",
+  "terms": [
+   "c plus plus",
+   "c++",
+   "cpp"
+  ]
+ },
+ {
+  "id": "c-lang",
+  "label": "C",
+  "family": "software-engineering",
+  "terms": [
+   "c language",
+   "c programming"
+  ]
+ },
+ {
+  "id": "csharp",
+  "label": "C#",
+  "family": "software-engineering",
+  "terms": [
+   "c sharp",
+   "c#",
+   "csharp"
+  ]
+ },
+ {
+  "id": "dotnet",
+  "label": ".NET",
+  "family": "software-engineering",
+  "terms": [
+   ".net",
+   ".net core",
+   "asp net",
+   "asp.net",
+   "dotnet"
+  ]
+ },
+ {
+  "id": "php",
+  "label": "PHP",
+  "family": "software-engineering",
+  "terms": [
+   "php"
+  ]
+ },
+ {
+  "id": "laravel",
+  "label": "Laravel",
+  "family": "software-engineering",
+  "terms": [
+   "laravel"
+  ]
+ },
+ {
+  "id": "ruby",
+  "label": "Ruby",
+  "family": "software-engineering",
+  "terms": [
+   "ruby"
+  ]
+ },
+ {
+  "id": "rails",
+  "label": "Ruby on Rails",
+  "family": "software-engineering",
+  "terms": [
+   "rails",
+   "ror",
+   "ruby on rails"
+  ]
+ },
+ {
+  "id": "scala",
+  "label": "Scala",
+  "family": "software-engineering",
+  "terms": [
+   "scala"
+  ]
+ },
+ {
+  "id": "elixir",
+  "label": "Elixir",
+  "family": "software-engineering",
+  "terms": [
+   "elixir",
+   "phoenix framework"
+  ]
+ },
+ {
+  "id": "dart",
+  "label": "Dart",
+  "family": "software-engineering",
+  "terms": [
+   "dart"
+  ]
+ },
+ {
+  "id": "flutter",
+  "label": "Flutter",
+  "family": "software-engineering",
+  "terms": [
+   "flutter"
+  ]
+ },
+ {
+  "id": "react",
+  "label": "React",
+  "family": "software-engineering",
+  "terms": [
+   "react",
+   "react js",
+   "react.js",
+   "reactjs"
+  ]
+ },
+ {
+  "id": "react-native",
+  "label": "React Native",
+  "family": "software-engineering",
+  "terms": [
+   "react native",
+   "react-native"
+  ]
+ },
+ {
+  "id": "nextjs",
+  "label": "Next.js",
+  "family": "software-engineering",
+  "terms": [
+   "next js",
+   "next.js",
+   "nextjs"
+  ]
+ },
+ {
+  "id": "vue",
+  "label": "Vue.js",
+  "family": "software-engineering",
+  "terms": [
+   "vue",
+   "vue.js",
+   "vuejs"
+  ]
+ },
+ {
+  "id": "angular",
+  "label": "Angular",
+  "family": "software-engineering",
+  "terms": [
+   "angular",
+   "angular.js",
+   "angularjs"
+  ]
+ },
+ {
+  "id": "svelte",
+  "label": "Svelte",
+  "family": "software-engineering",
+  "terms": [
+   "svelte",
+   "sveltekit"
+  ]
+ },
+ {
+  "id": "nodejs",
+  "label": "Node.js",
+  "family": "software-engineering",
+  "terms": [
+   "node",
+   "node js",
+   "node.js"
+  ]
+ },
+ {
+  "id": "express",
+  "label": "Express.js",
+  "family": "software-engineering",
+  "terms": [
+   "express.js",
+   "expressjs"
+  ]
+ },
+ {
+  "id": "nestjs",
+  "label": "NestJS",
+  "family": "software-engineering",
+  "terms": [
+   "nest.js",
+   "nestjs"
+  ]
+ },
+ {
+  "id": "django",
+  "label": "Django",
+  "family": "software-engineering",
+  "terms": [
+   "django",
+   "django rest framework",
+   "drf"
+  ]
+ },
+ {
+  "id": "flask",
+  "label": "Flask",
+  "family": "software-engineering",
+  "terms": [
+   "flask"
+  ]
+ },
+ {
+  "id": "fastapi",
+  "label": "FastAPI",
+  "family": "software-engineering",
+  "terms": [
+   "fastapi"
+  ]
+ },
+ {
+  "id": "spring-boot",
+  "label": "Spring Boot",
+  "family": "software-engineering",
+  "terms": [
+   "spring",
+   "spring boot",
+   "spring framework",
+   "springboot"
+  ]
+ },
+ {
+  "id": "html",
+  "label": "HTML",
+  "family": "software-engineering",
+  "terms": [
+   "html",
+   "html5"
+  ]
+ },
+ {
+  "id": "css",
+  "label": "CSS",
+  "family": "software-engineering",
+  "terms": [
+   "css",
+   "css3",
+   "sass",
+   "scss"
+  ]
+ },
+ {
+  "id": "tailwind",
+  "label": "Tailwind CSS",
+  "family": "software-engineering",
+  "terms": [
+   "tailwind",
+   "tailwind css",
+   "tailwindcss"
+  ]
+ },
+ {
+  "id": "bootstrap",
+  "label": "Bootstrap",
+  "family": "software-engineering",
+  "terms": [
+   "bootstrap"
+  ]
+ },
+ {
+  "id": "redux",
+  "label": "Redux",
+  "family": "software-engineering",
+  "terms": [
+   "redux"
+  ]
+ },
+ {
+  "id": "graphql",
+  "label": "GraphQL",
+  "family": "software-engineering",
+  "terms": [
+   "graphql"
+  ]
+ },
+ {
+  "id": "rest-api",
+  "label": "REST APIs",
+  "family": "software-engineering",
+  "terms": [
+   "api development",
+   "rest",
+   "rest api",
+   "rest apis",
+   "restful",
+   "restful api"
+  ]
+ },
+ {
+  "id": "microservices",
+  "label": "Microservices",
+  "family": "software-engineering",
+  "terms": [
+   "micro services",
+   "microservice architecture",
+   "microservices"
+  ]
+ },
+ {
+  "id": "android",
+  "label": "Android",
+  "family": "software-engineering",
+  "terms": [
+   "android",
+   "android development",
+   "android sdk"
+  ]
+ },
+ {
+  "id": "ios",
+  "label": "iOS",
+  "family": "software-engineering",
+  "terms": [
+   "ios",
+   "ios development",
+   "objective c",
+   "objective-c"
+  ]
+ },
+ {
+  "id": "data-structures",
+  "label": "Data Structures & Algorithms",
+  "family": "software-engineering",
+  "terms": [
+   "algorithms",
+   "data structures",
+   "data structures & algorithms",
+   "data structures and algorithms",
+   "dsa"
+  ]
+ },
+ {
+  "id": "oop",
+  "label": "Object-Oriented Programming",
+  "family": "software-engineering",
+  "terms": [
+   "object oriented programming",
+   "object-oriented design",
+   "object-oriented programming",
+   "oop",
+   "oops"
+  ]
+ },
+ {
+  "id": "system-design",
+  "label": "System Design",
+  "family": "software-engineering",
+  "terms": [
+   "distributed systems",
+   "high level design",
+   "low level design",
+   "system design"
+  ]
+ },
+ {
+  "id": "git",
+  "label": "Git",
+  "family": "software-engineering",
+  "terms": [
+   "bitbucket",
+   "git",
+   "github",
+   "gitlab",
+   "version control"
+  ]
+ },
+ {
+  "id": "linux",
+  "label": "Linux",
+  "family": "software-engineering",
+  "terms": [
+   "bash",
+   "linux",
+   "shell scripting",
+   "ubuntu",
+   "unix"
+  ]
+ },
+ {
+  "id": "websockets",
+  "label": "WebSockets",
+  "family": "software-engineering",
+  "terms": [
+   "socket.io",
+   "websocket",
+   "websockets"
+  ]
+ },
+ {
+  "id": "blockchain",
+  "label": "Blockchain",
+  "family": "software-engineering",
+  "terms": [
+   "blockchain",
+   "ethereum",
+   "smart contracts",
+   "solidity",
+   "web3"
+  ]
+ },
+ {
+  "id": "unity",
+  "label": "Unity",
+  "family": "software-engineering",
+  "terms": [
+   "game development",
+   "unity",
+   "unity3d",
+   "unreal engine"
+  ]
+ },
+ {
+  "id": "embedded",
+  "label": "Embedded Systems",
+  "family": "software-engineering",
+  "terms": [
+   "arduino",
+   "embedded systems",
+   "firmware",
+   "microcontrollers",
+   "raspberry pi",
+   "rtos"
+  ]
+ },
+ {
+  "id": "wordpress",
+  "label": "WordPress",
+  "family": "software-engineering",
+  "terms": [
+   "elementor",
+   "woocommerce",
+   "wordpress"
+  ]
+ },
+ {
+  "id": "shopify",
+  "label": "Shopify",
+  "family": "software-engineering",
+  "terms": [
+   "liquid templating",
+   "shopify"
+  ]
+ },
+ {
+  "id": "salesforce-dev",
+  "label": "Salesforce Development",
+  "family": "software-engineering",
+  "terms": [
+   "apex",
+   "lightning web components",
+   "salesforce developer",
+   "salesforce development"
+  ]
+ },
+ {
+  "id": "sap",
+  "label": "SAP",
+  "family": "operations",
+  "terms": [
+   "sap",
+   "sap abap",
+   "sap erp",
+   "sap fico",
+   "sap hana"
+  ]
+ },
+ {
+  "id": "sql",
+  "label": "SQL",
+  "family": "data",
+  "terms": [
+   "pl/sql",
+   "plsql",
+   "sql",
+   "structured query language",
+   "t-sql"
+  ]
+ },
+ {
+  "id": "mysql",
+  "label": "MySQL",
+  "family": "data",
+  "terms": [
+   "mariadb",
+   "mysql"
+  ]
+ },
+ {
+  "id": "postgresql",
+  "label": "PostgreSQL",
+  "family": "data",
+  "terms": [
+   "postgres",
+   "postgresql",
+   "psql"
+  ]
+ },
+ {
+  "id": "mongodb",
+  "label": "MongoDB",
+  "family": "data",
+  "terms": [
+   "mongo",
+   "mongodb",
+   "mongoose"
+  ]
+ },
+ {
+  "id": "redis",
+  "label": "Redis",
+  "family": "data",
+  "terms": [
+   "redis"
+  ]
+ },
+ {
+  "id": "elasticsearch",
+  "label": "Elasticsearch",
+  "family": "data",
+  "terms": [
+   "elasticsearch",
+   "elk stack",
+   "opensearch"
+  ]
+ },
+ {
+  "id": "snowflake",
+  "label": "Snowflake",
+  "family": "data",
+  "terms": [
+   "snowflake"
+  ]
+ },
+ {
+  "id": "bigquery",
+  "label": "BigQuery",
+  "family": "data",
+  "terms": [
+   "big query",
+   "bigquery"
+  ]
+ },
+ {
+  "id": "redshift",
+  "label": "Amazon Redshift",
+  "family": "data",
+  "terms": [
+   "amazon redshift",
+   "redshift"
+  ]
+ },
+ {
+  "id": "nosql",
+  "label": "NoSQL",
+  "family": "data",
+  "terms": [
+   "cassandra",
+   "couchbase",
+   "dynamodb",
+   "nosql"
+  ]
+ },
+ {
+  "id": "excel",
+  "label": "Excel",
+  "family": "data",
+  "terms": [
+   "advanced excel",
+   "excel",
+   "microsoft excel",
+   "ms excel",
+   "pivot table",
+   "pivot tables",
+   "vlookup",
+   "xlookup"
+  ]
+ },
+ {
+  "id": "google-sheets",
+  "label": "Google Sheets",
+  "family": "data",
+  "terms": [
+   "google sheets",
+   "google spreadsheets",
+   "gsheets"
+  ]
+ },
+ {
+  "id": "power-bi",
+  "label": "Power BI",
+  "family": "data",
+  "terms": [
+   "dax",
+   "power bi",
+   "powerbi"
+  ]
+ },
+ {
+  "id": "tableau",
+  "label": "Tableau",
+  "family": "data",
+  "terms": [
+   "tableau"
+  ]
+ },
+ {
+  "id": "looker",
+  "label": "Looker",
+  "family": "data",
+  "terms": [
+   "data studio",
+   "looker",
+   "looker studio"
+  ]
+ },
+ {
+  "id": "metabase",
+  "label": "Metabase",
+  "family": "data",
+  "terms": [
+   "metabase",
+   "redash",
+   "superset"
+  ]
+ },
+ {
+  "id": "pandas",
+  "label": "pandas",
+  "family": "data",
+  "terms": [
+   "pandas"
+  ]
+ },
+ {
+  "id": "numpy",
+  "label": "NumPy",
+  "family": "data",
+  "terms": [
+   "numpy"
+  ]
+ },
+ {
+  "id": "r-lang",
+  "label": "R",
+  "family": "data",
+  "terms": [
+   "r language",
+   "r programming",
+   "rstudio"
+  ]
+ },
+ {
+  "id": "statistics",
+  "label": "Statistics",
+  "family": "data",
+  "terms": [
+   "hypothesis testing",
+   "probability",
+   "regression analysis",
+   "statistical analysis",
+   "statistics"
+  ]
+ },
+ {
+  "id": "data-analysis",
+  "label": "Data Analysis",
+  "family": "data",
+  "terms": [
+   "analytical skills",
+   "data analysis",
+   "data analyst",
+   "data analytics",
+   "eda",
+   "exploratory data analysis"
+  ]
+ },
+ {
+  "id": "data-visualization",
+  "label": "Data Visualization",
+  "family": "data",
+  "terms": [
+   "dashboarding",
+   "dashboards",
+   "data visualisation",
+   "data visualization",
+   "reporting"
+  ]
+ },
+ {
+  "id": "etl",
+  "label": "ETL",
+  "family": "data",
+  "terms": [
+   "data integration",
+   "data pipeline",
+   "data pipelines",
+   "elt",
+   "etl"
+  ]
+ },
+ {
+  "id": "airflow",
+  "label": "Apache Airflow",
+  "family": "data",
+  "terms": [
+   "airflow",
+   "apache airflow"
+  ]
+ },
+ {
+  "id": "dbt",
+  "label": "dbt",
+  "family": "data",
+  "terms": [
+   "data build tool",
+   "dbt"
+  ]
+ },
+ {
+  "id": "spark",
+  "label": "Apache Spark",
+  "family": "data",
+  "terms": [
+   "apache spark",
+   "pyspark",
+   "spark"
+  ]
+ },
+ {
+  "id": "hadoop",
+  "label": "Hadoop",
+  "family": "data",
+  "terms": [
+   "hadoop",
+   "hdfs",
+   "hive",
+   "mapreduce"
+  ]
+ },
+ {
+  "id": "kafka",
+  "label": "Apache Kafka",
+  "family": "data",
+  "terms": [
+   "apache kafka",
+   "kafka",
+   "message queues",
+   "rabbitmq"
+  ]
+ },
+ {
+  "id": "data-modeling",
+  "label": "Data Modeling",
+  "family": "data",
+  "terms": [
+   "data modeling",
+   "data warehouse",
+   "data warehousing",
+   "dimensional modeling"
+  ]
+ },
+ {
+  "id": "machine-learning",
+  "label": "Machine Learning",
+  "family": "data",
+  "terms": [
+   "machine learning",
+   "ml",
+   "scikit-learn",
+   "sklearn",
+   "supervised learning"
+  ]
+ },
+ {
+  "id": "deep-learning",
+  "label": "Deep Learning",
+  "family": "data",
+  "terms": [
+   "cnn",
+   "deep learning",
+   "neural networks",
+   "rnn"
+  ]
+ },
+ {
+  "id": "tensorflow",
+  "label": "TensorFlow",
+  "family": "data",
+  "terms": [
+   "keras",
+   "tensorflow"
+  ]
+ },
+ {
+  "id": "pytorch",
+  "label": "PyTorch",
+  "family": "data",
+  "terms": [
+   "pytorch",
+   "torch"
+  ]
+ },
+ {
+  "id": "nlp",
+  "label": "NLP",
+  "family": "data",
+  "terms": [
+   "hugging face",
+   "natural language processing",
+   "nlp",
+   "spacy",
+   "text mining",
+   "transformers"
+  ]
+ },
+ {
+  "id": "computer-vision",
+  "label": "Computer Vision",
+  "family": "data",
+  "terms": [
+   "computer vision",
+   "image processing",
+   "object detection",
+   "opencv"
+  ]
+ },
+ {
+  "id": "llm",
+  "label": "LLMs",
+  "family": "data",
+  "terms": [
+   "genai",
+   "generative ai",
+   "langchain",
+   "large language models",
+   "llms",
+   "openai api",
+   "prompt engineering",
+   "rag"
+  ]
+ },
+ {
+  "id": "a-b-testing",
+  "label": "A/B Testing",
+  "family": "data",
+  "terms": [
+   "a/b testing",
+   "a/b tests",
+   "ab testing",
+   "experimentation",
+   "split testing"
+  ]
+ },
+ {
+  "id": "web-scraping",
+  "label": "Web Scraping",
+  "family": "data",
+  "terms": [
+   "beautifulsoup",
+   "data scraping",
+   "scrapy",
+   "selenium scraping",
+   "web scraping"
+  ]
+ },
+ {
+  "id": "google-analytics",
+  "label": "Google Analytics",
+  "family": "data",
+  "terms": [
+   "amplitude",
+   "ga4",
+   "google analytics",
+   "google analytics 4",
+   "mixpanel",
+   "web analytics"
+  ]
+ },
+ {
+  "id": "aws",
+  "label": "AWS",
+  "family": "devops-cloud",
+  "terms": [
+   "amazon web services",
+   "aws",
+   "aws lambda",
+   "ec2",
+   "lambda",
+   "s3"
+  ]
+ },
+ {
+  "id": "azure",
+  "label": "Microsoft Azure",
+  "family": "devops-cloud",
+  "terms": [
+   "azure cloud",
+   "azure devops",
+   "microsoft azure"
+  ]
+ },
+ {
+  "id": "gcp",
+  "label": "Google Cloud",
+  "family": "devops-cloud",
+  "terms": [
+   "gcp",
+   "gke",
+   "google cloud",
+   "google cloud platform"
+  ]
+ },
+ {
+  "id": "docker",
+  "label": "Docker",
+  "family": "devops-cloud",
+  "terms": [
+   "containerization",
+   "containers",
+   "docker",
+   "dockerfile"
+  ]
+ },
+ {
+  "id": "kubernetes",
+  "label": "Kubernetes",
+  "family": "devops-cloud",
+  "terms": [
+   "aks",
+   "eks",
+   "helm",
+   "k8s",
+   "kubernetes"
+  ]
+ },
+ {
+  "id": "terraform",
+  "label": "Terraform",
+  "family": "devops-cloud",
+  "terms": [
+   "cloudformation",
+   "iac",
+   "infrastructure as code",
+   "pulumi",
+   "terraform"
+  ]
+ },
+ {
+  "id": "ansible",
+  "label": "Ansible",
+  "family": "devops-cloud",
+  "terms": [
+   "ansible",
+   "chef",
+   "configuration management",
+   "puppet"
+  ]
+ },
+ {
+  "id": "ci-cd",
+  "label": "CI/CD",
+  "family": "devops-cloud",
+  "terms": [
+   "ci cd",
+   "ci/cd",
+   "cicd",
+   "circleci",
+   "continuous delivery",
+   "continuous integration",
+   "github actions",
+   "gitlab ci",
+   "jenkins"
+  ]
+ },
+ {
+  "id": "monitoring",
+  "label": "Monitoring & Observability",
+  "family": "devops-cloud",
+  "terms": [
+   "datadog",
+   "grafana",
+   "monitoring & observability",
+   "new relic",
+   "observability",
+   "prometheus",
+   "splunk"
+  ]
+ },
+ {
+  "id": "networking",
+  "label": "Networking",
+  "family": "devops-cloud",
+  "terms": [
+   "ccna",
+   "dns",
+   "firewalls",
+   "load balancing",
+   "networking",
+   "tcp ip",
+   "tcp/ip",
+   "vpn"
+  ]
+ },
+ {
+  "id": "sysadmin",
+  "label": "System Administration",
+  "family": "devops-cloud",
+  "terms": [
+   "active directory",
+   "sysadmin",
+   "system administration",
+   "system administrator",
+   "windows server"
+  ]
+ },
+ {
+  "id": "cybersecurity",
+  "label": "Cybersecurity",
+  "family": "devops-cloud",
+  "terms": [
+   "cybersecurity",
+   "information security",
+   "infosec",
+   "owasp",
+   "penetration testing",
+   "pentesting",
+   "security operations",
+   "siem",
+   "vulnerability assessment"
+  ]
+ },
+ {
+  "id": "sre",
+  "label": "Site Reliability",
+  "family": "devops-cloud",
+  "terms": [
+   "incident management",
+   "incident response",
+   "on-call",
+   "site reliability",
+   "sre"
+  ]
+ },
+ {
+  "id": "manual-testing",
+  "label": "Manual Testing",
+  "family": "qa-testing",
+  "terms": [
+   "black box testing",
+   "functional testing",
+   "manual testing",
+   "regression testing",
+   "test case design",
+   "test cases",
+   "uat"
+  ]
+ },
+ {
+  "id": "test-automation",
+  "label": "Test Automation",
+  "family": "qa-testing",
+  "terms": [
+   "appium",
+   "automation testing",
+   "bdd",
+   "cucumber",
+   "cypress",
+   "junit",
+   "playwright",
+   "pytest",
+   "robot framework",
+   "selenium",
+   "test automation",
+   "testng"
+  ]
+ },
+ {
+  "id": "api-testing",
+  "label": "API Testing",
+  "family": "qa-testing",
+  "terms": [
+   "api testing",
+   "postman",
+   "rest assured",
+   "soapui"
+  ]
+ },
+ {
+  "id": "performance-testing",
+  "label": "Performance Testing",
+  "family": "qa-testing",
+  "terms": [
+   "jmeter",
+   "k6",
+   "load testing",
+   "loadrunner",
+   "performance testing"
+  ]
+ },
+ {
+  "id": "jira",
+  "label": "Jira",
+  "family": "qa-testing",
+  "terms": [
+   "bug tracking",
+   "bugzilla",
+   "confluence",
+   "defect tracking",
+   "jira"
+  ]
+ },
+ {
+  "id": "sdlc",
+  "label": "SDLC",
+  "family": "qa-testing",
+  "terms": [
+   "sdlc",
+   "software development life cycle",
+   "stlc",
+   "test plans"
+  ]
+ },
+ {
+  "id": "figma",
+  "label": "Figma",
+  "family": "design",
+  "terms": [
+   "figjam",
+   "figma"
+  ]
+ },
+ {
+  "id": "sketch",
+  "label": "Sketch",
+  "family": "design",
+  "terms": [
+   "adobe xd",
+   "axure",
+   "balsamiq",
+   "invision",
+   "sketch"
+  ]
+ },
+ {
+  "id": "ui-design",
+  "label": "UI Design",
+  "family": "design",
+  "terms": [
+   "design system",
+   "design systems",
+   "interface design",
+   "ui design",
+   "user interface design",
+   "visual design"
+  ]
+ },
+ {
+  "id": "ux-design",
+  "label": "UX Design",
+  "family": "design",
+  "terms": [
+   "information architecture",
+   "interaction design",
+   "prototyping",
+   "user experience",
+   "user experience design",
+   "ux design",
+   "wireframes",
+   "wireframing"
+  ]
+ },
+ {
+  "id": "user-research",
+  "label": "User Research",
+  "family": "design",
+  "terms": [
+   "personas",
+   "usability testing",
+   "user interviews",
+   "user research",
+   "user testing",
+   "ux research"
+  ]
+ },
+ {
+  "id": "photoshop",
+  "label": "Photoshop",
+  "family": "design",
+  "terms": [
+   "adobe photoshop",
+   "photoshop"
+  ]
+ },
+ {
+  "id": "illustrator",
+  "label": "Illustrator",
+  "family": "design",
+  "terms": [
+   "adobe illustrator",
+   "illustrator",
+   "vector graphics"
+  ]
+ },
+ {
+  "id": "canva",
+  "label": "Canva",
+  "family": "design",
+  "terms": [
+   "canva"
+  ]
+ },
+ {
+  "id": "after-effects",
+  "label": "After Effects",
+  "family": "design",
+  "terms": [
+   "adobe after effects",
+   "after effects",
+   "lottie",
+   "motion design",
+   "motion graphics"
+  ]
+ },
+ {
+  "id": "video-editing",
+  "label": "Video Editing",
+  "family": "design",
+  "terms": [
+   "adobe premiere",
+   "capcut",
+   "davinci resolve",
+   "final cut pro",
+   "premiere pro",
+   "video editing",
+   "video production"
+  ]
+ },
+ {
+  "id": "graphic-design",
+  "label": "Graphic Design",
+  "family": "design",
+  "terms": [
+   "brand identity",
+   "branding",
+   "graphic design",
+   "indesign",
+   "logo design",
+   "typography"
+  ]
+ },
+ {
+  "id": "3d-modeling",
+  "label": "3D Modeling",
+  "family": "design",
+  "terms": [
+   "3d modeling",
+   "3ds max",
+   "autocad",
+   "blender",
+   "cinema 4d",
+   "maya",
+   "solidworks"
+  ]
+ },
+ {
+  "id": "product-management",
+  "label": "Product Management",
+  "family": "product",
+  "terms": [
+   "prioritization",
+   "product management",
+   "product manager",
+   "product ownership",
+   "product roadmap",
+   "product strategy",
+   "roadmapping"
+  ]
+ },
+ {
+  "id": "user-stories",
+  "label": "User Stories & Requirements",
+  "family": "product",
+  "terms": [
+   "acceptance criteria",
+   "brd",
+   "business requirements",
+   "functional specifications",
+   "prd",
+   "product requirements",
+   "requirements gathering",
+   "user stories & requirements"
+  ]
+ },
+ {
+  "id": "agile",
+  "label": "Agile",
+  "family": "product",
+  "terms": [
+   "agile",
+   "agile methodologies",
+   "agile methodology",
+   "kanban",
+   "scrum",
+   "scrum master",
+   "sprint planning"
+  ]
+ },
+ {
+  "id": "product-analytics",
+  "label": "Product Analytics",
+  "family": "product",
+  "terms": [
+   "cohort analysis",
+   "funnel analysis",
+   "kpis",
+   "okrs",
+   "product analytics",
+   "product metrics",
+   "retention analysis"
+  ]
+ },
+ {
+  "id": "business-analysis",
+  "label": "Business Analysis",
+  "family": "product",
+  "terms": [
+   "business analysis",
+   "business analyst",
+   "gap analysis",
+   "process improvement",
+   "process mapping",
+   "stakeholder management",
+   "swot"
+  ]
+ },
+ {
+  "id": "project-management",
+  "label": "Project Management",
+  "family": "operations",
+  "terms": [
+   "asana",
+   "clickup",
+   "monday.com",
+   "ms project",
+   "notion",
+   "pmp",
+   "program management",
+   "project coordination",
+   "project management",
+   "project planning",
+   "trello"
+  ]
+ },
+ {
+  "id": "customer-support",
+  "label": "Customer Support",
+  "family": "customer-support",
+  "terms": [
+   "client support",
+   "customer care",
+   "customer issues",
+   "customer queries",
+   "customer service",
+   "customer support",
+   "help desk",
+   "helpdesk",
+   "technical support"
+  ]
+ },
+ {
+  "id": "customer-success",
+  "label": "Customer Success",
+  "family": "customer-support",
+  "terms": [
+   "account management",
+   "client success",
+   "customer experience",
+   "customer onboarding",
+   "customer retention",
+   "customer success"
+  ]
+ },
+ {
+  "id": "zendesk",
+  "label": "Zendesk",
+  "family": "customer-support",
+  "terms": [
+   "freshdesk",
+   "gorgias",
+   "help scout",
+   "helpscout",
+   "hubspot service",
+   "intercom",
+   "kayako",
+   "servicenow",
+   "zendesk",
+   "zoho desk"
+  ]
+ },
+ {
+  "id": "chat-support",
+  "label": "Chat & Email Support",
+  "family": "customer-support",
+  "terms": [
+   "chat & email support",
+   "chat support",
+   "email support",
+   "live chat",
+   "non voice",
+   "non-voice",
+   "ticketing",
+   "ticketing systems",
+   "ticketing tools"
+  ]
+ },
+ {
+  "id": "voice-support",
+  "label": "Voice / Call Support",
+  "family": "customer-support",
+  "terms": [
+   "bpo",
+   "call center",
+   "call centre",
+   "inbound calls",
+   "outbound calls",
+   "tele calling",
+   "telecalling",
+   "telephone support",
+   "voice / call support",
+   "voice process"
+  ]
+ },
+ {
+  "id": "troubleshooting",
+  "label": "Troubleshooting",
+  "family": "customer-support",
+  "terms": [
+   "debugging",
+   "issue resolution",
+   "problem solving",
+   "root cause analysis",
+   "technical troubleshooting",
+   "troubleshooting"
+  ]
+ },
+ {
+  "id": "crm",
+  "label": "CRM Tools",
+  "family": "customer-support",
+  "terms": [
+   "crm software",
+   "crm systems",
+   "crm tools",
+   "hubspot",
+   "pipedrive",
+   "salesforce",
+   "zoho crm"
+  ]
+ },
+ {
+  "id": "sales",
+  "label": "Sales",
+  "family": "sales-bd",
+  "terms": [
+   "b2b sales",
+   "b2c sales",
+   "closing deals",
+   "cold calling",
+   "cold outreach",
+   "inside sales",
+   "sales",
+   "sales development",
+   "sales outreach"
+  ]
+ },
+ {
+  "id": "lead-generation",
+  "label": "Lead Generation",
+  "family": "sales-bd",
+  "terms": [
+   "apollo",
+   "bdr",
+   "lead generation",
+   "lead qualification",
+   "linkedin sales navigator",
+   "outbound sales",
+   "prospecting",
+   "sdr",
+   "zoominfo"
+  ]
+ },
+ {
+  "id": "business-development",
+  "label": "Business Development",
+  "family": "sales-bd",
+  "terms": [
+   "bde",
+   "business development",
+   "channel sales",
+   "client acquisition",
+   "partner development",
+   "partnerships"
+  ]
+ },
+ {
+  "id": "negotiation",
+  "label": "Negotiation",
+  "family": "sales-bd",
+  "terms": [
+   "contract negotiation",
+   "deal closing",
+   "negotiation"
+  ]
+ },
+ {
+  "id": "presales",
+  "label": "Pre-sales",
+  "family": "sales-bd",
+  "terms": [
+   "pre-sales",
+   "product demos",
+   "proposal writing",
+   "rfp",
+   "solution selling",
+   "solutions engineering"
+  ]
+ },
+ {
+  "id": "digital-marketing",
+  "label": "Digital Marketing",
+  "family": "marketing-content",
+  "terms": [
+   "demand generation",
+   "digital marketing",
+   "growth marketing",
+   "internet marketing",
+   "online marketing",
+   "performance marketing"
+  ]
+ },
+ {
+  "id": "seo",
+  "label": "SEO",
+  "family": "marketing-content",
+  "terms": [
+   "ahrefs",
+   "keyword research",
+   "link building",
+   "off-page seo",
+   "on-page seo",
+   "search engine optimisation",
+   "search engine optimization",
+   "semrush",
+   "seo",
+   "technical seo"
+  ]
+ },
+ {
+  "id": "sem",
+  "label": "Paid Ads",
+  "family": "marketing-content",
+  "terms": [
+   "adwords",
+   "facebook ads",
+   "google ads",
+   "linkedin ads",
+   "meta ads",
+   "paid ads",
+   "paid advertising",
+   "paid media",
+   "paid social",
+   "ppc",
+   "sem"
+  ]
+ },
+ {
+  "id": "social-media",
+  "label": "Social Media Marketing",
+  "family": "marketing-content",
+  "terms": [
+   "community engagement",
+   "instagram",
+   "linkedin marketing",
+   "social media",
+   "social media content",
+   "social media management",
+   "social media marketing"
+  ]
+ },
+ {
+  "id": "email-marketing",
+  "label": "Email Marketing",
+  "family": "marketing-content",
+  "terms": [
+   "drip campaigns",
+   "email campaigns",
+   "email marketing",
+   "hubspot marketing",
+   "klaviyo",
+   "mailchimp",
+   "marketing automation",
+   "newsletters",
+   "sendgrid"
+  ]
+ },
+ {
+  "id": "content-marketing",
+  "label": "Content Marketing",
+  "family": "marketing-content",
+  "terms": [
+   "blogging",
+   "content calendar",
+   "content creation",
+   "content marketing",
+   "content planning",
+   "content production",
+   "content strategy"
+  ]
+ },
+ {
+  "id": "influencer-marketing",
+  "label": "Influencer Marketing",
+  "family": "marketing-content",
+  "terms": [
+   "brand collaborations",
+   "creator partnerships",
+   "influencer management",
+   "influencer marketing",
+   "influencer outreach"
+  ]
+ },
+ {
+  "id": "pr",
+  "label": "Public Relations",
+  "family": "marketing-content",
+  "terms": [
+   "brand communication",
+   "communications strategy",
+   "corporate communications",
+   "media relations",
+   "press releases",
+   "public relations"
+  ]
+ },
+ {
+  "id": "market-research",
+  "label": "Market Research",
+  "family": "marketing-content",
+  "terms": [
+   "competitive analysis",
+   "competitor analysis",
+   "consumer insights",
+   "market analysis",
+   "market research",
+   "survey design"
+  ]
+ },
+ {
+  "id": "brand-management",
+  "label": "Brand Management",
+  "family": "marketing-content",
+  "terms": [
+   "brand building",
+   "brand management",
+   "brand marketing",
+   "brand positioning",
+   "brand strategy"
+  ]
+ },
+ {
+  "id": "event-management",
+  "label": "Event Management",
+  "family": "marketing-content",
+  "terms": [
+   "event management",
+   "event marketing",
+   "event planning",
+   "events coordination",
+   "webinars"
+  ]
+ },
+ {
+  "id": "cro",
+  "label": "Conversion Optimization",
+  "family": "marketing-content",
+  "terms": [
+   "conversion optimization",
+   "conversion rate optimization",
+   "funnel optimization",
+   "growth hacking",
+   "landing pages"
+  ]
+ },
+ {
+  "id": "copywriting",
+  "label": "Copywriting",
+  "family": "writing-editing",
+  "terms": [
+   "ad copy",
+   "copy writing",
+   "copywriter",
+   "copywriting",
+   "creative writing",
+   "marketing copy",
+   "web copy"
+  ]
+ },
+ {
+  "id": "content-writing",
+  "label": "Content Writing",
+  "family": "writing-editing",
+  "terms": [
+   "article writing",
+   "blog writing",
+   "content writer",
+   "content writing",
+   "ghostwriting",
+   "long-form content",
+   "web content"
+  ]
+ },
+ {
+  "id": "technical-writing",
+  "label": "Technical Writing",
+  "family": "writing-editing",
+  "terms": [
+   "api documentation",
+   "documentation",
+   "help articles",
+   "knowledge base",
+   "technical documentation",
+   "technical writing",
+   "user manuals"
+  ]
+ },
+ {
+  "id": "editing",
+  "label": "Editing & Proofreading",
+  "family": "writing-editing",
+  "terms": [
+   "content editing",
+   "copy editing",
+   "copyediting",
+   "editing & proofreading",
+   "editorial",
+   "fact checking",
+   "fact-checking",
+   "proofreading"
+  ]
+ },
+ {
+  "id": "translation",
+  "label": "Translation",
+  "family": "writing-editing",
+  "terms": [
+   "interpreter",
+   "interpreting",
+   "localisation",
+   "localization",
+   "subtitling",
+   "transcreation",
+   "transcription",
+   "translation",
+   "translator"
+  ]
+ },
+ {
+  "id": "storytelling",
+  "label": "Storytelling & Scriptwriting",
+  "family": "writing-editing",
+  "terms": [
+   "podcast",
+   "podcasting",
+   "script writing",
+   "scriptwriting",
+   "storytelling & scriptwriting",
+   "video scripts"
+  ]
+ },
+ {
+  "id": "community-management",
+  "label": "Community Management",
+  "family": "community",
+  "terms": [
+   "community building",
+   "community management",
+   "community manager",
+   "community moderation",
+   "discord",
+   "moderation",
+   "online communities",
+   "slack communities"
+  ]
+ },
+ {
+  "id": "developer-relations",
+  "label": "Developer Relations",
+  "family": "community",
+  "terms": [
+   "developer advocacy",
+   "developer advocate",
+   "developer evangelism",
+   "developer relations",
+   "devrel",
+   "technical evangelism"
+  ]
+ },
+ {
+  "id": "operations",
+  "label": "Operations",
+  "family": "operations",
+  "terms": [
+   "back office",
+   "back-office",
+   "business operations",
+   "operational excellence",
+   "operations",
+   "operations management",
+   "operations support",
+   "process management"
+  ]
+ },
+ {
+  "id": "data-entry",
+  "label": "Data Entry",
+  "family": "operations",
+  "terms": [
+   "data entry",
+   "data management",
+   "data processing",
+   "document management",
+   "form filling",
+   "record keeping",
+   "typing speed"
+  ]
+ },
+ {
+  "id": "virtual-assistance",
+  "label": "Virtual Assistance",
+  "family": "operations",
+  "terms": [
+   "admin support",
+   "administrative support",
+   "administrative tasks",
+   "calendar management",
+   "email management",
+   "executive assistant",
+   "scheduling",
+   "travel booking",
+   "virtual assistance",
+   "virtual assistant"
+  ]
+ },
+ {
+  "id": "logistics",
+  "label": "Logistics & Supply Chain",
+  "family": "operations",
+  "terms": [
+   "inventory management",
+   "logistics & supply chain",
+   "order fulfillment",
+   "order management",
+   "procurement",
+   "supply chain",
+   "supply chain management",
+   "vendor management",
+   "warehouse"
+  ]
+ },
+ {
+  "id": "process-documentation",
+  "label": "Process Documentation",
+  "family": "operations",
+  "terms": [
+   "airtable",
+   "make.com",
+   "no code",
+   "no-code",
+   "process automation",
+   "process documentation",
+   "rpa",
+   "sop",
+   "sops",
+   "standard operating procedures",
+   "uipath",
+   "workflow automation",
+   "zapier"
+  ]
+ },
+ {
+  "id": "quality-assurance-ops",
+  "label": "Quality Checks",
+  "family": "operations",
+  "terms": [
+   "aml",
+   "content moderation",
+   "fraud detection",
+   "kyc",
+   "qa checks",
+   "quality assurance",
+   "quality checks",
+   "quality control",
+   "risk operations",
+   "trust & safety",
+   "trust and safety"
+  ]
+ },
+ {
+  "id": "recruitment",
+  "label": "Recruitment",
+  "family": "hr-recruiting",
+  "terms": [
+   "applicant tracking",
+   "ats",
+   "boolean search",
+   "candidate screening",
+   "end-to-end recruitment",
+   "headhunting",
+   "linkedin recruiter",
+   "naukri",
+   "recruiting",
+   "recruitment",
+   "sourcing candidates",
+   "talent acquisition",
+   "technical recruiting"
+  ]
+ },
+ {
+  "id": "hr-operations",
+  "label": "HR Operations",
+  "family": "hr-recruiting",
+  "terms": [
+   "employee onboarding",
+   "employee relations",
+   "hr administration",
+   "hr generalist",
+   "hr operations",
+   "hr policies",
+   "hris",
+   "hrms",
+   "human resources",
+   "people operations",
+   "performance management"
+  ]
+ },
+ {
+  "id": "payroll",
+  "label": "Payroll & Benefits",
+  "family": "finance-accounting",
+  "terms": [
+   "benefits administration",
+   "compensation and benefits",
+   "esi",
+   "payroll & benefits",
+   "payroll processing",
+   "pf",
+   "pf esi",
+   "statutory compliance"
+  ]
+ },
+ {
+  "id": "training",
+  "label": "Training & Development",
+  "family": "hr-recruiting",
+  "terms": [
+   "corporate training",
+   "curriculum design",
+   "e-learning",
+   "elearning",
+   "employee engagement",
+   "instructional design",
+   "l&d",
+   "learning and development",
+   "lms",
+   "training & development",
+   "tutoring"
+  ]
+ },
+ {
+  "id": "accounting",
+  "label": "Accounting",
+  "family": "finance-accounting",
+  "terms": [
+   "accounting",
+   "accounts executive",
+   "accounts payable",
+   "accounts receivable",
+   "bank reconciliation",
+   "bookkeeping",
+   "financial accounting",
+   "general ledger",
+   "journal entries",
+   "month-end close",
+   "reconciliation"
+  ]
+ },
+ {
+  "id": "tally",
+  "label": "Tally",
+  "family": "finance-accounting",
+  "terms": [
+   "busy accounting",
+   "quickbooks",
+   "sage",
+   "tally",
+   "tally erp",
+   "tally prime",
+   "xero",
+   "zoho books"
+  ]
+ },
+ {
+  "id": "gst",
+  "label": "GST & Taxation",
+  "family": "finance-accounting",
+  "terms": [
+   "direct tax",
+   "gst & taxation",
+   "gst filing",
+   "gst returns",
+   "income tax",
+   "indirect tax",
+   "tax compliance",
+   "taxation",
+   "tds",
+   "vat"
+  ]
+ },
+ {
+  "id": "financial-analysis",
+  "label": "Financial Analysis",
+  "family": "finance-accounting",
+  "terms": [
+   "budgeting",
+   "equity research",
+   "financial analysis",
+   "financial modeling",
+   "financial modelling",
+   "financial reporting",
+   "forecasting",
+   "fp&a",
+   "investment banking",
+   "mis",
+   "mis reporting",
+   "valuation",
+   "variance analysis"
+  ]
+ },
+ {
+  "id": "audit",
+  "label": "Audit & Compliance",
+  "family": "finance-accounting",
+  "terms": [
+   "audit & compliance",
+   "auditing",
+   "chartered accountant",
+   "cpa",
+   "gaap",
+   "ifrs",
+   "ind as",
+   "internal audit",
+   "regulatory compliance",
+   "risk management",
+   "sox",
+   "statutory audit"
+  ]
+ },
+ {
+  "id": "collections",
+  "label": "Collections & Billing",
+  "family": "finance-accounting",
+  "terms": [
+   "billing",
+   "collections",
+   "collections & billing",
+   "credit control",
+   "invoicing",
+   "o2c",
+   "order to cash",
+   "p2p",
+   "procure to pay"
+  ]
+ },
+ {
+  "id": "communication",
+  "label": "Communication",
+  "family": "general",
+  "terms": [
+   "communication",
+   "communication skills",
+   "english communication",
+   "excellent communication",
+   "interpersonal skills",
+   "presentation skills",
+   "strong communication",
+   "verbal communication",
+   "written communication"
+  ]
+ },
+ {
+  "id": "english",
+  "label": "English (fluent)",
+  "family": "general",
+  "terms": [
+   "english (fluent)",
+   "english language",
+   "english proficiency",
+   "excellent english",
+   "fluent english",
+   "spoken english",
+   "written english"
+  ]
+ },
+ {
+  "id": "hindi",
+  "label": "Hindi",
+  "family": "general",
+  "terms": [
+   "fluent hindi",
+   "hindi",
+   "hindi language"
+  ]
+ },
+ {
+  "id": "teamwork",
+  "label": "Teamwork",
+  "family": "general",
+  "terms": [
+   "collaboration",
+   "cross functional",
+   "cross-functional collaboration",
+   "team collaboration",
+   "team player",
+   "teamwork"
+  ]
+ },
+ {
+  "id": "time-management",
+  "label": "Time Management",
+  "family": "general",
+  "terms": [
+   "attention to detail",
+   "detail oriented",
+   "detail-oriented",
+   "fast learner",
+   "multitasking",
+   "organisational skills",
+   "organizational skills",
+   "prioritisation",
+   "quick learner",
+   "self motivated",
+   "self-motivated",
+   "time management"
+  ]
+ },
+ {
+  "id": "ms-office",
+  "label": "MS Office",
+  "family": "general",
+  "terms": [
+   "g suite",
+   "google docs",
+   "google slides",
+   "google workspace",
+   "gsuite",
+   "microsoft 365",
+   "microsoft office",
+   "microsoft word",
+   "ms office",
+   "ms powerpoint",
+   "ms word",
+   "office 365",
+   "powerpoint"
+  ]
+ },
+ {
+  "id": "leadership",
+  "label": "Leadership",
+  "family": "general",
+  "terms": [
+   "coaching",
+   "leadership",
+   "mentoring",
+   "people management",
+   "team lead",
+   "team leadership"
+  ]
+ },
+ {
+  "id": "research",
+  "label": "Research",
+  "family": "general",
+  "terms": [
+   "analytical thinking",
+   "critical thinking",
+   "desk research",
+   "due diligence",
+   "research",
+   "secondary research"
+  ]
+ },
+ {
+  "id": "slack",
+  "label": "Slack & Remote Tools",
+  "family": "general",
+  "terms": [
+   "async communication",
+   "asynchronous communication",
+   "google meet",
+   "loom",
+   "microsoft teams",
+   "remote collaboration",
+   "slack & remote tools",
+   "zoom"
+  ]
+ }
+]

@@ -13,14 +13,14 @@ skills:
   # ---- software engineering ----
   - {id: python, label: Python, family: software-engineering, aliases: [python3, python 3]}
   - {id: javascript, label: JavaScript, family: software-engineering, aliases: [js, java script, ecmascript, es6]}
-  - {id: typescript, label: TypeScript, family: software-engineering, aliases: [ts]}
+  - {id: typescript, label: TypeScript, family: software-engineering, aliases: []}
   - {id: java, label: Java, family: software-engineering, aliases: [core java, java 8, java 11, java 17]}
   - {id: kotlin, label: Kotlin, family: software-engineering, aliases: []}
-  - {id: swift, label: Swift, family: software-engineering, aliases: [swiftui]}
-  - {id: golang, label: Go, family: software-engineering, aliases: [golang, go lang]}
-  - {id: rust, label: Rust, family: software-engineering, aliases: []}
+  - {id: swift, label: Swift, family: software-engineering, exact_case: true, aliases: [SwiftUI]}
+  - {id: golang, label: Go, family: software-engineering, label_is_term: false, aliases: [golang, go lang]}
+  - {id: rust, label: Rust, family: software-engineering, exact_case: true, aliases: []}
   - {id: cpp, label: C++, family: software-engineering, aliases: [c plus plus, cpp]}
-  - {id: c-lang, label: C, family: software-engineering, aliases: [c programming, c language]}
+  - {id: c-lang, label: C, family: software-engineering, label_is_term: false, aliases: [c programming, c language]}
   - {id: csharp, label: C#, family: software-engineering, aliases: [c sharp, csharp]}
   - {id: dotnet, label: .NET, family: software-engineering, aliases: [dotnet, asp.net, asp net, .net core]}
   - {id: php, label: PHP, family: software-engineering, aliases: []}
@@ -43,7 +43,7 @@ skills:
   - {id: django, label: Django, family: software-engineering, aliases: [django rest framework, drf]}
   - {id: flask, label: Flask, family: software-engineering, aliases: []}
   - {id: fastapi, label: FastAPI, family: software-engineering, aliases: []}
-  - {id: spring-boot, label: Spring Boot, family: software-engineering, aliases: [spring, spring framework, springboot]}
+  - {id: spring-boot, label: Spring Boot, family: software-engineering, exact_case: true, aliases: [Spring, Spring Framework, SpringBoot]}
   - {id: html, label: HTML, family: software-engineering, aliases: [html5]}
   - {id: css, label: CSS, family: software-engineering, aliases: [css3, scss, sass]}
   - {id: tailwind, label: Tailwind CSS, family: software-engineering, aliases: [tailwind, tailwindcss]}
@@ -61,7 +61,7 @@ skills:
   - {id: linux, label: Linux, family: software-engineering, aliases: [unix, ubuntu, shell scripting, bash]}
   - {id: websockets, label: WebSockets, family: software-engineering, aliases: [websocket, socket.io]}
   - {id: blockchain, label: Blockchain, family: software-engineering, aliases: [web3, smart contracts, solidity, ethereum]}
-  - {id: unity, label: Unity, family: software-engineering, aliases: [unity3d, game development, unreal engine]}
+  - {id: unity, label: Unity, family: software-engineering, exact_case: true, aliases: [Unity3D, Unreal Engine, game development, Game Development]}
   - {id: embedded, label: Embedded Systems, family: software-engineering, aliases: [firmware, rtos, arduino, raspberry pi, microcontrollers]}
   - {id: wordpress, label: WordPress, family: software-engineering, aliases: [woocommerce, elementor]}
   - {id: shopify, label: Shopify, family: software-engineering, aliases: [liquid templating]}
@@ -86,7 +86,7 @@ skills:
   - {id: metabase, label: Metabase, family: data, aliases: [redash, superset]}
   - {id: pandas, label: pandas, family: data, aliases: []}
   - {id: numpy, label: NumPy, family: data, aliases: []}
-  - {id: r-lang, label: R, family: data, aliases: [r programming, rstudio, r language]}
+  - {id: r-lang, label: R, family: data, label_is_term: false, aliases: [r programming, rstudio, r language]}
   - {id: statistics, label: Statistics, family: data, aliases: [statistical analysis, hypothesis testing, regression analysis, probability]}
   - {id: data-analysis, label: Data Analysis, family: data, aliases: [data analytics, analytical skills, data analyst, exploratory data analysis, eda]}
   - {id: data-visualization, label: Data Visualization, family: data, aliases: [dashboards, dashboarding, data visualisation, reporting]}
@@ -130,7 +130,7 @@ skills:
   - {id: sdlc, label: SDLC, family: qa-testing, aliases: [software development life cycle, stlc, test plans]}
   # ---- design ----
   - {id: figma, label: Figma, family: design, aliases: [figjam]}
-  - {id: sketch, label: Sketch, family: design, aliases: [invision, adobe xd, axure, balsamiq]}
+  - {id: sketch, label: Sketch, family: design, exact_case: true, aliases: [InVision, Adobe XD, Axure, Balsamiq]}
   - {id: ui-design, label: UI Design, family: design, aliases: [user interface design, visual design, interface design, design systems, design system]}
   - {id: ux-design, label: UX Design, family: design, aliases: [user experience, user experience design, interaction design, wireframing, wireframes, prototyping, information architecture]}
   - {id: user-research, label: User Research, family: design, aliases: [usability testing, user interviews, ux research, personas, user testing]}
@@ -202,7 +202,7 @@ skills:
   - {id: tally, label: Tally, family: finance-accounting, aliases: [tally erp, tally prime, quickbooks, xero, zoho books, busy accounting, sage]}
   - {id: gst, label: GST & Taxation, family: finance-accounting, aliases: [taxation, income tax, tds, gst returns, gst filing, tax compliance, direct tax, indirect tax, vat]}
   - {id: financial-analysis, label: Financial Analysis, family: finance-accounting, aliases: [financial modeling, financial modelling, fp&a, budgeting, forecasting, variance analysis, valuation, financial reporting, mis, mis reporting, equity research, investment banking]}
-  - {id: audit, label: Audit & Compliance, family: finance-accounting, aliases: [auditing, internal audit, statutory audit, compliance, regulatory compliance, risk management, sox, ifrs, gaap, ind as, ca, chartered accountant, cpa]}
+  - {id: audit, label: Audit & Compliance, family: finance-accounting, aliases: [auditing, internal audit, statutory audit, regulatory compliance, risk management, sox, ifrs, gaap, ind as, chartered accountant, cpa]}
   - {id: collections, label: Collections & Billing, family: finance-accounting, aliases: [billing, invoicing, credit control, collections, order to cash, procure to pay, p2p, o2c]}
   # ---- general / soft ----
   - {id: communication, label: Communication, family: general, aliases: [communication skills, written communication, verbal communication, excellent communication, strong communication, english communication, interpersonal skills, presentation skills]}

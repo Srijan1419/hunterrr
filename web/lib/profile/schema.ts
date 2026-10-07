@@ -26,6 +26,8 @@ export const ProfileSchema = z.object({
   experienceYears: z.number().min(0).max(50).nullable().default(null),
   targetRoles: list(10, 80).default([]),
   skills: list(60, 60).default([]),
+  /** Role families (etl/decide/role_family.py ids, e.g. "customer-support") the owner wants; empty = no preference. */
+  targetFamilies: z.array(z.string().regex(/^[a-z][a-z-]*$/)).max(8).default([]),
   /** Preferred cities or regions, as the owner writes them. */
   locations: list(15, 80).default([]),
   remoteOk: z.boolean().default(true),

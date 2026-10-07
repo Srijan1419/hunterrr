@@ -7,7 +7,7 @@ const base: FeedRow = {
   id: 1, title: "Backend Engineer", companyName: "Acme", source: "greenhouse", locations: [],
   remoteType: null, eligibilityScope: null, eligibleCountries: [], payMin: null, payMax: null,
   payCurrency: null, payPeriod: null, payProvenance: "unknown", postedAt: null, applyUrl: null, seniority: null,
-  descriptionSnippet: "", experienceMin: null, experienceMax: null, indiaReason: null, labels: [],
+  descriptionSnippet: "", experienceMin: null, experienceMax: null, indiaReason: null, labels: [], roleFamily: null, skills: [],
 };
 
 describe("JobRow reasons", () => {
@@ -61,7 +61,7 @@ describe("JobRow fit breakdown", () => {
     const { rerender } = render(<ul><JobRow row={base} /></ul>);
     expect(screen.queryByText("Why this score")).toBeNull();
     const match = {
-      score: 82, blocked: null, flags: ["Level not stated"],
+      score: 82, blocked: null, bucket: "strong" as const, flags: ["Level not stated"],
       parts: [{ key: "skills", label: "Skills", points: 30, max: 40, note: "Names SQL, Python" }],
     };
     rerender(<ul><JobRow row={{ ...base, match }} /></ul>);
@@ -72,7 +72,7 @@ describe("JobRow fit breakdown", () => {
   });
 
   it("says plainly why a blocked job is held back", () => {
-    const match = { score: 20, blocked: "Only open to US", flags: [], parts: [] };
+    const match = { score: 20, blocked: "Only open to US", flags: [], parts: [], bucket: "other" as const };
     render(<ul><JobRow row={{ ...base, match }} /></ul>);
     expect(screen.getByText("Only open to US")).toBeTruthy();
   });

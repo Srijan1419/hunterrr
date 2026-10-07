@@ -63,6 +63,9 @@ export type FeedRow = {
   descriptionSnippet: string;
   experienceMin: number | null;
   experienceMax: number | null;
+  /** Role family from the decision layer, and the skills the skills pass found (both for scoring). */
+  roleFamily: string | null;
+  skills: { skill: string; importance: "must" | "nice" }[];
   /** Present when the owner has a saved profile. */
   match?: MatchResult;
 };
@@ -94,7 +97,8 @@ function likePattern(q: string): string {
 export const FEED_COLUMNS = sql`p.id, p.title, c.name AS company_name, p.source, p.locations, p.remote_type,
   p.eligibility_scope, p.eligible_countries, p.pay_min, p.pay_max, p.pay_currency, p.pay_period,
   p.pay_provenance, p.posted_at, p.apply_url_raw, p.seniority, p.india_reason, p.labels,
-  LEFT(p.description_md, 4000) AS description_snippet, p.experience_min_years, p.experience_max_years`;
+  LEFT(p.description_md, 4000) AS description_snippet, p.experience_min_years, p.experience_max_years, p.role_family,
+  (SELECT json_agg(json_build_object('s', k.skill, 'i', k.importance)) FROM hunterrr.posting_skills k WHERE k.posting_id = p.id) AS skills`;
 
 /**
  * Entry level = the posting SAYS so (see ENTRY_LEVEL below). Senior, lead, staff, principal and
@@ -255,7 +259,24 @@ export function toRow(r: Record<string, unknown>): FeedRow {
     descriptionSnippet: typeof r.description_snippet === "string" ? r.description_snippet : "",
     experienceMin: num(r.experience_min_years),
     experienceMax: num(r.experience_max_years),
+    roleFamily: typeof r.role_family === "string" ? r.role_family : null,
+    skills: toSkills(r.skills),
   };
+}
+
+function toSkills(value: unknown): FeedRow["skills"] {
+  let v = value;
+  if (typeof v === "string") {
+    try {
+      v = JSON.parse(v);
+    } catch {
+      return [];
+    }
+  }
+  if (!Array.isArray(v)) return [];
+  return v
+    .filter((x): x is { s: string; i: string } => typeof x === "object" && x !== null && typeof (x as { s?: unknown }).s === "string")
+    .map((x) => ({ skill: x.s, importance: x.i === "nice" ? "nice" as const : "must" as const }));
 }
 
 /** The row with its fit score for `profile`; the scoring input (description text) is dropped. */
@@ -265,6 +286,7 @@ export function withMatch(row: FeedRow, profile: Profile): FeedRow {
     experienceMin: row.experienceMin, experienceMax: row.experienceMax, remoteType: row.remoteType,
     locations: row.locations, eligibilityScope: row.eligibilityScope, eligibleCountries: row.eligibleCountries,
     payMin: row.payMin, payMax: row.payMax, payCurrency: row.payCurrency, payPeriod: row.payPeriod,
+    skills: row.skills, roleFamily: row.roleFamily, postedAt: row.postedAt,
   });
   return { ...row, match, descriptionSnippet: "" };
 }

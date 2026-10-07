@@ -44,6 +44,7 @@ export default async function JobDetailPage({ params }: { params: Params }) {
         experienceMin: posting.experienceMin, experienceMax: posting.experienceMax, remoteType: posting.remoteType,
         locations: posting.locations, eligibilityScope: posting.eligibilityScope, eligibleCountries: posting.eligibleCountries,
         payMin: posting.payMin, payMax: posting.payMax, payCurrency: posting.payCurrency, payPeriod: posting.payPeriod,
+        skills: posting.skills, roleFamily: posting.roleFamily, postedAt: posting.postedAt,
       })
     : null;
   const location = formatLocation(posting);

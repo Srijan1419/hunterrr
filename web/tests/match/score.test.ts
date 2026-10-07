@@ -77,3 +77,72 @@ describe("scoreMatch", () => {
     expect(r.flags).toEqual(expect.arrayContaining(["Add skills to your profile to score this", "Add target roles to your profile to score this"]));
   });
 });
+
+describe("scoreMatch with stored skills (matching v2)", () => {
+  const withSkills = (skills: { skill: string; importance: "must" | "nice" }[], extra: Partial<MatchInput> = {}): MatchInput => ({
+    ...base, title: "Business Analyst", description: "", seniority: "entry", remoteType: "remote",
+    eligibilityScope: "countries", eligibleCountries: ["IN"], skills, ...extra,
+  });
+  const python = ProfileSchema.parse({ skills: ["Python", "SQL", "js"], targetRoles: ["Business Analyst"], experienceYears: 0.5 });
+
+  it("maps your spellings to the dictionary and explains matched and missing must-haves", () => {
+    const r = scoreMatch(python, withSkills([
+      { skill: "sql", importance: "must" }, { skill: "python", importance: "must" }, { skill: "tableau", importance: "must" },
+      { skill: "airflow", importance: "nice" },
+    ]));
+    const skills = part(r, "skills");
+    expect(skills?.note).toMatch(/Matches 2 of 3 must-have skills \(SQL, Python\)\. Missing: Tableau/);
+    expect(skills!.points).toBeGreaterThan(20);
+  });
+
+  it("covering 80% of the weighted ask is full credit; nothing covered is zero", () => {
+    const all = scoreMatch(python, withSkills([{ skill: "sql", importance: "must" }, { skill: "python", importance: "must" }]));
+    expect(part(all, "skills")?.points).toBe(40);
+    const none = scoreMatch(python, withSkills([{ skill: "tableau", importance: "must" }, { skill: "power-bi", importance: "must" }]));
+    expect(part(none, "skills")?.points).toBe(0);
+  });
+
+  it("a nice-to-have counts less than a must-have, and everyday skills count least", () => {
+    const musts = scoreMatch(python, withSkills([{ skill: "sql", importance: "must" }, { skill: "tableau", importance: "must" }]));
+    const nice = scoreMatch(python, withSkills([{ skill: "sql", importance: "must" }, { skill: "tableau", importance: "nice" }]));
+    expect(part(nice, "skills")!.points).toBeGreaterThan(part(musts, "skills")!.points);
+    const soft = scoreMatch(python, withSkills([{ skill: "sql", importance: "must" }, { skill: "communication", importance: "must" }]));
+    expect(part(soft, "skills")!.points).toBeGreaterThanOrEqual(part(musts, "skills")!.points);
+  });
+
+  it("without stored skills it falls back to your skills found in the text", () => {
+    const r = scoreMatch(python, { ...withSkills([]), description: "We use SQL and Python." });
+    expect(part(r, "skills")?.note).toMatch(/Names Python, SQL/);
+  });
+
+  it("a role family you chose lifts the role part when the title is not one of your roles", () => {
+    const p = ProfileSchema.parse({ skills: ["Zendesk"], targetRoles: ["Data Analyst"], targetFamilies: ["customer-support"] });
+    const r = scoreMatch(p, withSkills([{ skill: "zendesk", importance: "must" }], { title: "Support Associate", roleFamily: "customer-support" }));
+    expect(part(r, "role")?.points).toBe(20);
+    expect(part(r, "role")?.note).toMatch(/Customer support/);
+    const elsewhere = scoreMatch(p, withSkills([], { title: "Support Associate", roleFamily: "sales-bd" }));
+    expect(part(elsewhere, "role")?.points).toBe(0);
+  });
+
+  it("freshness: today beats last week beats last month", () => {
+    const at = (hours: number) => new Date(Date.now() - hours * 3_600_000).toISOString();
+    const pts = (h: number) => part(scoreMatch(python, withSkills([], { postedAt: at(h) })), "freshness")?.points;
+    expect(pts(3)).toBe(5);
+    expect(pts(24 * 5)).toBe(3);
+    expect(pts(24 * 20)).toBe(1.5);
+    expect(pts(24 * 90)).toBe(0);
+    expect(part(scoreMatch(python, withSkills([], { postedAt: null })), "freshness")).toBeUndefined();
+  });
+
+  it("buckets: strong needs a high score at a reachable level; a stretch is worth a shot; blocked is other", () => {
+    const strong = scoreMatch(python, withSkills([{ skill: "sql", importance: "must" }, { skill: "python", importance: "must" }], { experienceMin: 1 }));
+    expect(strong.score).toBeGreaterThanOrEqual(65);
+    expect(strong.bucket).toBe("strong");
+    const stretch = scoreMatch(python, withSkills([{ skill: "sql", importance: "must" }, { skill: "python", importance: "must" }], { experienceMin: 2 }));
+    expect(stretch.bucket).toBe("worth");   // asks 2 years, you have 0.5: not "strong", still worth a shot
+    const blocked = scoreMatch(python, withSkills([{ skill: "sql", importance: "must" }], { seniority: "senior" }));
+    expect(blocked.bucket).toBe("other");
+    const poor = scoreMatch(python, withSkills([{ skill: "tableau", importance: "must" }], { title: "Chef", experienceMin: 5 }));
+    expect(poor.bucket).toBe("other");
+  });
+});

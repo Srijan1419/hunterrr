@@ -67,3 +67,30 @@ def test_non_technical_postings_get_skills_too():
 
 def test_empty_and_odd_inputs_never_raise():
     assert extract_skills("", "") == [] and extract_skills(None, None) == []  # type: ignore[arg-type]
+
+
+def test_ambiguous_names_do_not_match_ordinary_words():
+    assert ids(extract_skills("", "We go above and beyond. A swift response. In spring we hire. a unity of purpose is rare, like rust on a pipe. R and C are letters.")) == set()
+    assert {"golang"} <= ids(extract_skills("", "Backend in Golang"))
+    assert {"swift", "spring-boot", "unity", "rust"} <= ids(extract_skills("", "Swift, Spring Boot, Unity and Rust"))
+    assert "r-lang" in ids(extract_skills("", "Statistics in R programming")) and "c-lang" in ids(extract_skills("", "C programming"))
+
+
+def test_california_and_clearance_are_not_skills():
+    assert ids(extract_skills("", "Based in Los Angeles, CA. Needs TS/SCI clearance.")) == set()
+
+
+def test_currency_php_is_not_the_language():
+    assert "php" not in ids(extract_skills("", "Benefits: PHP de minimis, PHP 20,000 per month"))
+    assert "php" in ids(extract_skills("", "Backend in PHP and Laravel"))
+
+
+def test_the_web_dictionary_export_is_in_sync():
+    import json
+    from pathlib import Path
+
+    from etl.extract.rules.skills import export_dictionary
+
+    exported = Path(__file__).resolve().parents[4] / "web" / "lib" / "skills" / "dictionary.json"
+    assert json.loads(exported.read_text(encoding="utf-8")) == export_dictionary(), (
+        "run: python -m etl.extract.rules.skills --export web/lib/skills/dictionary.json")
