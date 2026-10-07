@@ -22,8 +22,8 @@ function loadMigrationStatements(): string[] {
     .filter((f) => /^\d+_.*\.sql$/.test(f))
     .sort();
   // 0000 schema, 0001 auth tables and grants, 0002 relaxed nullability, 0003 application posting link,
-  // 0004 account.password (Better Auth selects it on every sign-in lookup), 0005 stored decisions, 0006 apply-link check, 0007 skills, 0008 per-user profiles and applications
-  expect(files.length).toBe(9);
+  // 0004 account.password (Better Auth selects it on every sign-in lookup), 0005 stored decisions, 0006 apply-link check, 0007 skills, 0008 per-user profiles and applications, 0009 weekly check-ins
+  expect(files.length).toBe(10);
   const allSql = files.map((f) => fs.readFileSync(path.join(MIGRATION_DIR, f), "utf8")).join("\n");
   const stmts = allSql
     .split("--> statement-breakpoint")
@@ -33,13 +33,14 @@ function loadMigrationStatements(): string[] {
   return stmts;
 }
 
-// 27 tables: 23 from h2-01 + 4 Better Auth tables (user, session, account, verification)
+// 28 tables: 23 from h2-01 + 4 Better Auth tables (user, session, account, verification) + checkins (0009)
 const EXPECTED_TABLES = [
   "account",
   "application_events",
   "applications",
   "board_poll_state",
   "boards",
+  "checkins",
   "cluster_members",
   "companies",
   "emails",

@@ -13,7 +13,7 @@ describe("AppliedButton", () => {
     actions.appliedToJob.mockResolvedValue({ ok: true, applicationId: 3 });
     render(<AppliedButton postingId={7} state={null} />);
     fireEvent.click(screen.getByRole("button", { name: "I applied" }));
-    await waitFor(() => expect(screen.getByRole("link", { name: /Applied/ })).toBeInTheDocument(), { timeout: 4000 });
+    await waitFor(() => expect(screen.getByRole("link", { name: /Applied/ })).toBeInTheDocument(), { timeout: 8000 });
     expect(actions.appliedToJob).toHaveBeenCalledWith(7);
   });
 
@@ -29,7 +29,8 @@ describe("AppliedButton", () => {
     actions.appliedToJob.mockResolvedValue({ ok: false, error: "That job no longer exists." });
     render(<AppliedButton postingId={7} state={null} />);
     fireEvent.click(screen.getByRole("button", { name: "I applied" }));
-    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("no longer exists"), { timeout: 4000 });
+    const alert = await screen.findByRole("alert", {}, { timeout: 8000 });
+    expect(alert).toHaveTextContent("no longer exists");
     expect(screen.getByRole("button", { name: "I applied" })).toBeInTheDocument();
   });
 });

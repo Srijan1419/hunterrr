@@ -42,3 +42,14 @@
   .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .follow { grid-template-columns: 1fr; }
 }
+
+.steps { margin: 0; padding-left: 20px; display: grid; gap: 6px; color: var(--fg-2); font-size: var(--fs-2); }
+.steps a { color: var(--accent); text-underline-offset: 3px; }
+
+.checkin { display: grid; gap: 12px; max-width: 520px; }
+.checkinField { display: grid; gap: 4px; font-size: var(--fs-2); color: var(--fg-2); }
+.checkinField input, .checkinField textarea { padding: 8px 12px; border: 1px solid var(--line-strong); border-radius: var(--r-md, 10px); background: var(--surface); color: var(--fg); font: inherit; }
+.checkinField input:focus-visible, .checkinField textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.checkinError { margin: 0; color: var(--hot); font-size: var(--fs-1); }
+.checkinSubmit { justify-self: start; height: 36px; padding: 0 18px; border-radius: 999px; border: 0; background: var(--accent); color: var(--accent-fg); font-weight: 600; cursor: pointer; }
+.checkinSubmit:disabled { opacity: 0.6; cursor: default; }

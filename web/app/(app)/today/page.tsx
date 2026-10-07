@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { StatTile } from "@/components/atlas/StatTile";
+import { CheckinCard } from "@/components/today/CheckinCard";
 import { JobRow } from "@/components/feed/JobRow";
 import styles from "@/components/today/today.module.css";
 import { requireSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/client.v2";
+import { getCheckin } from "@/lib/queries/checkin";
 import { queryToday } from "@/lib/queries/today";
 import { getActiveProfile } from "@/lib/queries/profile";
 import { OPEN_STATES, savedPostingIds, type ApplicationState } from "@/lib/queries/tracker";
@@ -39,6 +41,7 @@ export default async function TodayPage() {
   const data = await queryToday(db as never, user.id, now, stored?.data ?? null);
   const saved = await savedPostingIds(db as never, user.id, data.newJobs.map((r) => r.id));
   const due = data.followUps.length;
+  const checkin = await getCheckin(db as never, user.id, now);
 
   const summary =
     data.newJobsCount === 0 && due === 0
@@ -61,6 +64,16 @@ export default async function TodayPage() {
         </span>
       </div>
       <p className={styles.summary}>{summary}</p>
+      {stored ? null : (
+        <section className={styles.section} aria-labelledby="start">
+          <h2 id="start" className={styles.sectionTitle}>Start here: two minutes</h2>
+          <ol className={styles.steps}>
+            <li><Link href="/profile">Upload your résumé</Link> (or type your skills): it fills the form for you.</li>
+            <li>Check the skills and pick the fields you want, technical or not.</li>
+            <li>Save, and the jobs are ranked for you, with the reason for each.</li>
+          </ol>
+        </section>
+      )}
 
       <div className={styles.stats}>
         <StatTile value={data.newJobsCount.toLocaleString("en-IN")} label="New remote entry-level jobs (24 h)" />
@@ -142,6 +155,7 @@ export default async function TodayPage() {
           </div>
         )}
       </section>
+      <CheckinCard appliedGuess={data.weekApplied} answered={checkin !== null} />
     </div>
   );
 }

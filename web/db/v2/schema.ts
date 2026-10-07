@@ -821,3 +821,22 @@ export const verification = hunterrr.table(
   },
   (table) => [index("verification_identifier_idx").on(table.identifier)],
 );
+
+
+// ---------------------------------------------------------------------------
+// checkins: the weekly three-question check-in of a tester (web writes; migration 0009)
+// ---------------------------------------------------------------------------
+export const checkins = hunterrr.table(
+  "checkins",
+  {
+    id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+    userId: text("user_id").notNull().references((): AnyPgColumn => user.id, { onDelete: "cascade" }),
+    weekStart: text("week_start").notNull(),
+    applied: integer("applied").notNull(),
+    interviews: integer("interviews").notNull(),
+    feedback: text("feedback").notNull().default(""),
+    createdAt: timestamptz("created_at").notNull().defaultNow(),
+    updatedAt: timestamptz("updated_at").notNull().defaultNow(),
+  },
+  (table) => [uniqueIndex("checkins_user_week_unique").on(table.userId, table.weekStart)]
+);

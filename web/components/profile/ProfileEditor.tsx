@@ -87,7 +87,7 @@ export function ProfileEditor({ initial, version, savedAt }: Props) {
     minPayLpa: initial.minPayLpa?.toString() ?? "",
   });
   const [fromResume, setFromResume] = useState<Set<keyof Profile>>(new Set());
-  const [notice, setNotice] = useState<{ text: string; bad: boolean } | null>(null);
+  const [notice, setNotice] = useState<{ text: string; bad: boolean; link?: { href: string; label: string } } | null>(null);
   const [errors, setErrors] = useState<Partial<Record<keyof Profile, string>>>({});
   const [saved, setSaved] = useState<{ version: number | null; savedAt: string | null }>({ version, savedAt });
   const [dirty, setDirty] = useState(false);
@@ -171,7 +171,7 @@ export function ProfileEditor({ initial, version, savedAt }: Props) {
       setSaved({ version: result.version, savedAt: new Date().toISOString() });
       setDirty(false);
       setFromResume(new Set());
-      setNotice({ text: `Saved as version ${result.version}.`, bad: false });
+      setNotice({ text: `Saved as version ${result.version}.`, bad: false, link: { href: "/jobs", label: "See the jobs ranked for you →" } });
     });
   }
 
@@ -222,7 +222,9 @@ export function ProfileEditor({ initial, version, savedAt }: Props) {
       </div>
 
       {notice ? (
-        <p role={notice.bad ? "alert" : "status"} className={`${styles.notice} ${notice.bad ? styles.noticeBad : ""}`}>{notice.text}</p>
+        <p role={notice.bad ? "alert" : "status"} className={`${styles.notice} ${notice.bad ? styles.noticeBad : ""}`}>
+          {notice.text}{notice.link ? <>{" "}<a href={notice.link.href}>{notice.link.label}</a></> : null}
+        </p>
       ) : null}
 
       <section className={styles.card} aria-labelledby="about">
