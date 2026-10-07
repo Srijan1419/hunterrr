@@ -6,7 +6,6 @@ import styles from "@/components/today/today.module.css";
 import { db } from "@/lib/db/client.v2";
 import { queryToday } from "@/lib/queries/today";
 import { getActiveProfile } from "@/lib/queries/profile";
-import { withMatch } from "@/lib/queries/feed";
 import { OPEN_STATES, savedPostingIds, type ApplicationState } from "@/lib/queries/tracker";
 
 export const metadata: Metadata = {
@@ -34,9 +33,8 @@ function dueLabel(iso: string, now: Date): { text: string; overdue: boolean } {
 
 export default async function TodayPage() {
   const now = new Date();
-  const data = await queryToday(db as never, now);
   const stored = await getActiveProfile(db as never);
-  if (stored) data.newJobs = data.newJobs.map((r) => withMatch(r, stored.data));
+  const data = await queryToday(db as never, now, stored?.data ?? null);
   const saved = await savedPostingIds(db as never, data.newJobs.map((r) => r.id));
   const due = data.followUps.length;
 
@@ -44,7 +42,11 @@ export default async function TodayPage() {
     data.newJobsCount === 0 && due === 0
       ? "Nothing needs you right now. New jobs arrive with each collection run, every few hours."
       : [
-          data.newJobsCount > 0 ? `${plural(data.newJobsCount, "new remote entry-level job", "new remote entry-level jobs")} in the last 24 hours` : null,
+          data.newJobsCount > 0
+            ? data.ranked
+              ? `${plural(data.newJobsCount, "fresh job that fits you", "fresh jobs that fit you")} to apply to today`
+              : `${plural(data.newJobsCount, "new remote entry-level job", "new remote entry-level jobs")} in the last 24 hours`
+            : null,
           due > 0 ? `${plural(due, "follow-up", "follow-ups")} due` : null,
         ].filter(Boolean).join(" · ") + ".";
 
@@ -63,11 +65,12 @@ export default async function TodayPage() {
         <StatTile value={due} label="Follow-ups due" tone={due > 0 ? "hot" : "default"} />
         <StatTile value={data.activeCount} label="Active applications" />
         <StatTile value={data.pipeline.saved} label="Saved, not applied yet" />
+        <StatTile value={`${data.weekApplied} / ${data.weeklyGoal}`} label="Applied this week (goal)" />
       </div>
 
       <section className={styles.section} aria-labelledby="new-jobs">
         <div className={styles.sectionHead}>
-          <h2 id="new-jobs" className={styles.sectionTitle}>New remote entry-level jobs</h2>
+          <h2 id="new-jobs" className={styles.sectionTitle}>{data.ranked ? "Apply today" : "New remote entry-level jobs"}</h2>
           {data.newJobsCount > data.newJobs.length ? (
             <Link href="/jobs?days=7" className={styles.more}>See all {data.newJobsCount.toLocaleString("en-IN")}</Link>
           ) : null}

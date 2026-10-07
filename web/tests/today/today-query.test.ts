@@ -9,7 +9,8 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { PGlite } from "@electric-sql/pglite";
 import { vector } from "@electric-sql/pglite-pgvector";
 import { drizzle } from "drizzle-orm/pglite";
-import { endOfTodayIST, queryToday } from "@/lib/queries/today";
+import { endOfTodayIST, queryToday, startOfWeekIST, WEEKLY_APPLY_GOAL } from "@/lib/queries/today";
+import { ProfileSchema } from "@/lib/profile/schema";
 
 const DIR = path.join(__dirname, "..", "..", "drizzle-v2");
 // 2026-10-06 14:00 IST
@@ -76,6 +77,15 @@ beforeAll(async () => {
   await posting(13, { title: "Flagged fresher", seniority: "entry", first_seen_at: hoursAgo(1), decision_key: "k13", india_eligible: "yes" });
   await pg.query("UPDATE hunterrr.postings SET flags = ARRAY['fee_requested'] WHERE title = 'Flagged fresher'");
 
+  // applications moved to "applied": two this week (Mon 00:00 IST = 2026-10-04T18:30Z), one last week, one only saved
+  for (const [title, to, at] of [["Applied Tue", "applied", "2026-10-05T10:00:00Z"], ["Applied Mon", "applied", "2026-10-04T19:00:00Z"],
+    ["Applied last week", "applied", "2026-10-03T10:00:00Z"], ["Saved this week", "saved", "2026-10-05T10:00:00Z"]]) {
+    const id = (await pg.query<{ id: number }>("INSERT INTO hunterrr.applications (title, source, current_state, company_id) VALUES ($1, 'ui', 'withdrawn', 1) RETURNING id", [title])).rows[0].id;
+    await pg.query(
+      "INSERT INTO hunterrr.application_events (application_id, type, occurred_at, actor, payload, payload_hash) VALUES ($1, 'state_changed', $2, 'user', $3::jsonb, $4)",
+      [id, at, JSON.stringify({ from: "saved", to }), `h-${title}`]);
+  }
+
   await application("Due later today (IST)", "applied", "2026-10-06T17:00:00Z"); // 22:30 IST today
   await application("Overdue", "interview", "2026-10-03T05:00:00Z");
   await application("Due tomorrow (IST)", "applied", "2026-10-06T19:00:00Z"); // 00:30 IST tomorrow
@@ -109,5 +119,33 @@ describe("queryToday", () => {
     const t = await queryToday(db as never, NOW);
     expect(t.pipeline).toMatchObject({ saved: 1, applied: 2, interview: 1, rejected: 1, offer: 0 });
     expect(t.activeCount).toBe(4);
+  });
+});
+
+
+describe("Apply today (with a profile) and the weekly goal", () => {
+  const me = ProfileSchema.parse({ skills: ["Python"], experienceYears: 0.5 });
+
+  it("the week starts Monday 00:00 IST", () => {
+    expect(startOfWeekIST(NOW).toISOString()).toBe("2026-10-04T18:30:00.000Z");
+    expect(startOfWeekIST(new Date("2026-10-04T18:29:00Z")).toISOString()).toBe("2026-09-27T18:30:00.000Z"); // still Sunday in IST
+  });
+
+  it("counts applications moved to applied this week, against the goal", async () => {
+    const t = await queryToday(db as never, NOW);
+    expect(t.weekApplied).toBe(2);
+    expect(t.weeklyGoal).toBe(WEEKLY_APPLY_GOAL);
+  });
+
+  it("without a profile the list is the 24-hour new jobs; with one it is the 48-hour fits, best first", async () => {
+    const plain = await queryToday(db as never, NOW);
+    expect(plain.ranked).toBe(false);
+    const ranked = await queryToday(db as never, NOW, me);
+    expect(ranked.ranked).toBe(true);
+    expect(ranked.newJobs.length).toBeGreaterThan(0);
+    expect(ranked.newJobs.every((r) => r.match?.bucket === "strong" || r.match?.bucket === "worth")).toBe(true);
+    // the 30-hour-old fresher is inside 48 h now, so the queue holds at least what the 24-hour list held
+    expect(ranked.newJobs.map((r) => r.title)).toContain("Fresher, found 30 h ago");
+    expect(ranked.newJobsCount).toBeGreaterThanOrEqual(plain.newJobsCount);
   });
 });

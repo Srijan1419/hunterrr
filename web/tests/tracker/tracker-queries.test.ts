@@ -14,8 +14,11 @@ import {
   applicationHistory,
   changeState,
   getApplication,
+  FOLLOW_UP_DAYS,
   listApplications,
+  markApplied,
   payloadHash,
+  postingApplicationState,
   saveApplication,
   savedPostingIds,
   setNextAction,
@@ -198,5 +201,40 @@ describe("payloadHash", () => {
   it("ignores key order and tells different payloads apart", () => {
     expect(payloadHash({ a: 1, b: { c: 2, d: 3 } })).toBe(payloadHash({ b: { d: 3, c: 2 }, a: 1 }));
     expect(payloadHash({ a: 1 })).not.toBe(payloadHash({ a: 2 }));
+  });
+});
+
+
+describe("markApplied (one tap)", () => {
+  it("saves, moves to applied and sets a follow-up a week ahead", async () => {
+    expect(await postingApplicationState(db as never, p1)).toBeNull();
+    const app = await markApplied(db as never, p1, T0);
+    expect(app?.state).toBe("applied");
+    expect(app?.nextActionAt).toBe(new Date(T0.getTime() + FOLLOW_UP_DAYS * 86_400_000).toISOString());
+    expect(await postingApplicationState(db as never, p1)).toBe("applied");
+    const history = await applicationHistory(db as never, app!.id);
+    expect(history.map((e) => e.type)).toEqual(expect.arrayContaining(["saved", "state_changed", "next_action_set"]));
+  });
+
+  it("is safe to repeat: no second event, and a later state or reminder is kept", async () => {
+    const first = await markApplied(db as never, p1, T0);
+    await changeState(db as never, first!.id, "interview", { now: minutes(30) });
+    const again = await markApplied(db as never, p1, minutes(60));
+    expect(again?.state).toBe("interview");
+    const history = await applicationHistory(db as never, first!.id);
+    expect(history.filter((e) => e.type === "state_changed")).toHaveLength(2);
+  });
+
+  it("never replaces a reminder the owner already set", async () => {
+    const saved = await saveApplication(db as never, p2, T0);
+    const mine = new Date("2026-10-05T04:00:00Z");
+    await setNextAction(db as never, saved!.application.id, mine, T0);
+    const app = await markApplied(db as never, p2, minutes(5));
+    expect(app?.state).toBe("applied");
+    expect(app?.nextActionAt).toBe(mine.toISOString());
+  });
+
+  it("returns null for a posting that does not exist", async () => {
+    expect(await markApplied(db as never, 999_999)).toBeNull();
   });
 });

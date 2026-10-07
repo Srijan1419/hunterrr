@@ -159,6 +159,35 @@ export async function changeState(
   });
 }
 
+/** Days after applying that the follow-up reminder is set for (a nudge to ask for news, not a promise). */
+export const FOLLOW_UP_DAYS = 7;
+
+/**
+ * "I applied": save the posting if it is not saved yet, move it to Applied and set a follow-up reminder
+ * `FOLLOW_UP_DAYS` ahead (never replacing one the owner already set). Safe to repeat: an application that is
+ * already applied (or further along) keeps its state and its reminder.
+ */
+export async function markApplied(db: TrackerDb, postingId: number, now: Date = new Date()): Promise<TrackedApplication | null> {
+  const saved = await saveApplication(db, postingId, now);
+  if (!saved) return null;
+  const app = saved.application;
+  const early = app.state === "saved";
+  const moved = early ? await changeState(db, app.id, "applied", { now }) : app;
+  if (!moved) return null;
+  if (early && moved.nextActionAt === null) {
+    return setNextAction(db, app.id, new Date(now.getTime() + FOLLOW_UP_DAYS * 86_400_000), now);
+  }
+  return moved;
+}
+
+/** The application state of a posting, or null when it was never saved. */
+export async function postingApplicationState(db: TrackerTx, postingId: number): Promise<ApplicationState | null> {
+  if (!validId(postingId)) return null;
+  const res = await db.execute(sql`SELECT current_state::text AS state FROM hunterrr.applications WHERE posting_id = ${postingId} LIMIT 1`);
+  const state = res.rows[0]?.state;
+  return isApplicationState(state) ? state : null;
+}
+
 export async function setNextAction(db: TrackerDb, id: number, when: Date | null, now: Date = new Date()): Promise<TrackedApplication | null> {
   if (!validId(id)) return null;
   if (when !== null && Number.isNaN(when.getTime())) return null;

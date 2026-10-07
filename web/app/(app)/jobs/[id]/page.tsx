@@ -9,6 +9,7 @@ import { initials } from "@/components/feed/JobRow";
 import { PostingFacts } from "@/components/feed/PostingFacts";
 import styles from "@/components/feed/detail.module.css";
 import { db } from "@/lib/db/client.v2";
+import { AppliedButton } from "@/components/tracker/AppliedButton";
 import { SaveButton } from "@/components/tracker/SaveButton";
 import { WrongButton } from "@/components/feed/WrongButton";
 import { SOURCE_VIA, labelText } from "@/components/feed/JobRow";
@@ -16,7 +17,7 @@ import { formatEligibility, formatLocation, formatPay } from "@/lib/feed-format"
 import { scoreMatch } from "@/lib/match/score";
 import { getActiveProfile } from "@/lib/queries/profile";
 import { queryPosting } from "@/lib/queries/posting";
-import { savedPostingIds } from "@/lib/queries/tracker";
+import { postingApplicationState, savedPostingIds } from "@/lib/queries/tracker";
 
 export const dynamic = "force-dynamic";
 
@@ -37,6 +38,7 @@ export default async function JobDetailPage({ params }: { params: Params }) {
   const posting = await queryPosting(db as never, parseId((await params).id));
   if (!posting) notFound();
   const saved = (await savedPostingIds(db as never, [posting.id])).has(posting.id);
+  const applicationState = await postingApplicationState(db as never, posting.id);
   const stored = await getActiveProfile(db as never);
   const match = stored
     ? scoreMatch(stored.data, {
@@ -83,9 +85,34 @@ export default async function JobDetailPage({ params }: { params: Params }) {
             <span className={styles.noApply}>No apply link was found for this posting.</span>
           )}
           <SaveButton postingId={posting.id} saved={saved} />
+          <AppliedButton postingId={posting.id} state={applicationState} />
           <WrongButton postingId={posting.id} />
         </div>
       </header>
+      <section className={styles.card} aria-labelledby="why">
+        <h2 id="why" className={styles.cardTitle}>Why this is on your list</h2>
+        <ul className={styles.reasons}>
+          <li>
+            {posting.indiaEligible === "yes" && posting.indiaReason ? <><strong>Open to India.</strong> {posting.indiaReason}.</> : null}
+            {posting.indiaEligible === "unknown" ? <><strong>Not confirmed for India.</strong> The posting does not say who may apply. Check before you apply.</> : null}
+            {posting.indiaEligible === "no" && posting.indiaReason ? <><strong>Not open to India.</strong> {posting.indiaReason}.</> : null}
+            {posting.indiaEligible === null ? <><strong>Not checked yet.</strong> This posting has not been through the India rule.</> : null}
+          </li>
+          {match ? (
+            <li>
+              {match.blocked ? <><strong>Held back.</strong> {match.blocked}.</> : (
+                <><strong>{match.bucket === "strong" ? "Strong fit" : match.bucket === "worth" ? "Worth a shot" : "Weak fit"}.</strong>{" "}
+                  {match.parts.find((x) => x.key === "skills")?.note ?? `${match.score} out of 100`}.</>
+              )}
+            </li>
+          ) : (
+            <li><Link href="/profile">Add your profile</Link> to see how this fits you.</li>
+          )}
+          {posting.experienceMin !== null ? (
+            <li><strong>Experience.</strong> Asks {posting.experienceMin}{posting.experienceMax && posting.experienceMax !== posting.experienceMin ? `–${posting.experienceMax}` : "+"} years{posting.experienceMin <= 2 ? ": within reach for a fresher" : ""}.</li>
+          ) : null}
+        </ul>
+      </section>
       <div className={styles.layout}>
         <section className={styles.card} aria-labelledby="about">
           <h2 id="about" className={styles.cardTitle}>

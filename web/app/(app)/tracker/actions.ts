@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db/client.v2";
 import { requireSession } from "@/lib/auth/session";
-import { changeState, isApplicationState, saveApplication, setNextAction, setNotes } from "@/lib/queries/tracker";
+import { changeState, isApplicationState, markApplied, saveApplication, setNextAction, setNotes } from "@/lib/queries/tracker";
 
 export type ActionResult = { ok: true; applicationId: number } | { ok: false; error: string };
 
@@ -25,6 +25,16 @@ export async function saveJob(postingId: number): Promise<ActionResult> {
   if (!saved) return { ok: false, error: "That job no longer exists." };
   refresh();
   return { ok: true, applicationId: saved.application.id };
+}
+
+/** "I applied": save the job, mark it applied and set a follow-up reminder a week ahead (idempotent). */
+export async function appliedToJob(postingId: number): Promise<ActionResult> {
+  await requireSession();
+  if (!validId(postingId)) return BAD_INPUT;
+  const app = await markApplied(db as never, postingId);
+  if (!app) return { ok: false, error: "That job no longer exists." };
+  refresh();
+  return { ok: true, applicationId: app.id };
 }
 
 export async function moveApplication(applicationId: number, state: string): Promise<ActionResult> {
