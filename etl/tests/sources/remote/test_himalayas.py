@@ -118,18 +118,24 @@ async def run(handler, **kw):
 
 async def test_every_page_is_read_and_each_job_becomes_one_document():
     seen = []
-    res = await run(pages_handler({1: {**ENTRY_P1, "totalCount": 38}, 2: {**ENTRY_P2, "totalCount": 38}}, seen=seen))
+    res = await run(pages_handler({1: {**ENTRY_P1, "totalCount": 38}, 2: {**ENTRY_P2, "totalCount": 38}, 3: {"totalCount": 38, "jobs": []}}, seen=seen))
     assert res.status == "ok" and len(res.documents) == 38
     assert res.posting_ids == frozenset(d.source_key.split("/", 1)[1] for d in res.documents)
-    assert [u.split("page=")[1] for u in seen] == ["1", "2"]                          # exactly the pages needed, in order
+    assert [u.split("page=")[1] for u in seen] == ["1", "2", "3"]                     # up to the empty page, in order
     d = res.documents[0]
     assert d.source == "himalayas" and d.source_key.startswith(SLUG_PREFIX + "in-entry/companies/")
     assert d.fetch_meta["slug"] == SLUG_PREFIX + "in-entry" and d.url.startswith("https://himalayas.app/")
 
 
-async def test_a_short_read_is_degraded_never_complete():
-    res = await run(pages_handler({1: {**ENTRY_P1, "totalCount": 38}, 2: {**ENTRY_P2, "jobs": ENTRY_P2["jobs"][:5], "totalCount": 38}}))
+async def test_an_empty_page_long_before_the_stated_total_is_a_glitch_not_the_end():
+    res = await run(pages_handler({1: {**ENTRY_P1, "totalCount": 460}, 2: {"totalCount": 460, "jobs": []}}))
     assert res.status == "degraded" and res.documents == [] and res.posting_ids is None
+
+
+async def test_pages_of_18_to_20_and_a_total_a_little_above_what_is_listed_are_still_complete():
+    # real behaviour (2026-10-07): 23 pages of 18-20 jobs, 442 unique jobs, totalCount 460
+    res = await run(pages_handler({1: {**ENTRY_P1, "totalCount": 40}, 2: {**ENTRY_P2, "totalCount": 40}, 3: {"totalCount": 40, "jobs": []}}))
+    assert res.status == "ok" and len(res.documents) == 38
 
 
 @pytest.mark.parametrize("status,expected", [(429, "blocked"), (404, "dead"), (500, "degraded"), (403, "degraded")])
@@ -153,8 +159,8 @@ async def test_the_page_cap_stops_a_runaway_query_and_is_not_complete(monkeypatc
 
 
 async def test_the_same_job_twice_in_the_results_is_one_document():
-    twice = {"totalCount": 40, "jobs": ENTRY_P1["jobs"]}
-    res = await run(pages_handler({1: twice, 2: {"totalCount": 40, "jobs": ENTRY_P1["jobs"]}}))
+    twice = {"totalCount": 20, "jobs": ENTRY_P1["jobs"]}
+    res = await run(pages_handler({1: twice, 2: {"totalCount": 20, "jobs": ENTRY_P1["jobs"]}, 3: {"totalCount": 20, "jobs": []}}))
     assert len(res.documents) == 20
 
 

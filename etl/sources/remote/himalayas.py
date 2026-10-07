@@ -1,7 +1,7 @@
 """Himalayas source: the public remote-jobs search API (https://himalayas.app/jobs/api/search).
 
 One pseudo-board per saved query (see `QUERIES`); a query is paged (20 jobs per page, `page` from 1) until
-`totalCount` jobs are read. Terms honoured: at most one request every `PACE_SECONDS`, a stop on 429, the job's
+an empty page is reached. Terms honoured: at most one request every `PACE_SECONDS`, a stop on 429, the job's
 Himalayas page kept as its apply link and "via Himalayas" shown in the app (attribution), and the jobs are never
 resubmitted to other job platforms.
 
@@ -26,6 +26,8 @@ from etl.sources.ats.base import DUE_WHERE, _status_from_http_error
 API = "https://himalayas.app/jobs/api/search"
 PACE_SECONDS = 2.0
 PAGE_SIZE = 20
+#: A complete read holds at least this share of the stated `totalCount`.
+MIN_SHARE = 0.8
 MAX_PAGES = 60  # 1,200 jobs per query: far above a fresher-level India query (hundreds), and a bound on one poll
 SLUG_PREFIX = "agg-himalayas-"
 
@@ -81,12 +83,14 @@ class HimalayasSource:
                 if total is None and isinstance(data.get("totalCount"), int):
                     total = data["totalCount"]
                 jobs.extend(j for j in batch if isinstance(j, dict))
-                if not batch or (total is not None and len(jobs) >= total) or len(batch) < PAGE_SIZE:
-                    break
+                if not batch:
+                    break  # the list ends with an empty page; pages hold 18-20 jobs (some are hidden per page)
             else:
                 return FetchResult(documents=[], status="degraded", posting_ids=None)  # hit the page cap: not complete
-            if total is not None and len(jobs) < total:
-                return FetchResult(documents=[], status="degraded", posting_ids=None)  # a short read: never "complete"
+            # `totalCount` is an upper bound (real read: 442 jobs vs 460 stated). An empty page long before it is a
+            # glitch, not the end of the list: never report that as complete.
+            if total is not None and len(jobs) < total * MIN_SHARE:
+                return FetchResult(documents=[], status="degraded", posting_ids=None)
         except asyncio.CancelledError:
             raise
         except CircuitOpenError:
