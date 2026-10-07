@@ -1,0 +1,16 @@
+# DEV (was a holdout until its misses were read) for the Himalayas aggregator source, batch A (2026-10-07). Labelled by reading the text AND the
+# aggregator's own fields (locationRestrictions, seniority, employmentType, pay). Himalayas lists remote jobs only.
+- {gid: "fbd4d33a60", remote: remote, india: "yes", employment: full_time, entry: "no", flags: [], why: "restrict ['India'], remote role for candidates based in India; asks 3+ years"}
+- {gid: "788e40f869", remote: remote, india: unknown, employment: full_time, entry: unknown, flags: [], why: "no country restriction listed but a US healthcare employer ('E-Verify'); no years stated"}
+- {gid: "19604f7835", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "no restriction, 'choose fully remote, hybrid, or office-based'; asks 1-4 years"}
+- {gid: "6619061aa6", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "no restriction, remote; asks 1-2 years"}
+- {gid: "e49e5e8d2c", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "no restriction, globally distributed async team; asks 1-3 years"}
+- {gid: "171d0b7648", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "no restriction, remote team; asks 1+ year"}
+- {gid: "60284cc6aa", remote: remote, india: "yes", employment: full_time, entry: unknown, flags: [], why: "restrict ['India'], UK shift hours; no years stated"}
+- {gid: "806fcc0528", remote: remote, india: "yes", employment: full_time, entry: unknown, flags: [], why: "restrict ['India'], associate level; no years stated"}
+- {gid: "bae7e328b7", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict ['India'], 'Job location: Remote'; asks 1+ year"}
+- {gid: "57a20a1c62", remote: remote, india: "yes", employment: full_time, entry: unknown, flags: [suspicious_contact], why: "no restriction, recruiter-agency role for US employers (MST hours); 'keep an eye on your email and WhatsApp for the next steps'"}
+- {gid: "eaebeb6509", remote: remote, india: "yes", employment: full_time, entry: unknown, flags: [], why: "restrict lists many countries including India; HR administrator; no years stated"}
+- {gid: "ce353dfeab", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict ['India'], 'Full time Remote working role'; asks minimum 2 years"}
+- {gid: "b67a73b81d", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict ['India'], work shift 5 PM-2 AM IST; asks minimum 2 years"}
+- {gid: "cf7c4e3599", remote: remote, india: "no", employment: full_time, entry: "yes", flags: [], why: "listed with no restriction but the text says 'remote based positions that are available in the EMEA region'; graduate role"}

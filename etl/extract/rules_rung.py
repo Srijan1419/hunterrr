@@ -16,7 +16,7 @@ from typing import Any, Callable, Mapping
 from etl.core.types import Field
 from etl.extract.rules.context import ParseContext
 from etl.extract.rules.dates import parse_deadline, parse_joining
-from etl.extract.rules.eligibility import parse_eligibility
+from etl.extract.rules.eligibility import explicit_availability, parse_eligibility
 from etl.extract.rules.experience import parse_experience
 from etl.extract.rules.locstring import combine, read_location
 from etl.extract.rules.geo import resolve_country
@@ -284,6 +284,21 @@ def apply_rules(
                 conflicts.append("remote_type: the board says remote but the description says this role is not")
 
         guarded(remote_contradicted)
+
+        def worldwide_contradicted() -> None:
+            """A source says "no country restriction" (Himalayas: an empty list) but the text says the role is
+            available only in places that do not include India ("positions available in the EMEA region"): two
+            explicit statements disagree, so claim nothing."""
+            scope = out.get("eligibility_scope")
+            if scope is None or scope.value != "worldwide" or scope.provenance not in ("source", "jsonld"):
+                return
+            found = explicit_availability(description)
+            if found is not None and "IN" not in found[0]:
+                out["eligibility_scope"] = Field()
+                out["eligible_countries"] = Field()
+                conflicts.append(f"eligibility: the source says worldwide but the text says {found[1]!r}")
+
+        guarded(worldwide_contradicted)
     except Exception:
         return dict(fields), ()
     return out, tuple(conflicts)

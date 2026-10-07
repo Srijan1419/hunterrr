@@ -27,10 +27,10 @@ BASE = query_url("in-entry")
 
 
 # ---- the mapper, on real responses ---------------------------------------------------------------------------
-def test_a_worldwide_entry_level_job_is_remote_worldwide_and_entry():
+def test_an_unrestricted_entry_level_job_is_remote_and_entry_but_eligibility_stays_unknown():
     job = next(j for j in ENTRY_P1["jobs"] if not j["locationRestrictions"])
     f = fields_from_himalayas(job)
-    assert (f["remote_type"].value, f["eligibility_scope"].value, f["seniority"].value) == ("remote", "worldwide", "entry")
+    assert (f["remote_type"].value, f["eligibility_scope"].value, f["seniority"].value) == ("remote", None, "entry")
     assert f["employment_type"].value == ["full_time"] and f["company_name"].value == job["companyName"]
     assert f["apply_url"].value.startswith("https://himalayas.app/") and f["posted_at"].value.year >= 2026
     assert all(v.provenance == "source" for v in f.values() if v.value is not None)
@@ -47,7 +47,7 @@ def test_every_real_job_in_the_fixtures_maps_without_error_and_with_a_company_an
     assert len(jobs) == 58
     for j in jobs:
         f = fields_from_himalayas(j)
-        assert f["company_name"].value and f["eligibility_scope"].value in ("worldwide", "countries")
+        assert f["company_name"].value and f["eligibility_scope"].value in (None, "countries")
         assert himalayas_posting_id(j) and "/" in himalayas_posting_id(j)
 
 
@@ -63,12 +63,12 @@ def test_level_is_claimed_only_when_the_list_is_unambiguous(levels, expected):
 
 def test_eligibility_from_the_structured_restrictions_never_guesses():
     full = [-11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 5.5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 3.5, 4.5, 5.75, 6.5, 8.75, 9.5, 10.5, 12.75, -9.5, -3.5]
-    assert himalayas_eligibility([], full) == (None, "worldwide", "no locationRestrictions and no time-zone limit")
+    assert himalayas_eligibility([], full) == (None, None, "no locationRestrictions and no time-zone limit")  # silence, not "worldwide"
     assert himalayas_eligibility(["India", "Singapore"], [5.5]) == (["IN", "SG"], "countries", "locationRestrictions")
     assert himalayas_eligibility(["Asia"], [])[1] == "countries"                    # a region expands to its countries
     assert himalayas_eligibility([], [-8, -7, -6, -5])[1] is None                     # a time-zone window alone says nothing
     assert himalayas_eligibility(["Atlantis"], full)[1] is None                       # an unresolvable name: unknown, not worldwide
-    assert himalayas_eligibility(None, None)[1] == "worldwide"
+    assert himalayas_eligibility(None, None)[1] is None
 
 
 def test_pay_needs_a_period_and_a_currency_and_dates_must_be_real():
@@ -240,5 +240,5 @@ def test_process_stores_himalayas_postings_with_their_own_companies_and_eligibil
         assert {r[0] for r in rows} == {"himalayas"} and {r[1] for r in rows} == {"remote"}
         assert all(r[4] and "aggregator" not in r[4] for r in rows)                    # each names its own company
         assert all(r[5] is not None for r in rows)                                     # attached to the query's board
-        assert sum(1 for r in rows if r[3] == ["IN"]) >= 4 and any(r[2] == "worldwide" for r in rows)
+        assert sum(1 for r in rows if r[3] == ["IN"]) >= 4 and any(r[2] is None for r in rows)  # an empty restriction list stays unknown
         assert conn.execute(text("SELECT count(*) FROM hunterrr.raw_documents WHERE clean_text_gz IS NOT NULL")).scalar() == 0

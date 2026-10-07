@@ -1,0 +1,15 @@
+# DEV (was a holdout until its misses were read) for the Himalayas aggregator source, batch B (2026-10-07). See 09_himalayas_a.yaml.
+- {gid: "373320dcb6", remote: remote, india: "yes", employment: full_time, entry: unknown, flags: [language_required, suspicious_contact], why: "no restriction, US employer hours (CST); 'Fluent English and Spanish required'; recruiter-agency posting that sends candidates to WhatsApp"}
+- {gid: "86238ffdc8", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict ['India'], trainee copywriter, level Entry-level"}
+- {gid: "b12fe608c9", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [suspicious_contact], why: "no restriction, US employer hours (EST), level Entry-level; recruiter-agency posting that says 'keep an eye on your email and WhatsApp for the next steps'"}
+- {gid: "be7fc58512", remote: remote, india: unknown, employment: full_time, entry: "yes", flags: [], why: "'Location: Remote', US medical billing company, no country stated; asks 1+ year; level Entry-level"}
+- {gid: "61d2e2f254", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict ['India'], 'All our positions are Remote'; junior role"}
+- {gid: "ece1bfda9f", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "'Entry level (Remote - Mumbai)', restrict ['India'], 'would be suited to a recent graduate'"}
+- {gid: "b5b0bf31fb", remote: remote, india: unknown, employment: full_time, entry: unknown, flags: [not_a_job], why: "'Talent Pool': a general application, not an open job"}
+- {gid: "ada7ff74a1", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict ['India'] (the text never says remote; Himalayas lists remote jobs only); asks minimum 2 years"}
+- {gid: "f9aa8cc4e3", remote: unknown, india: na, employment: full_time, entry: "yes", flags: [not_a_job], why: "'Join Distribusion Global Talent Pool': a general application"}
+- {gid: "f56e7a16bb", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict ['India'], 'Remote work'; asks 1 year, freshers welcome"}
+- {gid: "d1d02aedbd", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict ['India'], remote per Himalayas; 0-5 years, 'ideal for early-career professionals'"}
+- {gid: "a516c153ff", remote: remote, india: "yes", employment: full_time, entry: "no", flags: [], why: "restrict ['India']; 'typically 3+ years' of data governance experience"}
+- {gid: "15241dbff5", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict ['India'], trainee, level Entry-level"}
+- {gid: "6dffc7971d", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict ['India'] (the text never says remote), level Entry-level, associate"}

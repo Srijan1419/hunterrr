@@ -101,3 +101,43 @@ def test_recheck_rederives_work_auth_from_rules():
     params, changed = recheck_row(row)
     assert changed
     assert not params["work_auth_required"]
+
+
+# --- found on the fresh Himalayas holdout (2026-10-07) -------------------------------------------------------------
+from etl.extract.rules.eligibility import explicit_availability
+from etl.extract.rules_rung import apply_rules as _apply
+from etl.core.types import Field as _F
+
+
+def test_everify_is_a_us_work_requirement():
+    assert "us_work_authorization" in (auth("Sharecare and its subsidiaries are Equal Opportunity Employers and E-Verify users.") or [])
+
+
+@pytest.mark.parametrize("text,includes_india", [
+    ("These are remote based positions that are available in the EMEA region.", False),
+    ("This role is only open to candidates based in Canada.", False),
+    ("Candidates must be located in the United States or Canada.", False),
+    ("The positions are available in APAC and EMEA.", True),
+    ("This position is available in India, the Philippines and Vietnam.", True),
+])
+def test_explicit_availability_statements(text, includes_india):
+    found = explicit_availability(text)
+    assert found is not None and ("IN" in found[0]) == includes_india
+
+
+@pytest.mark.parametrize("text", [
+    "We are a company based in Germany with a remote team.",
+    "Our offices are available in Berlin and London for team weeks.",
+    "Roles are open to everyone.",
+])
+def test_ordinary_sentences_are_not_availability_statements(text):
+    assert explicit_availability(text) is None
+
+
+def test_a_source_worldwide_that_the_text_contradicts_becomes_unknown_and_a_consistent_one_stays():
+    worldwide = {"eligibility_scope": _F(value="worldwide", provenance="source", evidence="no locationRestrictions")}
+    out, conflicts = _apply(dict(worldwide), title="Graduate Talent Scientist",
+                            description="Location: These are remote based positions that are available in the EMEA region.", posted_at=None)
+    assert out["eligibility_scope"].value is None and any("source says worldwide" in c for c in conflicts)
+    kept, _ = _apply(dict(worldwide), title="Engineer", description="Fully remote. Positions are available in APAC and EMEA.", posted_at=None)
+    assert kept["eligibility_scope"].value == "worldwide"

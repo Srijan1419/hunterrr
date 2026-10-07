@@ -259,4 +259,30 @@ def parse_eligibility(text: Any, ctx: ParseContext | None = None) -> tuple[Field
     return countries_field, scope_field
 
 
-__all__ = ["parse_eligibility"]
+# "These remote positions are available in the EMEA region", "open only to candidates based in Canada": a plain
+# statement of where the role can be filled. Used to check an aggregator's blanket "no restriction" against the text.
+_AVAILABILITY = re.compile(
+    r"\b(?:positions?|roles?|jobs?|opportunit(?:y|ies)|vacanc(?:y|ies))\b[^.\n]{0,60}?\b(?:are|is)\s+(?:only\s+)?(?:available|open)\s+(?:only\s+)?(?:in|to)\s+(?:the\s+)?(?P<w1>[^.\n;]{2,70})"
+    r"|\b(?:only\s+)?(?:open|available)\s+(?:only\s+)?to\s+(?:candidates|applicants|residents)\s+(?:who\s+are\s+)?(?:based|located|living|residing|resident)\s+in\s+(?:the\s+)?(?P<w2>[^.\n;]{2,70})"
+    r"|\b(?:candidates|applicants)\s+(?:must|need\s+to|have\s+to)\s+(?:be\s+)?(?:based|located|living|residing|resident)\s+in\s+(?:the\s+)?(?P<w3>[^.\n;]{2,70})",
+    re.IGNORECASE,
+)
+_AFTER_PLACE = re.compile(r"\b(?:but|while|however)\b|\band\s+(?=(?:we|our|the|this|you|they|all)\b)", re.IGNORECASE)
+
+
+def explicit_availability(text: Any) -> tuple[set[str], str] | None:
+    """(countries, evidence) when the text states where the role can be filled and that place resolves to countries."""
+    if not isinstance(text, str) or not text:
+        return None
+    from etl.extract.rules.locstring import read_location  # local import: locstring imports the rule modules
+
+    for m in _AVAILABILITY.finditer(text[:MAX_SCAN]):
+        where = m.group("w1") or m.group("w2") or m.group("w3") or ""
+        where = _AFTER_PLACE.split(where, maxsplit=1)[0].strip(" ,")
+        reading = read_location(where)
+        if reading.countries:
+            return set(reading.countries), " ".join(m.group(0).split())[:MAX_EVIDENCE]
+    return None
+
+
+__all__ = ["parse_eligibility", "explicit_availability"]

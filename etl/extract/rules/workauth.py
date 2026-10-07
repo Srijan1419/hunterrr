@@ -40,7 +40,7 @@ _YES = re.compile(
 _AUTH = [
     ("us_work_authorization", re.compile(
         r"\bauthori[sz]ed\s+to\s+work\s+in\s+the\s+(?:us|u\.s\.|usa|united\s+states)\b"
-        r"|\bus\s+work\s+authori[sz]ation\b|\bus\s+citizens?\b|\bu\.s\.\s+citizens?\b", _I)),
+        r"|\bus\s+work\s+authori[sz]ation\b|\bus\s+citizens?\b|\bu\.s\.\s+citizens?\b|\be-?verify\b", _I)),
     ("uk_right_to_work", re.compile(r"\bright\s+to\s+work\s+in\s+the\s+uk\b|\buk\s+right\s+to\s+work\b", _I)),
     ("eu_work_permit", re.compile(r"\b(?:eu\s+work\s+permit|right\s+to\s+work\s+in\s+the\s+eu)\b", _I)),
     ("india_work_permit", re.compile(r"\bindia(?:n)?\s+work\s+(?:permit|authori[sz]ation)\b", _I)),

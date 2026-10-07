@@ -76,7 +76,9 @@ def himalayas_eligibility(restrictions: Any, timezones: Any) -> tuple[list[str] 
         return sorted(set(codes)), "countries", "locationRestrictions"
     zones = [z for z in timezones if isinstance(z, (int, float))] if isinstance(timezones, list) else []
     if not zones or len(zones) >= FULL_TIMEZONE_COUNT:
-        return None, "worldwide", "no locationRestrictions and no time-zone limit"
+        # An empty list is silence, not a statement that the company hires everywhere (4 of 17 such jobs were wrong in
+        # the 2026-10-07 check): leave it unknown and let the description say "worldwide" itself.
+        return None, None, "no locationRestrictions and no time-zone limit"
     return None, None, "time zones only"
 
 
