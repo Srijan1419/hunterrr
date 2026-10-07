@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { FeedFilters } from "@/components/feed/FeedFilters";
+import { EmptyArt } from "@/components/atlas/EmptyArt";
 import { FeedKeys } from "@/components/feed/FeedKeys";
 import { JobRow } from "@/components/feed/JobRow";
 import styles from "@/components/feed/feed.module.css";
@@ -109,6 +110,7 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
 
       {result.rows.length === 0 ? (
         <div className={styles.empty}>
+          <EmptyArt />
           <strong>Nothing matches these filters</strong>
           Try removing a filter, or wait for the next collection run.
           <div className={styles.emptyActions}>

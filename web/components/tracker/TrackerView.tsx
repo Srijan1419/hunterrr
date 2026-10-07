@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EmptyArt } from "@/components/atlas/EmptyArt";
 import { initials } from "@/components/feed/JobRow";
 import { StateSelect } from "@/components/tracker/StateSelect";
 import {
@@ -77,6 +78,7 @@ export function TrackerView({ board, now = new Date() }: { board: Record<Applica
       </div>
       {total === 0 ? (
         <div className={styles.emptyBoard}>
+          <EmptyArt />
           <p>{TRACKER_EMPTY}</p>
           <Link href="/jobs" className={styles.emptyLink}>Find a job to save</Link>
         </div>
