@@ -1,0 +1,33 @@
+# DEV (was a holdout until its misses were read) for the Himalayas aggregator source, batch D (2026-10-07), drawn after the v9 rules (an empty country
+# list is silence). Labelled by reading the text and the aggregator's fields BEFORE the pipeline was run on them.
+# An empty country list with no worldwide statement in the text is labelled india: unknown.
+- {gid: "d8b90ebe5b", remote: remote, india: unknown, employment: full_time, entry: unknown, flags: [language_required, suspicious_contact], why: "no restriction, US employers (CST); English and Spanish required; recruiter-agency posting that sends candidates to WhatsApp"}
+- {gid: "bcded5fed0", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict ['India'], 100% remote; asks 2-3 years with at least 1 hands-on"}
+- {gid: "df4d138072", remote: remote, india: unknown, employment: full_time, entry: "yes", flags: [], why: "no restriction listed, US childcare sales; asks 1-3+ years"}
+- {gid: "ba9ca31f2e", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [not_a_job], why: "'BFC Anywhere in India': a general application 'even when there may not be an immediate opening'"}
+- {gid: "5c69a684f5", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [not_a_job, non_english], why: "'Initiativbewerbung' = spontaneous application, written in German; restrict lists India among ten countries"}
+- {gid: "3f052e1f87", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict ['India']; Junior Payroll Assistant asking minimum 1-2 years"}
+- {gid: "20b8b91585", remote: remote, india: "yes", employment: full_time, entry: "no", flags: [], why: "restrict ['India']; asks 3+ years as an executive assistant"}
+- {gid: "6a8ecec771", remote: remote, india: "yes", employment: contract, entry: "yes", flags: [language_required], why: "restrict ['India']; Contract at $13/hour; Bengali expert required"}
+- {gid: "8fa8773747", remote: remote, india: "yes", employment: unknown, entry: "yes", flags: [], why: "restrict lists India; a teaching-assistant role for a training programme with set EST lecture hours, hours per week not stated"}
+- {gid: "9ecbfd29d0", remote: remote, india: unknown, employment: full_time, entry: "yes", flags: [], why: "no restriction listed, US insurance broker; asks 2-4 years preferred"}
+- {gid: "6b4247e984", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict ['India'], 'only apply if you are located in India', graveyard shift; asks at least 1 year"}
+- {gid: "745698719b", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict ['India'], Trainee - Sales Audit (the text never says remote; Himalayas lists remote jobs only)"}
+- {gid: "d753f83281", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [not_a_job], why: "'Open Applications - SEO': joins a passive talent pool; restrict lists India"}
+- {gid: "e9937fc507", remote: remote, india: "yes", employment: contract, entry: "yes", flags: [], why: "restrict lists India among many; Junior Business Analyst, asks 2-4 years, 'B2B contract preferred'"}
+- {gid: "29ff14b1d0", remote: remote, india: "yes", employment: full_time, entry: unknown, flags: [not_a_job], why: "'Refer a Candidate to OpenFX' is a referral form, not a job; restrict lists India"}
+- {gid: "d9c112ce91", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "no restriction listed but the text says 'This is a globally remote role'; Associate level, no years stated"}
+- {gid: "bb538ee665", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict lists India and 77 other countries; Coder I, less than 1 year; US hospital hours"}
+- {gid: "a78598ce03", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict ['India']; remote role for candidates based in Mumbai; asks 1-4 years"}
+- {gid: "511006ae5c", remote: remote, india: "yes", employment: full_time, entry: "no", flags: [], why: "restrict ['India']; asks 3-5 years in sales development"}
+- {gid: "1885ac5dea", remote: remote, india: "yes", employment: full_time, entry: "no", flags: [], why: "restrict ['India'], 'Location(s): India Remote'; asks 3-5 years of mainframe tools"}
+- {gid: "0f6eb0cb01", remote: remote, india: unknown, employment: full_time, entry: unknown, flags: [not_a_job], why: "'Talent Network': a general sign-up, not an open job; no restriction listed"}
+- {gid: "237238c1a6", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict ['India'], 'fully remote role based in India', 8 am-5 pm IST; Data QA associate"}
+- {gid: "8c4d27a427", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict ['India']; asks 1-2 years"}
+- {gid: "af847dae1b", remote: remote, india: unknown, employment: full_time, entry: "yes", flags: [], why: "no restriction listed; Junior Product Manager"}
+- {gid: "599de5adbe", remote: remote, india: unknown, employment: full_time, entry: "yes", flags: [], why: "no restriction listed, US customer service at USD pay; asks 2+ years"}
+- {gid: "8ddb3ff964", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict ['India']; Editorial Services Assistant, level Entry-level, no years stated"}
+- {gid: "7cf1479f0d", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict ['India']; asks 1-3 years in content or SEO"}
+- {gid: "9ae88c8acb", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [], why: "restrict ['India'], '100% remote', INR 5-7 lakh a year; 2+ years after graduation"}
+- {gid: "f7dc4e7ae7", remote: remote, india: "yes", employment: full_time, entry: "yes", flags: [language_required], why: "restrict ['India']; Punjabi interpreter, native fluency in English and Punjabi required; rotational night shifts"}
+- {gid: "3c80a89471", remote: remote, india: unknown, employment: full_time, entry: "yes", flags: [], why: "no restriction listed; Technical Support Specialist asking 2+ years"}

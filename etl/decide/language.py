@@ -44,6 +44,10 @@ _REQUIRED = (
         r"support|candidates?|analysts?|managers?|engineers?|professionals?|advisors?|consultants?|moderators?|writers?|recruiters?|roles?|positions?|jobs?)\b",
         _I),
     re.compile(r"\b" + _LANG + r"\s+(?:speaker|support|specialist)\b", _I),
+    # "Punjabi Language Interpreter", "Bengali translator": the title names the language the work is done in.
+    re.compile(r"\b" + _LANG + r"\s+(?:language\s+)?(?:interpreters?|translators?|transcri\w+|linguists?|annotators?|tutors?|teachers?)\b", _I),
+    # "Languages: English, Spanish" in a requirements block.
+    re.compile(r"\blanguages?\s*[:\-]\s*(?:[\w/&-]+[\s,]+){0,3}?" + _LANG + r"\b", _I),
     # "Good level of French", "strong command of German": a level word, then the language, and not a subject
     # ("French GAAP", "German tax law", "Spanish market knowledge") or a market.
     re.compile(
@@ -64,6 +68,15 @@ _NICE_BEFORE = re.compile(r"\b(?:plus|bonus|nice[- ]to[- ]have|preferred|desirab
 _STOPWORDS = frozenset(
     "the and to of a in for with is you we will are on as be our your or an at by that this from have has can it its not "
     "who their they about more work team role experience skills".split()
+)
+#: Common function words of German, French, Spanish, Portuguese, Italian and Dutch that are not English words.
+_FOREIGN_WORDS = frozenset(
+    "der die das und ist wir nicht dich du ihr sie ein eine mit auf bei für den dem des zu ich dein deine unsere werden "
+    "le les des du une est pour dans nous vous que qui sur avec ne pas au aux "
+    "el los las del por para con una es se su sus y como más pero "
+    "um uma os as dos das em não você nós "
+    "il lo gli di che per con una sono non nel della "
+    "het een van en te is zijn voor met niet op".split()
 )
 _WORD = re.compile(r"[^\W\d_]+", re.UNICODE)
 
@@ -100,9 +113,15 @@ def is_non_english(text: str) -> bool:
     # Scripts without spaces (Japanese, Chinese) have few "words", so judge the script first.
     if letters >= 80 and non_latin / letters > 0.3:
         return True
+    hits = sum(1 for w in words if w.lower() in _STOPWORDS)
+    # A short text is judged only when it is clearly another European language: many of that language's function
+    # words and almost none of English's.
+    if len(words) >= 15 and hits / len(words) < 0.08:
+        foreign = sum(1 for w in words if w.lower() in _FOREIGN_WORDS)
+        if foreign / len(words) >= 0.15:
+            return True
     if len(words) < 60:
         return False  # too short to judge; never hide on a guess
-    hits = sum(1 for w in words if w.lower() in _STOPWORDS)
     return hits / len(words) < 0.12
 
 

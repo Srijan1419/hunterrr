@@ -153,3 +153,29 @@ def test_subject_or_market_wording_is_not_a_language_requirement(text):
 def test_language_skills_that_would_help_are_a_nice_to_have():
     required, nice = required_languages("Portuguese, Italian and/or Spanish language skills would set you up for success in this role.")
     assert not required and {"portuguese", "italian", "spanish"} & nice
+
+
+# --- found on the second fresh Himalayas holdout (2026-10-07) -------------------------------------------------------
+from etl.decide.language import is_non_english, required_languages
+
+
+def test_an_interpreter_or_translator_title_names_the_language_it_needs():
+    assert "punjabi" in required_languages("Punjabi Language Interpreter\nNative fluency in English and Language")[0]
+    assert "bengali" in required_languages("Bengali translator wanted")[0]
+    assert "tamil" in required_languages("Tamil transcription specialist")[0]
+    assert required_languages("Language interpreter for our English-speaking customers")[0] == set()
+
+
+def test_a_languages_line_in_a_requirements_block_needs_those_languages():
+    assert "spanish" in required_languages("Requirements: - Time zone: CST\nLanguages: English, Spanish")[0]
+    assert required_languages("Languages: Python, Java and Go")[0] == set()
+
+
+def test_a_short_german_text_is_not_english_but_a_short_english_one_is():
+    german = ("In Kontakt treten Wann lernen wir dich kennen? Bist du bereit für den nächsten Karriereschritt? Dann bewirb dich "
+              "auf unsere offenen Jobs. Du hast nichts Passendes gefunden? Wir freuen uns auf deine Initiativbewerbung und "
+              "werden dein Profil bei zukünftigen Stellenausschreibungen berücksichtigen.")
+    assert is_non_english(german) is True
+    english = "We are looking for a support engineer to help our customers solve problems quickly and kindly, with a small team."
+    assert is_non_english(english) is False
+    assert is_non_english("Short text") is False

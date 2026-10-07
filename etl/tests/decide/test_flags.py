@@ -185,3 +185,26 @@ def test_himalayas_remote_that_the_text_never_says_gets_a_soft_label_and_stays_v
     assert "remote_unverified" not in stated.labels
     other = scan_flags({"title": "Analyst", "source": "greenhouse", "remote_type": "remote", "description_md": "Review claims."})
     assert "remote_unverified" not in other.labels
+
+
+# --- found on the second fresh Himalayas holdout (2026-10-07) -------------------------------------------------------
+@pytest.mark.parametrize("title", [
+    "Open Applications - SEO", "Open Application", "Refer a Candidate to OpenFX", "Refer a friend and earn",
+    "Initiativbewerbung", "Candidature spontanée", "Candidatura espontánea", "Spontane sollicitatie",
+])
+def test_applications_in_advance_and_referral_forms_are_not_jobs(title):
+    assert "not_a_job" in scan_flags({"title": title, "source": "himalayas", "description_md": "x"}).flags
+
+
+def test_a_posting_that_invites_a_cv_with_no_opening_is_not_a_job():
+    text = "We value talented people, even when there may not be an immediate opening that matches. Submit your resume for future consideration."
+    assert "not_a_job" in scan_flags({"title": "BFC Anywhere in India", "source": "himalayas", "description_md": text}).flags
+    assert "not_a_job" in scan_flags({"title": "Analyst", "source": "greenhouse", "description_md": "Please submit your CV for future opportunities."}).flags
+
+
+@pytest.mark.parametrize("title,expected", [
+    ("RVCE - EBA (January, 2027)", True), ("PES - MBA (Aug 2026)", True),
+    ("SDE - Backend Engineer", False), ("Software Engineer (January 2027 start)", False), ("QA - Automation", False),
+])
+def test_college_batch_registration_titles(title, expected):
+    assert ("not_a_job" in scan_flags({"title": title, "source": "himalayas", "description_md": "x"}).flags) is expected

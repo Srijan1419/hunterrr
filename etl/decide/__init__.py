@@ -27,7 +27,7 @@ from etl.decide.india import india_eligible
 from etl.decide.language import is_non_english, required_languages
 from etl.decide.role_family import FAMILIES, role_family
 
-DECISION_VERSION = 3  # 3: campus/student ambassador programmes are not jobs; soft label remote_unverified; 2: fee_requested only when the candidate is asked to pay (production false alarms); 1: first version
+DECISION_VERSION = 4  # 4: open applications, referral forms, spontaneous applications, college-batch titles are not jobs; Indian-language interpreters and 'Languages: X' need the language; short German/French/Spanish texts are non-English; 3: campus/student ambassador programmes are not jobs; soft label remote_unverified; 2: fee_requested only when the candidate is asked to pay (production false alarms); 1: first version
 
 #: Languages a candidate is assumed to read until profiles carry languages (Loop 3/5).
 ASSUMED_LANGUAGES = frozenset({"english", "hindi"})

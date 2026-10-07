@@ -93,7 +93,9 @@ _TOO_GOOD = re.compile(
 # Postings that are not an open job: talent-community sign-ups, open / spontaneous applications, "future roles"
 # pools, and conversion postings only existing temporary staff may use (all found on real boards, 2026-10-06).
 _NOT_A_JOB_TITLE = re.compile(
-    r"\btalent\s+(?:community|network|pool)\b|\bopen\s+(?:application|sollicitatie)\b|\b(?:general|spontaneous)\s+application\b"
+    r"\btalent\s+(?:community|network|pool)\b|\bopen\s+(?:applications?|sollicitatie)\b|\b(?:general|spontaneous)\s+application\b"
+    r"|\brefer\s+a\s+(?:candidate|friend|colleague)\b|\binitiativbewerbung\b|\bblindbewerbung\b|\bcandidature\s+spontan[ée]e\b"
+    r"|\bcandidatura\s+espont[aá]nea\b|\bspontane\s+sollicitatie\b"
     r"|\bfuture\s+(?:opportunities|openings|roles|positions?|\w+\s+roles)\b|\bexpression\s+of\s+interest\b|\bapply\s+here\b|\bsollicitatie\b"
     r"|\bjoin\s+our\s+(?:talent|team)\s+(?:community|network|pool)\b|\btemp\s+to\s+(?:full[- ]?time|perm\w*)\b"
     r"|\b(?:campus|student|college)\s+ambassador\b",
@@ -102,8 +104,15 @@ _NOT_A_JOB_TITLE = re.compile(
 _NOT_A_JOB_TEXT = re.compile(
     r"\bonly\s+(?:\w+\s+){0,3}(?:may|can)\s+apply\b|\bconversion\s+program\b|\bnot\s+every\s+(?:\w+\s+)?role\s+is\s+open\b"
     r"|\bwe(?:'|’)re\s+always\s+interested\s+(?:in\s+meeting|to\s+meet)\b|\bno\s+(?:current|open)\s+(?:positions|openings|vacancies)\b"
-    r"|\b(?:campus|student|college)\s+ambassador\b",
+    r"|\b(?:campus|student|college)\s+ambassador\b"
+    # "even when there may not be an immediate opening ... submit your resume for future consideration"
+    r"|\beven\s+(?:when|if)\s+there\s+(?:may\s+not\s+be|is\s+not|isn(?:'|’)t)\s+an?\s+(?:immediate|current|open)\s+(?:opening|position|vacancy|role)\b"
+    r"|\bsubmit\s+your\s+(?:resume|cv)\s+for\s+future\s+(?:consideration|opportunities|openings)\b",
     _I,
+)
+# A college-batch registration post, not a job: "RVCE - EBA (January, 2027)" (institution - programme (month, year)).
+_CAMPUS_BATCH_TITLE = re.compile(
+    r"^\s*[A-Z]{2,8}\s*[-–]\s*[A-Z]{2,6}\s*\((?i:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?,?\s*20\d\d\)\s*$"
 )
 
 # A posting that says remote anywhere in its text; tells an aggregator's blanket "remote" from a stated one.
@@ -166,7 +175,7 @@ def scan_flags(view: Mapping[str, Any]) -> FlagResult:
     hard("unpaid", _first_unguarded(_UNPAID, cleaned))
     hard("commission_only", _first_unguarded(_COMMISSION_ONLY, text))
     hard("too_good", _first_unguarded(_TOO_GOOD, text))
-    hard("not_a_job", _NOT_A_JOB_TITLE.search(title) or _NOT_A_JOB_TEXT.search(description[:3000]))
+    hard("not_a_job", _NOT_A_JOB_TITLE.search(title) or _CAMPUS_BATCH_TITLE.search(title) or _NOT_A_JOB_TEXT.search(description[:3000]))
     if source not in KNOWN_BOARD_SOURCES:
         for m in _WHATSAPP.finditer(text):
             near = text[max(0, m.start() - 80):m.end() + 80]
