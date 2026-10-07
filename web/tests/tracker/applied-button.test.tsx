@@ -31,6 +31,7 @@ describe("AppliedButton", () => {
     fireEvent.click(screen.getByRole("button", { name: "I applied" }));
     const alert = await screen.findByRole("alert", {}, { timeout: 8000 });
     expect(alert).toHaveTextContent("no longer exists");
-    expect(screen.getByRole("button", { name: "I applied" })).toBeInTheDocument();
+    // the error shows a moment before the transition ends and the label returns to "I applied"
+    expect(await screen.findByRole("button", { name: "I applied" }, { timeout: 8000 })).toBeInTheDocument();
   });
 });
