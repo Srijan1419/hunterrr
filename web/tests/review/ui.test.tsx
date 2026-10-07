@@ -39,7 +39,8 @@ describe("WrongButton", () => {
     fireEvent.click(screen.getByRole("button", { name: "Something wrong?" }));
     fireEvent.click(screen.getByRole("button", { name: "Send" }));
     await waitFor(() => expect(screen.getByRole("alert").textContent).toMatch(/no longer exists/));
-    expect(screen.getByRole("button", { name: "Send" })).toBeTruthy();
+    // the error shows a moment before the transition ends and the button reads "Send" again
+    expect(await screen.findByRole("button", { name: "Send" })).toBeTruthy();
   });
 });
 
