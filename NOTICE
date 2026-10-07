@@ -26,10 +26,9 @@ Crawl4AI — Apache License 2.0
 
 Better Auth — MIT License
   https://github.com/better-auth/better-auth
-  Framework-agnostic authentication library for TypeScript. Used for email and
-  password authentication, self-hosted, with its tables in the same libSQL database as
-  the rest of the app.
-  Status: adopted, pending implementation.
+  Framework-agnostic authentication library for TypeScript. Used for Google sign-in, self-hosted, with its tables
+  in the same Postgres database as the rest of the app. Sign-in is limited to an invite list.
+  Status: adopted.
   MIT obligations: the copyright notice and license text ship with the dependency and
   are reproduced by its own distribution. This project uses it unmodified.
 
@@ -37,27 +36,17 @@ Better Auth — MIT License
 DATA SOURCE ATTRIBUTION
 =======================
 
-Remote OK — public API, https://remoteok.com/api
-  Every response from the Remote OK API carries the publisher's terms inside the first
-  object's `legal` field, which reads:
+Himalayas — public search API, https://himalayas.app/jobs/api/search
+  Used for one saved query (India, entry level, full-time, remote). Its terms ask that the source is shown and that
+  its jobs are not resubmitted to other job platforms. This project shows "via Himalayas" on every job from it,
+  sends the person to the Himalayas page to apply, and never reposts its jobs. Requests are paced at one per two
+  seconds and stop on a 429 answer.
 
-    "Please link back (with follow, and without nofollow!) to the URL on Remote OK and
-     mention Remote OK as a source, so we get traffic back from your site. If you do
-     not we'll have to suspend API access. Please don't use the Remote OK logo without
-     written permission."
+Company job boards — Greenhouse, Lever, Ashby, SmartRecruiters, Workable, Recruitee
+  Read through each platform's public, key-less posting endpoints, one polite request at a time. Every job links to
+  the employer's own apply page.
 
-  That is a condition of access, and this project accepts it. Concretely, the deployed
-  application must:
+Not used: Remote OK, Jobicy and Remotive. Earlier versions of this project read Remote OK and Jobicy; their code and
+attribution obligations were removed with them. Remotive's terms forbid republishing its jobs, so it is not collected.
 
-    1. display a visible "Remote OK" attribution link pointing at remoteok.com on every
-       page, with rel="follow" and no rel="nofollow";
-    2. name Remote OK as a source wherever posting data is shown; and
-    3. not render the Remote OK logo.
-
-  The notice is preserved as data rather than discarded: the source module keeps the
-  `legal` object verbatim instead of dropping it during parsing, so the obligation stays
-  visible in the stored payload and the pipeline cannot silently erase it.
-
-  Jobicy (https://jobicy.com) and Himalayas (https://himalayas.app) are ingested under
-  the same public, no-key, no-login rule and are attributed on the coverage page. No
-  platform requiring login to a personal account is scraped by this project.
+No platform requiring login to a personal account is scraped by this project. See docs/sources-terms.md.

@@ -1,195 +1,118 @@
 # Hunterrr
 
-**Live: https://hunterrr.vercel.app** · **Source: https://github.com/Srijan1419/hunterrr**
+**Live: https://hunterrr.vercel.app** (invite-only) · **Source: https://github.com/Srijan1419/hunterrr**
 
-**A personal job-hunting tool.** GitHub Actions collects postings from company job boards
-every few hours into Postgres (Neon), extracts structured fields with fixed rules first and
-AI only for what is still unknown, and a private web app (Next.js on Vercel, one Google
-account allowed) shows entry-level jobs ranked by fit with your profile, with an application
-tracker.
+**An early-career basecamp for Indian freshers.** Hunterrr finds remote, full-time, entry-level jobs
+that a person in India can actually take, tells you why each one is on your list, ranks them against
+your skills, and tracks your applications. The goal is a short time from first use to first interview.
 
-> **Status (2026-10-06):** this README is mid-rewrite. The sections below describe the first
-> version, a public analytics dashboard on Turso, which has been retired. They stay as design
-> history until the portfolio rewrite replaces them.
+It is not a job board. A board shows everything and leaves the checking to you. Hunterrr hides what
+you cannot take and says so about what it is unsure of.
 
-## Why this project
+## The rules it never bends
 
-Most portfolio projects that touch job data stop at "here's a table of postings." This
-one is built the way a data engineer would actually be asked to build it: a fixed
-normalization ladder that only reaches for an LLM after deterministic rules have failed,
-a data contract that both the pipeline and the web app code against so the two runtimes
-can't silently drift apart, and — the part most projects skip — a `/coverage` page that
-publishes exactly how much of each source resolved, how much didn't, and why.
+Every job in the main list passes all of these. When the data is silent, the answer is "not eligible",
+and supply is grown by finding more sources, never by loosening a rule.
 
-That last part came out of a real finding: public remote-job aggregators systematically
-under-represent the Indian market. RemoteOK resolves India for 4 of 99 postings in a
-capture window; Jobicy and Himalayas resolve zero in their default pages. That's not a
-bug in this pipeline — it's a measured property of the sources themselves, and this
-project reports it rather than smoothing it into a chart that implies otherwise. A
-dashboard that says "here's what we don't know, and here's why" is a more interesting
-thing to hand an interviewer than one that pretends completeness it doesn't have.
+1. **Remote only.** Hybrid and on-site roles are not shown.
+2. **A person in India can take it.** The posting names India or a region that contains it, or says
+   worldwide and asks for no US/UK/EU work authorisation, clearance or citizenship.
+3. **Full-time.** No internships, part-time, volunteer or temporary roles. Contract is allowed and labelled.
+4. **Entry level.** Senior titles and a stated minimum of 3 or more years are hidden. 1–2 years is "worth a shot".
+5. **A real, open job.** Fee-asking, unpaid, commission-only, "talent pool" and campus-ambassador postings,
+   expired postings and dead apply links are hidden.
 
-## Architecture
+Jobs that are remote and entry level but do not say whether India may apply sit in a separate, clearly
+labelled "unconfirmed" view, never mixed into the main list.
+
+## How it works
 
 ```mermaid
 flowchart LR
-    subgraph Sources["Public, no-login sources"]
-        RO[RemoteOK]
-        JB[Jobicy]
-        HM[Himalayas]
-        ATS[Greenhouse / Lever / Ashby<br/>ATS connector]
-    end
-
-    subgraph ETL["ETL — Python, dlt, scheduled every 6h by GitHub Actions"]
-        RAW[(raw_jobs<br/>verbatim landing)]
-        NORM[Normalizer<br/>rules first, LLM last resort]
-        LLM[NVIDIA NIM<br/>skill extraction only]
-        AGG[Aggregator]
-        JOBS[(jobs / job_skills)]
-        DAILY[(skills_daily /<br/>source_coverage)]
-    end
-
-    subgraph Web["Web — Next.js, Drizzle, Better Auth"]
-        READ[Read layer]
-        PAGES["/ /jobs /skills /trends /coverage"]
-        AUTH[Better Auth<br/>email + password]
-        DASH["/dashboard<br/>saved searches, shortlist"]
-    end
-
-    DB[(Turso / libSQL<br/>one database, two runtimes)]
-
-    RO & JB & HM & ATS --> RAW
-    RAW --> NORM
-    NORM -.skills only.-> LLM
-    LLM -.-> NORM
-    NORM --> JOBS
-    JOBS --> AGG --> DAILY
-    JOBS --> DB
-    DAILY --> DB
-    DB --> READ --> PAGES
-    AUTH --> DASH
-    READ --> DASH
+    S1[Company boards<br/>Greenhouse, Lever, Ashby,<br/>SmartRecruiters, Workable, Recruitee] --> C
+    S2[Himalayas<br/>saved India query] --> C
+    C[collect<br/>8 shards, every 6 h] --> P[process<br/>extraction ladder]
+    P --> R[recheck<br/>re-derive with newer rules]
+    R --> D[decide<br/>the five rules, with reasons]
+    D --> K[skills + link check]
+    K --> DB[(Postgres on Neon)]
+    DB --> W[Next.js app on Vercel<br/>feed, Today, tracker, profile]
+    D -. scored against .-> G[gold set<br/>300 hand-labelled postings]
 ```
 
-Two deployables, one database. The ETL is the only writer; the web app is a pure read
-path plus two small, auth-gated writes (saved searches, shortlist). Neither runtime
-guesses at the other's schema — both code against the same documented data contract
-(`docs/data-model.md` and `web/db/v2/schema.ts`), and if the contract and a task ever disagreed, the contract
-won.
+- **Collect** polls each job board politely (per-host pacing, stop on 429) and stores the raw posting.
+- **Process** extracts fields with a fixed ladder: structured data in the page, then the board's own fields,
+  then fixed rules, and an AI step only for what is still unknown. Every field remembers where it came from.
+- **Decide** (`etl/decide`) turns the five rules into stored decisions with a plain-language reason, so the web
+  app only reads them.
+- **Skills** (`config/skills.yaml`) are matched in each posting and in your profile with the same dictionary;
+  the score explains matched and missing skills.
+- **The gold set** (`etl/fixtures/gold`) is 300 real postings labelled by hand. `python -m etl.run eval` scores
+  the pipeline against them, and CI fails if precision on what is shown drops below 95%.
+- **Privacy**: a profile and a tracker belong to one person. Every personal query filters on the signed-in user,
+  and `web/tests/privacy` proves that user A never sees user B's data.
 
-**Normalization is a fixed ladder, not a model call.** For every field: try the source's
-own structured field first, then a deterministic rule (a curated country-alias table,
-an ordered seniority keyword ladder), and only call the LLM for the residue — skill
-extraction from free text, which no source provides structurally. `unknown` is always a
-legal answer; the pipeline never guesses a value it can't support. NVIDIA's free tier
-caps out around 40 requests/minute account-wide, so a `content_hash` cache means an
-unchanged posting is never re-sent to a model twice.
+More detail: [`docs/architecture.md`](docs/architecture.md) and [`docs/data-model.md`](docs/data-model.md).
 
-## Product surface
+## Where the jobs come from
 
-| Route | What it shows | Auth |
+| Source | How | Notes |
 |---|---|---|
-| `/` | Market overview | Public |
-| `/jobs` | Search and filter by country, seniority, role type, skill, source | Public |
-| `/jobs/[id]` | Full posting detail with extracted skills, source-tagged vs. LLM-derived | Public |
-| `/skills` | In-demand skills, filterable, pay where disclosed | Public |
-| `/trends` | Posting volume over time, by source, by day of week | Public |
-| `/coverage` | The data-quality page — postings, pay-disclosure rate, and structured-seniority availability per source per country, plus how much of each feed resolved a country at all | Public |
-| `/dashboard` | Saved searches and a shortlist | Signed in |
+| ~120 company boards | Greenhouse, Lever, Ashby (and a few others) public job APIs | Mostly global companies; few are open to India, so India-heavy companies are added over time with `python -m etl.run discover "Company"` |
+| Himalayas | Public search API, one saved query (India, entry level, full-time, remote) | Shown as "via Himalayas". An empty country list is treated as silence, not "worldwide", because 4 of 17 such jobs were wrong in a hand check |
 
-**Two honesty rules run through every page, enforced by the type system rather than by
-convention** (`ChartCard`'s `postingCount` prop is required, not optional — a chart
-cannot render on this site without stating how many postings are behind it):
+Sources that need a personal login are not scraped. See [`NOTICE`](NOTICE) for attributions and terms.
 
-1. Every filter and every chart shows the posting count behind it.
-2. Every pay statistic shows its disclosure rate next to it. "Pay disclosed on 16% of
-   Remote OK postings" is a more honest sentence than a salary chart with no caveat, and
-   it survives an interviewer's first follow-up question.
+## Honest numbers (2026-10-07)
 
-## Running it locally
+- About 14,000 open postings collected; about 3,000 are remote; **222 pass all five rules** in the main list,
+  and about 130 more sit in the unconfirmed view.
+- Of the roughly 2,700 remote jobs on company boards, about 1,200 are US-only and under 100 are open to India,
+  mostly senior. That is the real shape of remote supply for India, and it is why Himalayas is the main source.
+- On the hand-labelled set the main list is 97% precise on postings used to tune the rules and 100% on postings
+  the rules have never seen (small sample, 7 shown). Recall is lower by design: a job that is not clearly open to
+  India stays out.
 
-**ETL** — Python 3.11+. The default test run needs no API key and no network:
+## Run it
+
+**ETL** (Python 3.11+). The default tests need no network and no API key:
 
 ```bash
 pip install -r etl/requirements.txt
 python -m pytest etl/tests -q -m "not live"
+python -m etl.run eval            # score the pipeline against the gold set
 ```
 
-The real runs are `python -m etl.run collect --shard 0/8`, `python -m etl.run process` and
-`python -m etl.run recheck`. They read `DATABASE_URL` (Postgres, schema `hunterrr`) and, for the
-AI extraction step, `NVIDIA_API_KEY` / `GROQ_API_KEY`. GitHub Actions runs them on a schedule
-(`collect.yml`, `process.yml`).
+The scheduled runs are `collect`, `process` (which runs seed, process, recheck, decide, skills, linkcheck) and a
+daily `health` check; see `.github/workflows`. They read `DATABASE_URL` and, for the AI step, `GROQ_API_KEY`,
+`NVIDIA_API_KEY` or `OPENROUTER_API_KEY`.
 
-**Web** — Node 22+:
+**Web** (Node 22+):
 
 ```bash
 cd web
 npm install
-npm run check      # typecheck + tests, in-memory Postgres, no live database needed
+npm run check      # typecheck + tests on an in-memory Postgres
 npm run dev
 ```
 
-A real deployment needs `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `ALLOWED_EMAIL`,
-`GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` (plus `GROQ_API_KEY` / `NVIDIA_API_KEY` for résumé
-reading) — see `web/.env.example`. This README is rewritten properly in the portfolio phase.
+A deployment needs `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`,
+`GOOGLE_CLIENT_SECRET` and `ALLOWED_EMAILS` (comma-separated invite list; the older single `ALLOWED_EMAIL`
+still works). See `web/.env.example`. Deploys happen by pushing to `main` (Vercel root directory `web`).
 
-## Data sources and attribution
+Database changes are plain SQL files in `web/drizzle-v2` (`0000` to `0009`), applied in order and written to be
+safe to run twice.
 
-RemoteOK, Jobicy, and Himalayas are ingested via their public, no-key, no-login JSON
-APIs. Greenhouse, Lever, and Ashby postings come through a generic ATS connector — one
-module per platform, not per company — against a small seed list of verified company
-boards. No source that requires logging into a personal account is scraped by this
-project.
+## Limits
 
-Remote OK's API terms require a visible, followed attribution link on every page as a
-condition of continued access; that link is in this site's footer. Full attribution
-text, license obligations for `dlt` and `Better Auth`, and the reasoning behind
-deferring `Crawl4AI` are in [`NOTICE`](./NOTICE).
-
-## Testing philosophy
-
-`etl/`: pytest, and the acceptance bar is that it passes with no network and no API key.
-Fixtures are small, real captured payloads from all three sources, including the
-degenerate cases actually observed (blank location, `salary_min == 0`, multi-country
-strings, Himalayas' numeric timezone-offset lists). LLM calls in tests run against a
-scripted transport, never the network.
-
-`web/`: Vitest is the only default gate. Playwright is available but deliberately not
-required — browser tests on a free CI tier are too slow to keep the build loop fast, and
-the trade favors deterministic, always-passing coverage of the layer where the real
-logic lives over end-to-end coverage of a UI that changes shape more often.
-
-## Honest limitations
-
-- **India coverage is thin across every source measured**, not just this pipeline: 4 of
-  99 RemoteOK postings, 0 of 200 on Jobicy's default page, 0 of 20 on Himalayas' default
-  page (Himalayas' own search endpoint surfaces 5,917 of a 97,976-posting feed when
-  queried directly for India — the gap is a default-fetch-window problem on their side,
-  not a resolution failure on ours, which is exactly the distinction `/coverage`'s
-  fetch-window figures exist to make visible).
-- **Pay disclosure is sparse and uneven**: 16% on RemoteOK, 59% on Jobicy, 10% on
-  Himalayas in the measured baseline. Every pay figure on this site is shown with its
-  disclosure rate for exactly this reason.
-- **RemoteOK serves a fixed rolling window of its newest ~100 postings**, not a
-  paginated full feed — its window-to-feed ratio is not a sampling rate and is labeled
-  as such.
-- **The scheduled pipeline has not run against a live Turso database yet.** Provisioning
-  a real Turso instance and wiring the resulting credentials into GitHub Actions secrets
-  is the one step between "fully built and tested offline" and "live in production" —
-  see `.github/workflows/cron.yml`.
-- **Greenhouse/Lever/Ashby postings carry no structured seniority, pay, or timezone
-  field on any of the three boards** — all three default to a rules/LLM resolution path
-  like every other under-structured source, never a silent guess.
-
-## Repo topology
-
-This project was built as a subfolder of a larger internal repository (a small
-multi-agent dev-org simulation) so it could reuse that repository's task and
-verification loop during development. Before deployment it is split into its own
-public repository with `git subtree split --prefix=hunterrr`, which carries this
-folder's commit history and none of the surrounding content.
+- **Free tiers.** Neon stores about 106 MB of the 512 MB free allowance and grows a few MB a day, so plan a
+  cleanup of old closed postings within about two months. GitHub Actions is free for this public repository.
+  Vercel Hobby and the AI providers' free rate limits are enough for a handful of testers, not for a public launch.
+- **The AI step** reads job text only. Résumés go to Groq or NVIDIA once, are not stored, and are checked against
+  the résumé itself before anything fills your profile.
+- **Not built yet**: semantic (embedding) matching, email-based tracker updates (needs Google OAuth for the inbox),
+  and a measured Lighthouse pass. Matching today uses the skills dictionary, role family, level, place and freshness.
 
 ## License
 
-MIT — see [`LICENSE`](./LICENSE). Third-party attributions and obligations are in
-[`NOTICE`](./NOTICE).
+MIT, see [`LICENSE`](LICENSE). Third-party notes are in [`NOTICE`](NOTICE).
