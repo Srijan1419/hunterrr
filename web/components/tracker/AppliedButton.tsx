@@ -10,7 +10,9 @@ import styles from "./tracker.module.css";
  * follow-up reminder a week ahead. Once applied (or further along) it reads as a link to the tracker.
  */
 export function AppliedButton({ postingId, state }: { postingId: number; state: string | null }) {
-  const [applied, setApplied] = useState(state !== null && state !== "saved");
+  const [tapped, setApplied] = useState(false);
+  // Applied by this tap, or already applied (or further along) when the page was rendered.
+  const applied = tapped || (state !== null && state !== "saved");
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
 
