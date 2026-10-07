@@ -4,6 +4,7 @@ import { useRef, useState, useTransition, type DragEvent, type KeyboardEvent } f
 import { readResume, saveProfileAction } from "@/app/(app)/profile/actions";
 import { FilterToggle } from "@/components/atlas/FilterToggle";
 import { ProfileSchema, type Profile, type ResumeFields } from "@/lib/profile/schema";
+import { ROLE_FAMILIES, SKILLS, skillIdsFromText } from "@/lib/skills/dictionary";
 import styles from "./profile.module.css";
 
 type Props = { initial: Profile; version: number | null; savedAt: string | null };
@@ -35,9 +36,9 @@ export function mergeResume(current: Profile, fields: ResumeFields): { next: Pro
 }
 
 function ChipsInput({
-  id, values, onChange, placeholder, transform = (s) => s,
+  id, values, onChange, placeholder, transform = (s) => s, listId,
 }: {
-  id: string; values: string[]; onChange: (v: string[]) => void; placeholder: string; transform?: (s: string) => string;
+  id: string; values: string[]; onChange: (v: string[]) => void; placeholder: string; transform?: (s: string) => string; listId?: string;
 }) {
   const [draft, setDraft] = useState("");
   const add = (raw: string) => {
@@ -66,6 +67,7 @@ function ChipsInput({
       ))}
       <input
         id={id}
+        list={listId}
         className={styles.chipInput}
         value={draft}
         placeholder={values.length ? "" : placeholder}
@@ -260,6 +262,21 @@ export function ProfileEditor({ initial, version, savedAt }: Props) {
             <span className={styles.hint}>Press Enter or comma after each one.</span>
           </div>
           <div className={`${styles.field} ${styles.full}`}>
+            <span className={styles.label} id="families-label">Fields you want to work in</span>
+            <div className={styles.famRow} role="group" aria-labelledby="families-label">
+              {ROLE_FAMILIES.map((f) => {
+                const on = profile.targetFamilies.includes(f.id);
+                return (
+                  <button key={f.id} type="button" className={`${styles.fam} ${on ? styles.famOn : ""}`} aria-pressed={on}
+                    onClick={() => set("targetFamilies", on ? profile.targetFamilies.filter((x) => x !== f.id) : [...profile.targetFamilies, f.id])}>
+                    {f.label}
+                  </button>
+                );
+              })}
+            </div>
+            <span className={styles.hint}>Jobs in these fields rank higher even when the title is not one of your target roles. Technical or not, pick what fits you.</span>
+          </div>
+          <div className={`${styles.field} ${styles.full}`}>
             <label className={styles.label} htmlFor="locations">Preferred locations {fromCv("locations")}</label>
             <ChipsInput id="locations" values={profile.locations} onChange={setList("locations")} placeholder="e.g. Bengaluru, Pune" />
           </div>
@@ -277,7 +294,13 @@ export function ProfileEditor({ initial, version, savedAt }: Props) {
 
       <section className={styles.card} aria-labelledby="skills">
         <h2 id="skills" className={styles.cardTitle}>Skills {fromCv("skills")}</h2>
-        <ChipsInput id="skillsInput" values={profile.skills} onChange={setList("skills")} placeholder="e.g. SQL, Python, Excel, Power BI" />
+        <ChipsInput id="skillsInput" values={profile.skills} onChange={setList("skills")} listId="skill-suggestions" placeholder="e.g. SQL, Python, Excel, Power BI" />
+        <datalist id="skill-suggestions">{SKILLS.map((k) => <option key={k.id} value={k.label} />)}</datalist>
+        <span className={styles.hint}>
+          {profile.skills.length > 0
+            ? `${skillIdsFromText(profile.skills).length} of ${profile.skills.length} are skills Hunterrr recognises in job postings; the others still count when a posting names them in its text.`
+            : "Start typing: suggestions come from the skills job postings ask for."}
+        </span>
       </section>
 
       <section className={styles.card} aria-labelledby="auth">

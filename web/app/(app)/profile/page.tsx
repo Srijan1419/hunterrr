@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { ProfileEditor } from "@/components/profile/ProfileEditor";
+import { SkillGap } from "@/components/profile/SkillGap";
 import { db } from "@/lib/db/client.v2";
 import { EMPTY_PROFILE } from "@/lib/profile/schema";
+import { querySkillGap } from "@/lib/queries/gap";
 import { getActiveProfile } from "@/lib/queries/profile";
 
 export const metadata: Metadata = {
@@ -14,11 +16,15 @@ export const maxDuration = 60;
 
 export default async function ProfilePage() {
   const stored = await getActiveProfile(db as never);
+  const gap = stored ? await querySkillGap(db as never, stored.data) : null;
   return (
-    <ProfileEditor
-      initial={stored?.data ?? EMPTY_PROFILE}
-      version={stored?.version ?? null}
-      savedAt={stored?.savedAt ?? null}
-    />
+    <>
+      <ProfileEditor
+        initial={stored?.data ?? EMPTY_PROFILE}
+        version={stored?.version ?? null}
+        savedAt={stored?.savedAt ?? null}
+      />
+      {gap ? <SkillGap gap={gap} /> : null}
+    </>
   );
 }

@@ -30,7 +30,7 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
   const filters = filtersFromSearchParams(params);
   const stored = await getActiveProfile(db as never);
   const result = await queryFeed(db as never, filters, stored?.data ?? null);
-  const ranking = stored !== null && filters.sort !== "newest";
+  const ranking = stored !== null && (filters.sort !== "newest" || filters.bucket !== undefined);
   const saved = await savedPostingIds(db as never, result.rows.map((r) => r.id));
   const from = result.total === 0 ? 0 : (result.page - 1) * FEED_PAGE_SIZE + 1;
   const to = Math.min(result.total, result.page * FEED_PAGE_SIZE);
@@ -46,6 +46,23 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
       <Suspense fallback={null}>
         <FeedFilters />
       </Suspense>
+      {stored && result.bucketCounts ? (
+        <div className={styles.sort} role="group" aria-label="Fit with your profile">
+          {([
+            ["", "All", result.bucketCounts.strong + result.bucketCounts.worth + result.bucketCounts.other],
+            ["strong", "Strong fit", result.bucketCounts.strong],
+            ["worth", "Worth a shot", result.bucketCounts.worth],
+          ] as const).map(([value, label, n]) => {
+            const on = (filters.bucket ?? "") === value;
+            return (
+              <a key={label} className={`${styles.sortOption} ${on ? styles.sortOn : ""}`} aria-current={on ? "true" : undefined}
+                href={pageHref({ ...params, fit: value || undefined }, 1)}>
+                {label} · {n}
+              </a>
+            );
+          })}
+        </div>
+      ) : null}
       {stored ? (
         <div className={styles.sort} role="group" aria-label="Sort jobs">
           <a className={`${styles.sortOption} ${ranking ? styles.sortOn : ""}`} aria-current={ranking ? "true" : undefined} href={pageHref({ ...params, sort: "match" }, 1)}>Best match</a>

@@ -27,6 +27,8 @@ export type FeedFilters = {
   unconfirmed?: boolean;
   /** "match" ranks by fit with the profile (needs one); "newest" is date order. Default: match. */
   sort?: "match" | "newest";
+  /** Only jobs in this fit bucket (needs a profile; ranks by fit). Absent = every bucket. */
+  bucket?: "strong" | "worth";
   page?: number;
 };
 
@@ -76,6 +78,8 @@ export type FeedResult = {
   openTotal: number;
   /** Postings a country filter hides because they do not say whether that country may apply. */
   eligibilityUnknown: number;
+  /** How many of the scored candidates fall in each fit bucket (null without a profile). */
+  bucketCounts: { strong: number; worth: number; other: number } | null;
   /** Postings that pass every filter except that they do not say whether the country may apply (decided unknown). */
   unconfirmed: number;
   /** Postings the entry-level filter hides because they state neither a level nor years of experience. */
@@ -174,6 +178,11 @@ export const NEWEST_COPY = sql`(p.decision_key IS NULL OR p.company_id IS NULL O
     AND q.seniority IS NOT DISTINCT FROM p.seniority
     AND q.experience_min_years IS NOT DISTINCT FROM p.experience_min_years
     AND q.employment_kind IS NOT DISTINCT FROM p.employment_kind))`;
+
+/** The WHERE clause of the feed for these filters (shared with the skill-gap view). */
+export function feedWhere(f: FeedFilters): SQL {
+  return sql.join(conditions(f), sql` AND `);
+}
 
 function conditions(f: FeedFilters): SQL[] {
   // A company the owner chose to ignore never shows (postings with no known company still do).
@@ -291,6 +300,22 @@ export function withMatch(row: FeedRow, profile: Profile): FeedRow {
   return { ...row, match, descriptionSnippet: "" };
 }
 
+/**
+ * The newest `MATCH_CANDIDATES` postings that pass `where`, each scored for `profile`, best first (ties keep newest
+ * first). Fit is computed in code, so the feed's ranking, its fit tabs and the skill-gap view all start from this list.
+ */
+export async function queryScored(db: FeedDb, where: SQL, profile: Profile): Promise<FeedRow[]> {
+  const candidates = await db.execute(sql`
+    SELECT ${FEED_COLUMNS}
+    FROM hunterrr.postings p
+    LEFT JOIN hunterrr.companies c ON c.id = p.company_id
+    WHERE ${where}
+    ORDER BY p.posted_at DESC NULLS LAST, p.id DESC
+    LIMIT ${MATCH_CANDIDATES}`);
+  return candidates.rows.map((r) => withMatch(toRow(r), profile))
+    .sort((a, b) => (b.match?.score ?? 0) - (a.match?.score ?? 0));
+}
+
 export async function queryFeed(db: FeedDb, filters: FeedFilters = {}, profile: Profile | null = null): Promise<FeedResult> {
   const where = sql.join(conditions(filters), sql` AND `);
   const requested = Math.max(1, Math.floor(filters.page ?? 1));
@@ -313,23 +338,26 @@ export async function queryFeed(db: FeedDb, filters: FeedFilters = {}, profile: 
 
   const c = counts.rows[0] ?? {};
   const total = num(c.total) ?? 0;
-  const byFit = profile !== null && filters.sort !== "newest";
-  const reachable = byFit ? Math.min(total, MATCH_CANDIDATES) : total; // ranking pages through the scored candidates only
+  const byFit = profile !== null && (filters.sort !== "newest" || filters.bucket !== undefined);
+  let rows: FeedRow[];
+  let bucketCounts: FeedResult["bucketCounts"] = null;
+  let shownTotal = total;
+  let reachable = byFit ? Math.min(total, MATCH_CANDIDATES) : total; // ranking pages through the scored candidates only
+  let ranked: FeedRow[] = [];
+  if (byFit) {
+    ranked = await queryScored(db, where, profile);
+    bucketCounts = { strong: 0, worth: 0, other: 0 };
+    for (const r of ranked) bucketCounts[r.match?.bucket ?? "other"] += 1;
+    if (filters.bucket) {
+      ranked = ranked.filter((r) => r.match?.bucket === filters.bucket);
+      reachable = ranked.length;
+      shownTotal = ranked.length;
+    }
+  }
   const pages = Math.max(1, Math.ceil(reachable / FEED_PAGE_SIZE));
   const page = Math.min(requested, pages); // ?page=9999 shows the last page, not an empty one
   const offset = (page - 1) * FEED_PAGE_SIZE;
-  let rows: FeedRow[];
   if (byFit) {
-    // Fit is computed in code, so score the newest candidates and page through the ranked list.
-    const candidates = await db.execute(sql`
-      SELECT ${FEED_COLUMNS}
-      FROM hunterrr.postings p
-      LEFT JOIN hunterrr.companies c ON c.id = p.company_id
-      WHERE ${where}
-      ORDER BY p.posted_at DESC NULLS LAST, p.id DESC
-      LIMIT ${MATCH_CANDIDATES}`);
-    const ranked = candidates.rows.map((r) => withMatch(toRow(r), profile))
-      .sort((a, b) => (b.match?.score ?? 0) - (a.match?.score ?? 0)); // stable: ties keep newest first
     rows = ranked.slice(offset, offset + FEED_PAGE_SIZE);
   } else {
     const list = await db.execute(sql`
@@ -344,7 +372,8 @@ export async function queryFeed(db: FeedDb, filters: FeedFilters = {}, profile: 
 
   return {
     rows,
-    total,
+    total: shownTotal,
+    bucketCounts,
     openTotal: num(c.open_total) ?? 0,
     eligibilityUnknown: filters.country ? (num(c.eligibility_unknown) ?? 0) : 0,
     levelUnknown: filters.entryLevel ? (num(c.level_unknown) ?? 0) : 0,
@@ -379,6 +408,7 @@ export function filtersFromSearchParams(
     entryLevel: one("level") === "all" ? undefined : true,
     unconfirmed: one("unconfirmed") === "1" || undefined,
     sort: one("sort") === "newest" ? "newest" : "match",
+    bucket: one("fit") === "strong" ? "strong" : one("fit") === "worth" ? "worth" : undefined,
     page: Number.isInteger(page) && page > 0 && page < 10_000 ? page : undefined,
   };
 }
