@@ -1,6 +1,7 @@
 """Link check: open the apply link of postings that would be shown, and close the ones that are gone.
 
-Only postings the feed can show are checked (open, decided open to India, no hard flag, with an apply link), the
+Himalayas pages are skipped: himalayas.app answers 403 to any script, and its own expiry date (deadline_at)
+covers it. Only postings the feed can show are checked (open, decided open to India, no hard flag, with an apply link), the
 least recently checked first, so the budget goes where a reader would click. A link that answers 404 or 410 twice
 in a row (two separate runs) marks the posting `dead`; any 2xx/3xx resets the count. Anything else (403, 429, 5xx,
 a timeout, an open circuit) records the visit and changes nothing: a busy or blocking site is not a closed job.
@@ -31,7 +32,7 @@ _HAS_COLUMN = text(
 _SELECT = text(
     "SELECT id, apply_url_raw, link_dead_checks FROM hunterrr.postings "
     "WHERE status = 'open' AND decision_key IS NOT NULL AND india_eligible = 'yes' AND cardinality(flags) = 0 "
-    "AND apply_url_raw IS NOT NULL "
+    "AND apply_url_raw IS NOT NULL AND source <> 'himalayas' "
     "AND (link_checked_at IS NULL OR link_checked_at < now() - make_interval(days => :days)) "
     "ORDER BY link_checked_at NULLS FIRST, id LIMIT :n"
 )
