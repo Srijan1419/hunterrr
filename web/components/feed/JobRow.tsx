@@ -37,13 +37,17 @@ export function JobRow({ row, now, saved = false }: { row: FeedRow; now?: Date; 
   const eligibility = formatEligibility(row);
   const location = formatLocation(row);
   const posted = formatPosted(row.postedAt, now);
+  // Matched and missing skills, visible without opening the breakdown (the feed is for scanning).
+  const skillsNote = row.match && !row.match.blocked ? row.match.parts.find((p) => p.key === "skills")?.note ?? null : null;
+  const ageHours = row.postedAt ? ((now ?? new Date()).getTime() - new Date(row.postedAt).getTime()) / 3_600_000 : null;
+  const fresh = ageHours !== null && ageHours >= 0 && ageHours <= 48 && (row.match?.bucket === "strong" || row.match?.bucket === "worth");
 
   return (
     <li className={styles.row}>
       <span className={styles.mark} aria-hidden="true">{initials(row.companyName)}</span>
       <div className={styles.main}>
         <h2 className={styles.jobTitle}>
-          <Link href={`/jobs/${row.id}`} className={styles.titleLink}>{row.title}</Link>
+          <Link href={`/jobs/${row.id}`} className={styles.titleLink} data-job-link>{row.title}</Link>
         </h2>
         <div className={styles.meta}>
           {row.companyName ? <span>{row.companyName}</span> : null}
@@ -51,6 +55,7 @@ export function JobRow({ row, now, saved = false }: { row: FeedRow; now?: Date; 
           {row.seniority ? <span>{row.seniority}</span> : null}
           {SOURCE_VIA[row.source] ? <span>via {SOURCE_VIA[row.source]}</span> : null}
         </div>
+        {skillsNote ? <p className={styles.fitSkills}>{skillsNote}</p> : null}
         {row.match ? (
           <details className={styles.fit}>
             <summary className={styles.fitSummary}>
@@ -73,6 +78,9 @@ export function JobRow({ row, now, saved = false }: { row: FeedRow; now?: Date; 
           </details>
         ) : null}
         <div className={styles.chips}>
+          {row.match?.bucket === "strong" ? <Chip tone="ok">Strong fit</Chip> : null}
+          {row.match?.bucket === "worth" ? <Chip>Worth a shot</Chip> : null}
+          {fresh ? <Chip tone="ok">Apply today</Chip> : null}
           {row.remoteType ? (
             <Chip tone={row.remoteType === "remote" ? "ok" : "default"}>{REMOTE_LABEL[row.remoteType]}</Chip>
           ) : null}

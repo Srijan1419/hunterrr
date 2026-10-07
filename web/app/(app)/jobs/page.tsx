@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { FeedFilters } from "@/components/feed/FeedFilters";
+import { FeedKeys } from "@/components/feed/FeedKeys";
 import { JobRow } from "@/components/feed/JobRow";
 import styles from "@/components/feed/feed.module.css";
 import { db } from "@/lib/db/client.v2";
@@ -117,6 +118,7 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
         </div>
       ) : (
         <ul className={styles.list}>
+          <FeedKeys />
           {result.rows.map((row) => (
             <JobRow key={row.id} row={row} saved={saved.has(row.id)} />
           ))}

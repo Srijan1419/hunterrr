@@ -67,7 +67,7 @@ describe("JobRow fit breakdown", () => {
     rerender(<ul><JobRow row={{ ...base, match }} /></ul>);
     expect(screen.getByRole("img", { name: "Match score 82 out of 100" })).toBeTruthy();
     expect(screen.getByText("Why this score")).toBeTruthy();
-    expect(screen.getByText("Names SQL, Python")).toBeTruthy();
+    expect(screen.getAllByText("Names SQL, Python").length).toBeGreaterThan(0);
     expect(screen.getByText(/Not counted \(not stated\): Level not stated/)).toBeTruthy();
   });
 
@@ -97,5 +97,36 @@ describe("JobRow attribution", () => {
   it("names no source for a company board", () => {
     render(<ul><JobRow row={base} /></ul>);
     expect(screen.queryByText(/^via /)).toBeNull();
+  });
+});
+
+describe("JobRow v2 card", () => {
+  const match = (bucket: "strong" | "worth" | "other") => ({
+    score: 80, blocked: null, flags: [], bucket,
+    parts: [{ key: "skills", label: "Skills", points: 30, max: 40, note: "Matches 2 of 3 must-have skills (SQL, Python). Missing: Tableau" }],
+  });
+  const now = new Date("2026-10-07T12:00:00Z");
+
+  it("shows the fit bucket and the matched and missing skills without opening the breakdown", () => {
+    render(<ul><JobRow row={{ ...base, match: match("strong") }} now={now} /></ul>);
+    expect(screen.getByText("Strong fit")).toBeTruthy();
+    expect(screen.getAllByText(/Matches 2 of 3 must-have skills.*Missing: Tableau/).length).toBe(2); // the line under the title, and the breakdown
+  });
+
+  it("says 'Apply today' only for a fresh job that fits", () => {
+    const fresh = new Date("2026-10-07T06:00:00Z").toISOString();
+    const { rerender } = render(<ul><JobRow row={{ ...base, postedAt: fresh, match: match("worth") }} now={now} /></ul>);
+    expect(screen.getByText("Apply today")).toBeTruthy();
+    expect(screen.getByText("Worth a shot")).toBeTruthy();
+    rerender(<ul><JobRow row={{ ...base, postedAt: fresh, match: match("other") }} now={now} /></ul>);
+    expect(screen.queryByText("Apply today")).toBeNull();
+    rerender(<ul><JobRow row={{ ...base, postedAt: new Date("2026-09-20T06:00:00Z").toISOString(), match: match("strong") }} now={now} /></ul>);
+    expect(screen.queryByText("Apply today")).toBeNull();
+  });
+
+  it("shows no bucket or skills line when the row was not scored", () => {
+    render(<ul><JobRow row={base} now={now} /></ul>);
+    expect(screen.queryByText("Strong fit")).toBeNull();
+    expect(screen.queryByText(/must-have skills/)).toBeNull();
   });
 });
