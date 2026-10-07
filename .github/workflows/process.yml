@@ -64,3 +64,8 @@ jobs:
       # 0005 is applied.
       - name: Decide
         run: python -m etl.run decide --batch-size 500 --max-seconds 240
+
+      # Open the apply link of postings that would be shown (the least recently checked first); a link that is gone
+      # twice in a row closes the posting. A no-op until migration 0006 is applied.
+      - name: Check apply links
+        run: python -m etl.run linkcheck --limit 150 --max-seconds 150

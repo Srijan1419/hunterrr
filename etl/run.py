@@ -187,6 +187,30 @@ def decide_cmd(batch_size: int, limit: int | None, max_seconds: float | None) ->
     return 0
 
 
+def linkcheck_cmd(limit: int, max_seconds: float | None) -> int:
+    """Open the apply links of postings that would be shown; a link gone twice in a row closes the posting."""
+    from etl.runner.linkcheck import linkcheck
+
+    settings = Settings()
+    db_url = _secret(settings.DATABASE_URL) or os.environ.get("DATABASE_URL")
+    if not db_url:
+        print("DATABASE_URL is not set", file=sys.stderr)
+        return 2
+    engine = make_engine(db_url, pooled=True)
+    try:
+        result = linkcheck(engine, limit=limit, max_seconds=max_seconds)
+    except Exception as exc:
+        print(f"linkcheck status=failed error={type(exc).__name__}")
+        return 1
+    finally:
+        engine.dispose()
+    if result.skipped_reason:
+        print(f"linkcheck status=skipped reason={result.skipped_reason}")
+        return 0
+    print(f"linkcheck status=ok checked={result.checked} ok={result.ok} gone={result.gone} closed={result.closed} unclear={result.unclear}")
+    return 0
+
+
 def eval_cmd(show_misses: bool) -> int:
     """Score the extraction + decisions against the hand-labelled gold set (no database, no network, no AI)."""
     from etl.eval.gold import evaluate, format_report
@@ -270,6 +294,15 @@ def main(argv: list[str] | None = None) -> int:
         except SystemExit:
             return 2
         return decide_cmd(max(1, args.batch_size), args.limit, args.max_seconds)
+    if argv and argv[0] == "linkcheck":
+        parser = argparse.ArgumentParser(prog="etl.run linkcheck")
+        parser.add_argument("--limit", type=int, default=150)
+        parser.add_argument("--max-seconds", type=float, default=150.0)
+        try:
+            args = parser.parse_args(argv[1:])
+        except SystemExit:
+            return 2
+        return linkcheck_cmd(max(1, args.limit), args.max_seconds)
     if argv and argv[0] == "eval":
         parser = argparse.ArgumentParser(prog="etl.run eval")
         parser.add_argument("--no-misses", action="store_true", help="print only the score table")

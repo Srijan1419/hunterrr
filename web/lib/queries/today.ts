@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { DEFAULT_COUNTRY, ENTRY_LEVEL, FEED_COLUMNS, NEWEST_COPY, NO_HARD_FLAGS, NOT_IGNORED, remoteFor, toRow, type FeedRow } from "@/lib/queries/feed";
+import { DEFAULT_COUNTRY, ENTRY_LEVEL, FEED_COLUMNS, NEWEST_COPY, NO_HARD_FLAGS, NOT_EXPIRED, NOT_IGNORED, remoteFor, toRow, type FeedRow } from "@/lib/queries/feed";
 import {
   APPLICATION_STATES,
   CLOSED_STATES,
@@ -43,7 +43,7 @@ export async function queryToday(db: TrackerTx, now: Date = new Date()): Promise
   const since = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
   const stale = new Date(now.getTime() - NEW_JOB_MAX_AGE_DAYS * 24 * 60 * 60 * 1000).toISOString();
   const fresh = sql`p.status = 'open' AND ${NOT_IGNORED} AND ${ENTRY_LEVEL} AND ${remoteFor(DEFAULT_COUNTRY)} AND p.first_seen_at >= ${since}
-    AND ${NO_HARD_FLAGS} AND ${NEWEST_COPY} AND (p.posted_at IS NULL OR p.posted_at >= ${stale})`;
+    AND ${NO_HARD_FLAGS} AND ${NOT_EXPIRED} AND ${NEWEST_COPY} AND (p.posted_at IS NULL OR p.posted_at >= ${stale})`;
 
   const [list, count, followUps, states] = await Promise.all([
     db.execute(sql`

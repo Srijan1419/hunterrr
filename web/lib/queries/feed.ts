@@ -129,6 +129,9 @@ export function eligibleFor(country: string): SQL {
 }
 
 /** A decided posting that carries a hard flag (scam, unpaid, language needed, not an open job ...) never shows. */
+/** A posting whose own deadline / expiry date has passed never shows (Himalayas and some boards state one). */
+export const NOT_EXPIRED = sql`(p.deadline_at IS NULL OR p.deadline_at >= now())`;
+
 export const NO_HARD_FLAGS = sql`(p.decision_key IS NULL OR cardinality(p.flags) = 0)`;
 
 /** Remote AND a person in this country can take it. */
@@ -170,7 +173,7 @@ export const NEWEST_COPY = sql`(p.decision_key IS NULL OR p.company_id IS NULL O
 
 function conditions(f: FeedFilters): SQL[] {
   // A company the owner chose to ignore never shows (postings with no known company still do).
-  const out: SQL[] = [sql`p.status = 'open'`, NOT_IGNORED, NO_HARD_FLAGS, NEWEST_COPY];
+  const out: SQL[] = [sql`p.status = 'open'`, NOT_IGNORED, NO_HARD_FLAGS, NOT_EXPIRED, NEWEST_COPY];
   const q = f.q?.trim();
   if (q) {
     const pat = likePattern(q.slice(0, 80));

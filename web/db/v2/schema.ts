@@ -332,6 +332,8 @@ export const postings = hunterrr.table(
     flags: text("flags").array().notNull().default(sql`'{}'::text[]`),
     labels: text("labels").array().notNull().default(sql`'{}'::text[]`),
     decisionKey: text("decision_key"),
+    linkCheckedAt: timestamptz("link_checked_at"),
+    linkDeadChecks: smallint("link_dead_checks").notNull().default(0),
   },
   (table) => [
     unique("postings_source_source_id_unique").on(
