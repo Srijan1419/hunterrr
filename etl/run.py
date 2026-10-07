@@ -294,6 +294,18 @@ def main(argv: list[str] | None = None) -> int:
         except SystemExit:
             return 2
         return decide_cmd(max(1, args.batch_size), args.limit, args.max_seconds)
+    if argv and argv[0] == "discover":
+        parser = argparse.ArgumentParser(prog="etl.run discover")
+        parser.add_argument("names", nargs="+", help="company names; each is tried as a Greenhouse, Lever and Ashby board")
+        parser.add_argument("--config", default="config/companies.yaml")
+        parser.add_argument("--add", action="store_true", help="append the boards found to the config file")
+        try:
+            args = parser.parse_args(argv[1:])
+        except SystemExit:
+            return 2
+        from etl.discovery.probe import run as discover_run
+
+        return discover_run(args.names, args.config, args.add)
     if argv and argv[0] == "linkcheck":
         parser = argparse.ArgumentParser(prog="etl.run linkcheck")
         parser.add_argument("--limit", type=int, default=150)

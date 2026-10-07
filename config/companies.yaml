@@ -103,3 +103,9 @@ companies:
   #   - {name: Example Co, ats: careerpage, url: "https://example.com/careers"}
   # (GemPages was tried and removed: gempages.com is a parked "for sale" page and gempages.net shows no
   # careers link in its static HTML. Send the real careers URL and it goes here.)
+
+  # Added by `etl.run discover`
+  - {name: Atlan, ats: ashby,     slug: atlan}  # 6 jobs, 4 in India, 6 remote, 1 early-career titles
+  - {name: Hevo Data, ats: lever,     slug: hevodata}  # 52 jobs, 50 in India, 2 remote, 6 early-career titles
+  - {name: Mindtickle, ats: lever,     slug: mindtickle}  # 19 jobs, 18 in India, 1 remote, 0 early-career titles
+  - {name: Highradius, ats: greenhouse, slug: highradius}  # 79 jobs, 52 in India, 1 remote, 3 early-career titles
