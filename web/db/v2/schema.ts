@@ -332,6 +332,7 @@ export const postings = hunterrr.table(
     flags: text("flags").array().notNull().default(sql`'{}'::text[]`),
     labels: text("labels").array().notNull().default(sql`'{}'::text[]`),
     decisionKey: text("decision_key"),
+    skillsKey: text("skills_key"),
     linkCheckedAt: timestamptz("link_checked_at"),
     linkDeadChecks: smallint("link_dead_checks").notNull().default(0),
   },
@@ -363,6 +364,7 @@ export const postingSkills = hunterrr.table(
       .references(() => postings.id),
     skill: text("skill").notNull(),
     provenance: provenanceEnum("provenance").notNull(),
+    importance: text("importance").notNull().default("must"),
   },
   (table) => [
     primaryKey({

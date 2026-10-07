@@ -234,6 +234,30 @@ def health_cmd() -> int:
     return 1 if h.problems else 0
 
 
+def skills_cmd(batch_size: int, limit: int | None, max_seconds: float | None) -> int:
+    """Store the skills each visible posting names (from config/skills.yaml) in posting_skills."""
+    from etl.runner.skills import skills_pending
+
+    settings = Settings()
+    db_url = _secret(settings.DATABASE_URL) or os.environ.get("DATABASE_URL")
+    if not db_url:
+        print("DATABASE_URL is not set", file=sys.stderr)
+        return 2
+    engine = make_engine(db_url, pooled=True)
+    try:
+        result = skills_pending(engine, batch_size=batch_size, limit=limit, max_seconds=max_seconds)
+    except Exception as exc:
+        print(f"skills status=failed error={type(exc).__name__}")
+        return 1
+    finally:
+        engine.dispose()
+    if result.skipped_reason:
+        print(f"skills status=skipped reason={result.skipped_reason}")
+        return 0
+    print(f"skills status=ok seen={result.seen} skills={result.skills} batches={result.batches}")
+    return 0
+
+
 def eval_cmd(show_misses: bool) -> int:
     """Score the extraction + decisions against the hand-labelled gold set (no database, no network, no AI)."""
     from etl.eval.gold import evaluate, format_report
@@ -331,6 +355,16 @@ def main(argv: list[str] | None = None) -> int:
         return discover_run(args.names, args.config, args.add)
     if argv and argv[0] == "health":
         return health_cmd()
+    if argv and argv[0] == "skills":
+        parser = argparse.ArgumentParser(prog="etl.run skills")
+        parser.add_argument("--batch-size", type=int, default=300)
+        parser.add_argument("--limit", type=int, default=None)
+        parser.add_argument("--max-seconds", type=float, default=None)
+        try:
+            args = parser.parse_args(argv[1:])
+        except SystemExit:
+            return 2
+        return skills_cmd(max(1, args.batch_size), args.limit, args.max_seconds)
     if argv and argv[0] == "linkcheck":
         parser = argparse.ArgumentParser(prog="etl.run linkcheck")
         parser.add_argument("--limit", type=int, default=150)

@@ -65,6 +65,10 @@ jobs:
       - name: Decide
         run: python -m etl.run decide --batch-size 500 --max-seconds 240
 
+      # Store the skills each visible posting names (config/skills.yaml) for matching. A no-op until migration 0007.
+      - name: Extract skills
+        run: python -m etl.run skills --batch-size 300 --max-seconds 120
+
       # Open the apply link of postings that would be shown (the least recently checked first); a link that is gone
       # twice in a row closes the posting. A no-op until migration 0006 is applied.
       - name: Check apply links

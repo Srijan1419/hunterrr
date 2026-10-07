@@ -1,0 +1,216 @@
+# Canonical skills Hunterrr understands, for postings and for profiles (one dictionary, so "JS", "javascript" and
+# "Java Script" are the same skill). Used by etl/extract/rules/skills.py and by the web profile editor.
+#
+#   id       stable, lower-case, never reused (it is stored in posting_skills and profiles)
+#   label    how it is shown
+#   family   the role family it mostly belongs to (see etl/decide/role_family.py), or "general"
+#   aliases  other spellings found in postings and resumes (matching ignores case; a skill's label counts too)
+#
+# Rules for aliases: no bare one- or two-letter word that is also an ordinary word ("go", "r", "c", "it", "sap" is
+# fine as an acronym but "go" is not: use "golang"). tests/test_skills_config.py fails on a duplicate id or alias.
+
+skills:
+  # ---- software engineering ----
+  - {id: python, label: Python, family: software-engineering, aliases: [python3, python 3]}
+  - {id: javascript, label: JavaScript, family: software-engineering, aliases: [js, java script, ecmascript, es6]}
+  - {id: typescript, label: TypeScript, family: software-engineering, aliases: [ts]}
+  - {id: java, label: Java, family: software-engineering, aliases: [core java, java 8, java 11, java 17]}
+  - {id: kotlin, label: Kotlin, family: software-engineering, aliases: []}
+  - {id: swift, label: Swift, family: software-engineering, aliases: [swiftui]}
+  - {id: golang, label: Go, family: software-engineering, aliases: [golang, go lang]}
+  - {id: rust, label: Rust, family: software-engineering, aliases: []}
+  - {id: cpp, label: C++, family: software-engineering, aliases: [c plus plus, cpp]}
+  - {id: c-lang, label: C, family: software-engineering, aliases: [c programming, c language]}
+  - {id: csharp, label: C#, family: software-engineering, aliases: [c sharp, csharp]}
+  - {id: dotnet, label: .NET, family: software-engineering, aliases: [dotnet, asp.net, asp net, .net core]}
+  - {id: php, label: PHP, family: software-engineering, aliases: []}
+  - {id: laravel, label: Laravel, family: software-engineering, aliases: []}
+  - {id: ruby, label: Ruby, family: software-engineering, aliases: []}
+  - {id: rails, label: Ruby on Rails, family: software-engineering, aliases: [rails, ror]}
+  - {id: scala, label: Scala, family: software-engineering, aliases: []}
+  - {id: elixir, label: Elixir, family: software-engineering, aliases: [phoenix framework]}
+  - {id: dart, label: Dart, family: software-engineering, aliases: []}
+  - {id: flutter, label: Flutter, family: software-engineering, aliases: []}
+  - {id: react, label: React, family: software-engineering, aliases: [reactjs, react.js, react js]}
+  - {id: react-native, label: React Native, family: software-engineering, aliases: [react-native]}
+  - {id: nextjs, label: Next.js, family: software-engineering, aliases: [next.js, next js, nextjs]}
+  - {id: vue, label: Vue.js, family: software-engineering, aliases: [vue, vuejs, vue.js]}
+  - {id: angular, label: Angular, family: software-engineering, aliases: [angularjs, angular.js]}
+  - {id: svelte, label: Svelte, family: software-engineering, aliases: [sveltekit]}
+  - {id: nodejs, label: Node.js, family: software-engineering, aliases: [node, node.js, node js]}
+  - {id: express, label: Express.js, family: software-engineering, aliases: [expressjs, express.js]}
+  - {id: nestjs, label: NestJS, family: software-engineering, aliases: [nest.js]}
+  - {id: django, label: Django, family: software-engineering, aliases: [django rest framework, drf]}
+  - {id: flask, label: Flask, family: software-engineering, aliases: []}
+  - {id: fastapi, label: FastAPI, family: software-engineering, aliases: []}
+  - {id: spring-boot, label: Spring Boot, family: software-engineering, aliases: [spring, spring framework, springboot]}
+  - {id: html, label: HTML, family: software-engineering, aliases: [html5]}
+  - {id: css, label: CSS, family: software-engineering, aliases: [css3, scss, sass]}
+  - {id: tailwind, label: Tailwind CSS, family: software-engineering, aliases: [tailwind, tailwindcss]}
+  - {id: bootstrap, label: Bootstrap, family: software-engineering, aliases: []}
+  - {id: redux, label: Redux, family: software-engineering, aliases: []}
+  - {id: graphql, label: GraphQL, family: software-engineering, aliases: []}
+  - {id: rest-api, label: REST APIs, family: software-engineering, aliases: [rest, restful, rest api, restful api, api development]}
+  - {id: microservices, label: Microservices, family: software-engineering, aliases: [micro services, microservice architecture]}
+  - {id: android, label: Android, family: software-engineering, aliases: [android development, android sdk]}
+  - {id: ios, label: iOS, family: software-engineering, aliases: [ios development, objective-c, objective c]}
+  - {id: data-structures, label: Data Structures & Algorithms, family: software-engineering, aliases: [dsa, data structures, algorithms, data structures and algorithms]}
+  - {id: oop, label: Object-Oriented Programming, family: software-engineering, aliases: [oop, oops, object oriented programming, object-oriented design]}
+  - {id: system-design, label: System Design, family: software-engineering, aliases: [low level design, high level design, distributed systems]}
+  - {id: git, label: Git, family: software-engineering, aliases: [github, gitlab, bitbucket, version control]}
+  - {id: linux, label: Linux, family: software-engineering, aliases: [unix, ubuntu, shell scripting, bash]}
+  - {id: websockets, label: WebSockets, family: software-engineering, aliases: [websocket, socket.io]}
+  - {id: blockchain, label: Blockchain, family: software-engineering, aliases: [web3, smart contracts, solidity, ethereum]}
+  - {id: unity, label: Unity, family: software-engineering, aliases: [unity3d, game development, unreal engine]}
+  - {id: embedded, label: Embedded Systems, family: software-engineering, aliases: [firmware, rtos, arduino, raspberry pi, microcontrollers]}
+  - {id: wordpress, label: WordPress, family: software-engineering, aliases: [woocommerce, elementor]}
+  - {id: shopify, label: Shopify, family: software-engineering, aliases: [liquid templating]}
+  - {id: salesforce-dev, label: Salesforce Development, family: software-engineering, aliases: [apex, lightning web components, salesforce developer]}
+  - {id: sap, label: SAP, family: operations, aliases: [sap erp, sap abap, sap fico, sap hana]}
+  # ---- data / ML ----
+  - {id: sql, label: SQL, family: data, aliases: [t-sql, pl/sql, plsql, structured query language]}
+  - {id: mysql, label: MySQL, family: data, aliases: [mariadb]}
+  - {id: postgresql, label: PostgreSQL, family: data, aliases: [postgres, psql]}
+  - {id: mongodb, label: MongoDB, family: data, aliases: [mongo, mongoose]}
+  - {id: redis, label: Redis, family: data, aliases: []}
+  - {id: elasticsearch, label: Elasticsearch, family: data, aliases: [opensearch, elk stack]}
+  - {id: snowflake, label: Snowflake, family: data, aliases: []}
+  - {id: bigquery, label: BigQuery, family: data, aliases: [big query]}
+  - {id: redshift, label: Amazon Redshift, family: data, aliases: [redshift]}
+  - {id: nosql, label: NoSQL, family: data, aliases: [dynamodb, cassandra, couchbase]}
+  - {id: excel, label: Excel, family: data, aliases: [microsoft excel, ms excel, advanced excel, vlookup, pivot tables, pivot table, xlookup]}
+  - {id: google-sheets, label: Google Sheets, family: data, aliases: [gsheets, google spreadsheets]}
+  - {id: power-bi, label: Power BI, family: data, aliases: [powerbi, dax]}
+  - {id: tableau, label: Tableau, family: data, aliases: []}
+  - {id: looker, label: Looker, family: data, aliases: [looker studio, data studio]}
+  - {id: metabase, label: Metabase, family: data, aliases: [redash, superset]}
+  - {id: pandas, label: pandas, family: data, aliases: []}
+  - {id: numpy, label: NumPy, family: data, aliases: []}
+  - {id: r-lang, label: R, family: data, aliases: [r programming, rstudio, r language]}
+  - {id: statistics, label: Statistics, family: data, aliases: [statistical analysis, hypothesis testing, regression analysis, probability]}
+  - {id: data-analysis, label: Data Analysis, family: data, aliases: [data analytics, analytical skills, data analyst, exploratory data analysis, eda]}
+  - {id: data-visualization, label: Data Visualization, family: data, aliases: [dashboards, dashboarding, data visualisation, reporting]}
+  - {id: etl, label: ETL, family: data, aliases: [data pipelines, data pipeline, elt, data integration]}
+  - {id: airflow, label: Apache Airflow, family: data, aliases: [airflow]}
+  - {id: dbt, label: dbt, family: data, aliases: [data build tool]}
+  - {id: spark, label: Apache Spark, family: data, aliases: [pyspark, spark]}
+  - {id: hadoop, label: Hadoop, family: data, aliases: [hive, hdfs, mapreduce]}
+  - {id: kafka, label: Apache Kafka, family: data, aliases: [kafka, rabbitmq, message queues]}
+  - {id: data-modeling, label: Data Modeling, family: data, aliases: [data warehousing, data warehouse, dimensional modeling]}
+  - {id: machine-learning, label: Machine Learning, family: data, aliases: [ml, scikit-learn, sklearn, supervised learning]}
+  - {id: deep-learning, label: Deep Learning, family: data, aliases: [neural networks, cnn, rnn]}
+  - {id: tensorflow, label: TensorFlow, family: data, aliases: [keras]}
+  - {id: pytorch, label: PyTorch, family: data, aliases: [torch]}
+  - {id: nlp, label: NLP, family: data, aliases: [natural language processing, text mining, spacy, hugging face, transformers]}
+  - {id: computer-vision, label: Computer Vision, family: data, aliases: [opencv, image processing, object detection]}
+  - {id: llm, label: LLMs, family: data, aliases: [large language models, generative ai, genai, prompt engineering, langchain, rag, openai api]}
+  - {id: a-b-testing, label: A/B Testing, family: data, aliases: [ab testing, a/b tests, experimentation, split testing]}
+  - {id: web-scraping, label: Web Scraping, family: data, aliases: [scrapy, beautifulsoup, selenium scraping, data scraping]}
+  - {id: google-analytics, label: Google Analytics, family: data, aliases: [ga4, google analytics 4, mixpanel, amplitude, web analytics]}
+  # ---- devops / cloud / security ----
+  - {id: aws, label: AWS, family: devops-cloud, aliases: [amazon web services, ec2, s3, lambda, aws lambda]}
+  - {id: azure, label: Microsoft Azure, family: devops-cloud, aliases: [azure devops, azure cloud]}
+  - {id: gcp, label: Google Cloud, family: devops-cloud, aliases: [google cloud platform, gcp, gke]}
+  - {id: docker, label: Docker, family: devops-cloud, aliases: [containers, containerization, dockerfile]}
+  - {id: kubernetes, label: Kubernetes, family: devops-cloud, aliases: [k8s, helm, eks, aks]}
+  - {id: terraform, label: Terraform, family: devops-cloud, aliases: [infrastructure as code, iac, pulumi, cloudformation]}
+  - {id: ansible, label: Ansible, family: devops-cloud, aliases: [chef, puppet, configuration management]}
+  - {id: ci-cd, label: CI/CD, family: devops-cloud, aliases: [cicd, ci cd, continuous integration, continuous delivery, jenkins, github actions, gitlab ci, circleci]}
+  - {id: monitoring, label: Monitoring & Observability, family: devops-cloud, aliases: [prometheus, grafana, datadog, new relic, observability, splunk]}
+  - {id: networking, label: Networking, family: devops-cloud, aliases: [tcp/ip, tcp ip, dns, vpn, ccna, load balancing, firewalls]}
+  - {id: sysadmin, label: System Administration, family: devops-cloud, aliases: [windows server, active directory, system administrator, sysadmin]}
+  - {id: cybersecurity, label: Cybersecurity, family: devops-cloud, aliases: [information security, infosec, security operations, siem, penetration testing, pentesting, vulnerability assessment, owasp]}
+  - {id: sre, label: Site Reliability, family: devops-cloud, aliases: [incident management, on-call, incident response, sre]}
+  # ---- QA ----
+  - {id: manual-testing, label: Manual Testing, family: qa-testing, aliases: [functional testing, test cases, test case design, regression testing, uat, black box testing]}
+  - {id: test-automation, label: Test Automation, family: qa-testing, aliases: [automation testing, selenium, cypress, playwright, appium, testng, junit, pytest, robot framework, cucumber, bdd]}
+  - {id: api-testing, label: API Testing, family: qa-testing, aliases: [postman, rest assured, soapui]}
+  - {id: performance-testing, label: Performance Testing, family: qa-testing, aliases: [jmeter, load testing, k6, loadrunner]}
+  - {id: jira, label: Jira, family: qa-testing, aliases: [bug tracking, defect tracking, bugzilla, confluence]}
+  - {id: sdlc, label: SDLC, family: qa-testing, aliases: [software development life cycle, stlc, test plans]}
+  # ---- design ----
+  - {id: figma, label: Figma, family: design, aliases: [figjam]}
+  - {id: sketch, label: Sketch, family: design, aliases: [invision, adobe xd, axure, balsamiq]}
+  - {id: ui-design, label: UI Design, family: design, aliases: [user interface design, visual design, interface design, design systems, design system]}
+  - {id: ux-design, label: UX Design, family: design, aliases: [user experience, user experience design, interaction design, wireframing, wireframes, prototyping, information architecture]}
+  - {id: user-research, label: User Research, family: design, aliases: [usability testing, user interviews, ux research, personas, user testing]}
+  - {id: photoshop, label: Photoshop, family: design, aliases: [adobe photoshop]}
+  - {id: illustrator, label: Illustrator, family: design, aliases: [adobe illustrator, vector graphics]}
+  - {id: canva, label: Canva, family: design, aliases: []}
+  - {id: after-effects, label: After Effects, family: design, aliases: [motion graphics, adobe after effects, motion design, lottie]}
+  - {id: video-editing, label: Video Editing, family: design, aliases: [premiere pro, adobe premiere, final cut pro, davinci resolve, capcut, video production]}
+  - {id: graphic-design, label: Graphic Design, family: design, aliases: [branding, brand identity, typography, logo design, indesign]}
+  - {id: 3d-modeling, label: 3D Modeling, family: design, aliases: [blender, maya, 3ds max, cinema 4d, autocad, solidworks]}
+  # ---- product ----
+  - {id: product-management, label: Product Management, family: product, aliases: [product manager, product ownership, product strategy, roadmapping, product roadmap, prioritization]}
+  - {id: user-stories, label: User Stories & Requirements, family: product, aliases: [prd, product requirements, requirements gathering, acceptance criteria, business requirements, brd, functional specifications]}
+  - {id: agile, label: Agile, family: product, aliases: [scrum, kanban, sprint planning, agile methodologies, agile methodology, scrum master]}
+  - {id: product-analytics, label: Product Analytics, family: product, aliases: [funnel analysis, cohort analysis, retention analysis, product metrics, kpis, okrs]}
+  - {id: business-analysis, label: Business Analysis, family: product, aliases: [business analyst, process mapping, process improvement, gap analysis, stakeholder management, swot]}
+  - {id: project-management, label: Project Management, family: operations, aliases: [project planning, pmp, program management, project coordination, ms project, asana, trello, notion, monday.com, clickup]}
+  # ---- customer support ----
+  - {id: customer-support, label: Customer Support, family: customer-support, aliases: [customer service, client support, customer care, customer queries, customer issues, technical support, helpdesk, help desk]}
+  - {id: customer-success, label: Customer Success, family: customer-support, aliases: [client success, account management, customer onboarding, customer retention, customer experience]}
+  - {id: zendesk, label: Zendesk, family: customer-support, aliases: [freshdesk, intercom, helpscout, help scout, servicenow, zoho desk, kayako, gorgias, hubspot service]}
+  - {id: chat-support, label: Chat & Email Support, family: customer-support, aliases: [live chat, email support, ticketing, ticketing systems, ticketing tools, chat support, non-voice, non voice]}
+  - {id: voice-support, label: Voice / Call Support, family: customer-support, aliases: [call center, call centre, inbound calls, outbound calls, bpo, voice process, telecalling, tele calling, telephone support]}
+  - {id: troubleshooting, label: Troubleshooting, family: customer-support, aliases: [problem solving, issue resolution, root cause analysis, technical troubleshooting, debugging]}
+  - {id: crm, label: CRM Tools, family: customer-support, aliases: [hubspot, salesforce, zoho crm, pipedrive, crm software, crm systems]}
+  # ---- sales / BD ----
+  - {id: sales, label: Sales, family: sales-bd, aliases: [b2b sales, b2c sales, inside sales, sales development, cold calling, cold outreach, sales outreach, closing deals]}
+  - {id: lead-generation, label: Lead Generation, family: sales-bd, aliases: [prospecting, lead qualification, outbound sales, sdr, bdr, linkedin sales navigator, apollo, zoominfo]}
+  - {id: business-development, label: Business Development, family: sales-bd, aliases: [partnerships, partner development, client acquisition, bde, channel sales]}
+  - {id: negotiation, label: Negotiation, family: sales-bd, aliases: [deal closing, contract negotiation]}
+  - {id: presales, label: Pre-sales, family: sales-bd, aliases: [solutions engineering, solution selling, product demos, rfp, proposal writing]}
+  # ---- marketing / content ----
+  - {id: digital-marketing, label: Digital Marketing, family: marketing-content, aliases: [online marketing, internet marketing, performance marketing, growth marketing, demand generation]}
+  - {id: seo, label: SEO, family: marketing-content, aliases: [search engine optimization, search engine optimisation, keyword research, on-page seo, off-page seo, link building, ahrefs, semrush, technical seo]}
+  - {id: sem, label: Paid Ads, family: marketing-content, aliases: [google ads, adwords, ppc, sem, facebook ads, meta ads, paid media, paid social, linkedin ads, paid advertising]}
+  - {id: social-media, label: Social Media Marketing, family: marketing-content, aliases: [social media management, social media, instagram, community engagement, social media content, linkedin marketing]}
+  - {id: email-marketing, label: Email Marketing, family: marketing-content, aliases: [mailchimp, klaviyo, drip campaigns, newsletters, email campaigns, marketing automation, hubspot marketing, sendgrid]}
+  - {id: content-marketing, label: Content Marketing, family: marketing-content, aliases: [content strategy, content creation, content calendar, blogging, content planning, content production]}
+  - {id: influencer-marketing, label: Influencer Marketing, family: marketing-content, aliases: [influencer outreach, creator partnerships, influencer management, brand collaborations]}
+  - {id: pr, label: Public Relations, family: marketing-content, aliases: [media relations, press releases, communications strategy, corporate communications, brand communication]}
+  - {id: market-research, label: Market Research, family: marketing-content, aliases: [competitor analysis, competitive analysis, consumer insights, market analysis, survey design]}
+  - {id: brand-management, label: Brand Management, family: marketing-content, aliases: [brand strategy, brand building, brand marketing, brand positioning]}
+  - {id: event-management, label: Event Management, family: marketing-content, aliases: [event planning, event marketing, events coordination, webinars]}
+  - {id: cro, label: Conversion Optimization, family: marketing-content, aliases: [conversion rate optimization, landing pages, funnel optimization, growth hacking]}
+  # ---- writing / editing ----
+  - {id: copywriting, label: Copywriting, family: writing-editing, aliases: [copy writing, ad copy, creative writing, marketing copy, copywriter, web copy]}
+  - {id: content-writing, label: Content Writing, family: writing-editing, aliases: [article writing, blog writing, content writer, long-form content, ghostwriting, web content]}
+  - {id: technical-writing, label: Technical Writing, family: writing-editing, aliases: [documentation, technical documentation, api documentation, knowledge base, user manuals, help articles]}
+  - {id: editing, label: Editing & Proofreading, family: writing-editing, aliases: [proofreading, copy editing, copyediting, editorial, fact checking, fact-checking, content editing]}
+  - {id: translation, label: Translation, family: writing-editing, aliases: [translator, localization, localisation, subtitling, transcription, interpreting, interpreter, transcreation]}
+  - {id: storytelling, label: Storytelling & Scriptwriting, family: writing-editing, aliases: [scriptwriting, script writing, video scripts, podcast, podcasting]}
+  # ---- community ----
+  - {id: community-management, label: Community Management, family: community, aliases: [community manager, community building, discord, moderation, community moderation, online communities, slack communities]}
+  - {id: developer-relations, label: Developer Relations, family: community, aliases: [devrel, developer advocacy, developer advocate, developer evangelism, technical evangelism]}
+  # ---- operations ----
+  - {id: operations, label: Operations, family: operations, aliases: [business operations, operations management, process management, operational excellence, back office, back-office, operations support]}
+  - {id: data-entry, label: Data Entry, family: operations, aliases: [data processing, typing speed, form filling, data management, record keeping, document management]}
+  - {id: virtual-assistance, label: Virtual Assistance, family: operations, aliases: [virtual assistant, executive assistant, administrative support, admin support, calendar management, scheduling, email management, travel booking, administrative tasks]}
+  - {id: logistics, label: Logistics & Supply Chain, family: operations, aliases: [supply chain, supply chain management, inventory management, procurement, vendor management, warehouse, order fulfillment, order management]}
+  - {id: process-documentation, label: Process Documentation, family: operations, aliases: [sops, sop, standard operating procedures, workflow automation, process automation, rpa, uipath, zapier, make.com, no-code, no code, airtable]}
+  - {id: quality-assurance-ops, label: Quality Checks, family: operations, aliases: [quality control, quality assurance, qa checks, content moderation, trust and safety, trust & safety, fraud detection, risk operations, kyc, aml]}
+  # ---- HR / recruiting ----
+  - {id: recruitment, label: Recruitment, family: hr-recruiting, aliases: [talent acquisition, recruiting, sourcing candidates, candidate screening, technical recruiting, end-to-end recruitment, headhunting, applicant tracking, ats, boolean search, naukri, linkedin recruiter]}
+  - {id: hr-operations, label: HR Operations, family: hr-recruiting, aliases: [human resources, hr generalist, employee onboarding, employee relations, hris, people operations, hr administration, hr policies, performance management, hrms]}
+  - {id: payroll, label: Payroll & Benefits, family: finance-accounting, aliases: [payroll processing, compensation and benefits, benefits administration, statutory compliance, pf esi, pf, esi]}
+  - {id: training, label: Training & Development, family: hr-recruiting, aliases: [learning and development, l&d, employee engagement, corporate training, instructional design, e-learning, elearning, lms, curriculum design, tutoring]}
+  # ---- finance / accounting ----
+  - {id: accounting, label: Accounting, family: finance-accounting, aliases: [bookkeeping, accounts payable, accounts receivable, general ledger, journal entries, reconciliation, bank reconciliation, month-end close, financial accounting, accounts executive]}
+  - {id: tally, label: Tally, family: finance-accounting, aliases: [tally erp, tally prime, quickbooks, xero, zoho books, busy accounting, sage]}
+  - {id: gst, label: GST & Taxation, family: finance-accounting, aliases: [taxation, income tax, tds, gst returns, gst filing, tax compliance, direct tax, indirect tax, vat]}
+  - {id: financial-analysis, label: Financial Analysis, family: finance-accounting, aliases: [financial modeling, financial modelling, fp&a, budgeting, forecasting, variance analysis, valuation, financial reporting, mis, mis reporting, equity research, investment banking]}
+  - {id: audit, label: Audit & Compliance, family: finance-accounting, aliases: [auditing, internal audit, statutory audit, compliance, regulatory compliance, risk management, sox, ifrs, gaap, ind as, ca, chartered accountant, cpa]}
+  - {id: collections, label: Collections & Billing, family: finance-accounting, aliases: [billing, invoicing, credit control, collections, order to cash, procure to pay, p2p, o2c]}
+  # ---- general / soft ----
+  - {id: communication, label: Communication, family: general, aliases: [communication skills, written communication, verbal communication, excellent communication, strong communication, english communication, interpersonal skills, presentation skills]}
+  - {id: english, label: English (fluent), family: general, aliases: [fluent english, english proficiency, spoken english, written english, excellent english, english language]}
+  - {id: hindi, label: Hindi, family: general, aliases: [hindi language, fluent hindi]}
+  - {id: teamwork, label: Teamwork, family: general, aliases: [team player, collaboration, cross-functional collaboration, cross functional, team collaboration]}
+  - {id: time-management, label: Time Management, family: general, aliases: [prioritisation, multitasking, attention to detail, detail oriented, detail-oriented, organizational skills, organisational skills, self-motivated, self motivated, quick learner, fast learner]}
+  - {id: ms-office, label: MS Office, family: general, aliases: [microsoft office, ms word, ms powerpoint, powerpoint, microsoft word, google workspace, g suite, gsuite, office 365, microsoft 365, google docs, google slides]}
+  - {id: leadership, label: Leadership, family: general, aliases: [team leadership, people management, mentoring, coaching, team lead]}
+  - {id: research, label: Research, family: general, aliases: [desk research, secondary research, analytical thinking, critical thinking, due diligence]}
+  - {id: slack, label: Slack & Remote Tools, family: general, aliases: [zoom, google meet, microsoft teams, remote collaboration, asynchronous communication, async communication, loom]}
