@@ -148,9 +148,25 @@ export const ENTRY_LEVEL = sql`(${NOT_INTERNSHIP} AND (
   OR (p.seniority IS NULL AND (p.experience_min_years <= 2 OR p.experience_max_years <= 2))))`;
 const LEVEL_UNSTATED = sql`(p.seniority IS NULL AND p.experience_min_years IS NULL AND p.experience_max_years IS NULL)`;
 
+/**
+ * The same job listed twice (same company and title, e.g. once per board or re-posted) shows once: the newest open
+ * copy. Only an identical copy hides another: same decided eligibility, work mode, level, countries and no flags,
+ * so a US copy never hides an India copy of the same title.
+ */
+const NEWEST_COPY = sql`(p.decision_key IS NULL OR p.company_id IS NULL OR NOT EXISTS (
+  SELECT 1 FROM hunterrr.postings q
+  WHERE q.company_id = p.company_id AND q.title_normalized = p.title_normalized AND q.status = 'open' AND q.id > p.id
+    AND q.decision_key IS NOT NULL AND cardinality(q.flags) = 0
+    AND q.india_eligible = p.india_eligible AND q.remote_type IS NOT DISTINCT FROM p.remote_type
+    AND q.eligibility_scope IS NOT DISTINCT FROM p.eligibility_scope
+    AND q.eligible_countries IS NOT DISTINCT FROM p.eligible_countries
+    AND q.seniority IS NOT DISTINCT FROM p.seniority
+    AND q.experience_min_years IS NOT DISTINCT FROM p.experience_min_years
+    AND q.employment_kind IS NOT DISTINCT FROM p.employment_kind))`;
+
 function conditions(f: FeedFilters): SQL[] {
   // A company the owner chose to ignore never shows (postings with no known company still do).
-  const out: SQL[] = [sql`p.status = 'open'`, NOT_IGNORED, NO_HARD_FLAGS];
+  const out: SQL[] = [sql`p.status = 'open'`, NOT_IGNORED, NO_HARD_FLAGS, NEWEST_COPY];
   const q = f.q?.trim();
   if (q) {
     const pat = likePattern(q.slice(0, 80));
