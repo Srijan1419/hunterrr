@@ -27,6 +27,7 @@ from etl.core.types import Field
 from etl.extract.ladder import StoredDocument, extract
 from etl.extract.llm_rung import apply_llm
 from etl.extract.model import FIELD_KEYS, Extracted
+from etl.sources.remote import AGGREGATOR_SOURCES
 
 EXTRACTION_VERSION = 8  # 8: Ashby work mode from workplaceType (isRemote is also true for hybrid), bare remote/hybrid only in work-mode contexts, board-vs-text conflicts become unknown; 7: level hints only from the title or an explicit un-negated fresher statement (a description that mentions interns no longer makes an intern); 6: Indian grade titles (Senior Associate) carry no level; "0-1 yrs + freshers" not a conflict; 5: negated work-auth ("no clearance required") and "worldwide except X" (2026-10-06); 4: fresher level v2 (trainee, campus, SDE-1, months, batch year); 3: board location text (2026-10-06)
 
@@ -272,12 +273,38 @@ UPDATE_COLUMNS: tuple[str, ...] = tuple(
     c for c in INSERT_COLUMNS if c not in ("source", "source_id", "first_seen_at")
 )
 
+_OTHER_SOURCES_SQL = ", ".join(f"'{s}'" for s in ("careerpage", *AGGREGATOR_SOURCES))
+
+
+def normalize_company_name(name: str) -> str:
+    """Lower case, letters and digits only: "Acme, Inc." and "acme inc" are the same company."""
+    return re.sub(r"[^a-z0-9]+", "", name.lower())
+
+
+def resolve_companies(conn, names: set[str]) -> dict[str, int]:
+    """Company id per normalized name: the existing company, else a new one (aggregator postings name their own)."""
+    out: dict[str, int] = {}
+    for name in sorted(names):
+        norm = normalize_company_name(name)
+        if not norm or norm in out:
+            continue
+        found = conn.execute(
+            text("SELECT id FROM hunterrr.companies WHERE normalized_name = :n ORDER BY id LIMIT 1"), {"n": norm}).scalar()
+        if found is None:
+            found = conn.execute(
+                text("INSERT INTO hunterrr.companies (name, normalized_name) VALUES (:name, :n) RETURNING id"),
+                {"name": name.strip()[:120], "n": norm}).scalar()
+        out[norm] = int(found)
+    return out
+
+
 _PENDING_SQL = text(
     "SELECT r.id, r.source, r.source_key, r.url, r.content_type, r.content_hash, r.clean_text_gz, "
     "b.id AS board_id, b.company_id AS company_id "
     "FROM hunterrr.raw_documents r "
-    # career-page boards are stored with ats 'other' (there is no job-board system); their documents say 'careerpage'
-    "LEFT JOIN hunterrr.boards b ON (b.ats::text = r.source OR (r.source = 'careerpage' AND b.ats::text = 'other')) "
+    # career-page and aggregator boards are stored with ats 'other' (there is no job-board system); their documents
+    # say 'careerpage' / the aggregator's name
+    "LEFT JOIN hunterrr.boards b ON (b.ats::text = r.source OR (r.source IN (" + _OTHER_SOURCES_SQL + ") AND b.ats::text = 'other')) "
     "AND b.slug = (r.fetch_meta->>'slug') "
     "WHERE r.clean_text_gz IS NOT NULL AND r.id > :after "
     "ORDER BY r.id LIMIT :n"
@@ -367,6 +394,7 @@ def process(
 
         by_key: dict[tuple[str, str], dict[str, Any]] = {}
         doc_ids: dict[tuple[str, str], list[int]] = {}
+        company_names: dict[tuple[str, str], str] = {}  # aggregator postings name their own company
         for doc in pending:
             try:
                 extracted = extract(StoredDocument(
@@ -384,10 +412,25 @@ def process(
                 result.failed_ids.append(doc.id)
                 continue
             key = (row["source"], row["source_id"])
+            if doc.source in AGGREGATOR_SOURCES:
+                row["company_id"] = None  # the aggregator's own pseudo company is never the posting's company
+                name = extracted.fields.get("company_name")
+                if name is not None and isinstance(name.value, str) and name.value.strip():
+                    company_names[key] = name.value
             if key in by_key:
                 result.skipped += 1  # an older version of the same posting in this batch
             by_key[key] = row  # ids ascend, so the newest document wins
             doc_ids.setdefault(key, []).append(doc.id)
+
+        if company_names:
+            try:
+                with session_scope(engine) as conn:
+                    company_ids = resolve_companies(conn, set(company_names.values()))
+                for key, name in company_names.items():
+                    if key in by_key:
+                        by_key[key]["company_id"] = company_ids.get(normalize_company_name(name))
+            except Exception:
+                pass  # postings are still written, without a company, and fixed by a later run
 
         try:
             with session_scope(engine) as conn:

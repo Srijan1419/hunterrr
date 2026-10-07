@@ -87,3 +87,15 @@ describe("initials", () => {
     expect(initials(null)).toBe("?");
   });
 });
+
+
+describe("JobRow attribution", () => {
+  it("names an aggregator source next to the job", () => {
+    render(<ul><JobRow row={{ ...base, source: "himalayas" }} /></ul>);
+    expect(screen.getByText("via Himalayas")).toBeTruthy();
+  });
+  it("names no source for a company board", () => {
+    render(<ul><JobRow row={base} /></ul>);
+    expect(screen.queryByText(/^via /)).toBeNull();
+  });
+});

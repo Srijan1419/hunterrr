@@ -11,7 +11,7 @@ import styles from "@/components/feed/detail.module.css";
 import { db } from "@/lib/db/client.v2";
 import { SaveButton } from "@/components/tracker/SaveButton";
 import { WrongButton } from "@/components/feed/WrongButton";
-import { labelText } from "@/components/feed/JobRow";
+import { SOURCE_VIA, labelText } from "@/components/feed/JobRow";
 import { formatEligibility, formatLocation, formatPay } from "@/lib/feed-format";
 import { scoreMatch } from "@/lib/match/score";
 import { getActiveProfile } from "@/lib/queries/profile";
@@ -76,7 +76,7 @@ export default async function JobDetailPage({ params }: { params: Params }) {
         <div className={styles.actions}>
           {posting.applyUrl ? (
             <a className={styles.apply} href={posting.applyUrl} target="_blank" rel="noopener noreferrer">
-              Apply on the employer&apos;s page
+              {SOURCE_VIA[posting.source] ? `Apply on ${SOURCE_VIA[posting.source]}` : "Apply on the employer's page"}
             </a>
           ) : (
             <span className={styles.noApply}>No apply link was found for this posting.</span>

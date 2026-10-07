@@ -119,7 +119,7 @@ class CareerPageSource:
         rows = conn.execute(
             text(
                 "SELECT b.id, b.slug, b.url, b.etag FROM hunterrr.boards b "
-                "WHERE b.ats = CAST('other' AS hunterrr.ats) AND " + DUE_WHERE + " ORDER BY b.id"
+                "WHERE b.ats = CAST('other' AS hunterrr.ats) AND b.slug NOT LIKE 'agg-%' AND " + DUE_WHERE + " ORDER BY b.id"
             )
         ).all()
         return [

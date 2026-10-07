@@ -140,10 +140,25 @@ def test_the_cli_reports_and_refuses_a_bad_file(db, pg_url, monkeypatch, tmp_pat
     bad.write_text("companies:\n  - {name: Acme, ats: taleo, slug: acme}\n", encoding="utf-8")
     assert run_main(["seed", "--file", str(bad)]) == 1
     assert "seed status=failed" in capsys.readouterr().out
-    assert count(db, "SELECT count(*) FROM hunterrr.boards") == 1  # the bad file added nothing
+    assert count(db, "SELECT count(*) FROM hunterrr.boards WHERE slug NOT LIKE 'agg-%'") == 1  # the bad file added nothing
 
 
 def test_the_cli_without_a_database_url_exits_2(monkeypatch):
     monkeypatch.delenv("DATABASE_URL", raising=False)
     monkeypatch.setattr("etl.run.Settings", lambda: type("S", (), {"DATABASE_URL": None})())
     assert run_main(["seed"]) == 2
+
+
+@pg
+def test_aggregator_queries_get_one_pseudo_board_each_and_seeding_twice_changes_nothing(db):
+    from etl.discovery.seed import ensure_aggregators
+    from etl.sources.remote.himalayas import QUERIES, SLUG_PREFIX, API
+
+    db.dispose()
+    first = ensure_aggregators(db)
+    assert first == [SLUG_PREFIX + n for n in QUERIES] or first == []  # already added by the CLI test above
+    assert ensure_aggregators(db) == []
+    rows = db.connect().execute(text("SELECT ats::text, slug, url FROM hunterrr.boards WHERE slug LIKE 'agg-himalayas-%'")).all()
+    assert len(rows) == len(QUERIES)
+    ats, slug, url = rows[0]
+    assert ats == "other" and url.startswith(API + "?country=IN") and "employment_type=Full%20Time" in url

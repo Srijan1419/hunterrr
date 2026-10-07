@@ -9,6 +9,9 @@ import styles from "./feed.module.css";
 
 const REMOTE_LABEL = { remote: "Remote", hybrid: "Hybrid", onsite: "On-site" } as const;
 
+/** Aggregator sources must be named next to the job (attribution is a term of their APIs). */
+export const SOURCE_VIA: Record<string, string> = { himalayas: "Himalayas" };
+
 /** Soft labels from the decision layer, in plain words. Unknown labels are not shown. */
 export function labelText(label: string): string | null {
   const fixed: Record<string, string> = {
@@ -45,6 +48,7 @@ export function JobRow({ row, now, saved = false }: { row: FeedRow; now?: Date; 
           {row.companyName ? <span>{row.companyName}</span> : null}
           {location ? <span>{location}</span> : null}
           {row.seniority ? <span>{row.seniority}</span> : null}
+          {SOURCE_VIA[row.source] ? <span>via {SOURCE_VIA[row.source]}</span> : null}
         </div>
         {row.match ? (
           <details className={styles.fit}>

@@ -198,7 +198,7 @@ def eval_cmd(show_misses: bool) -> int:
 
 def seed_cmd(path: str) -> int:
     """Add the companies and boards in config/companies.yaml that the database does not have yet."""
-    from etl.discovery.seed import SeedError, load_entries, sync
+    from etl.discovery.seed import SeedError, ensure_aggregators, load_entries, sync
 
     settings = Settings()
     db_url = _secret(settings.DATABASE_URL) or os.environ.get("DATABASE_URL")
@@ -213,6 +213,7 @@ def seed_cmd(path: str) -> int:
     engine = make_engine(db_url, pooled=True)
     try:
         result = sync(engine, entries)
+        aggregators = ensure_aggregators(engine)
     except Exception as exc:
         print(f"seed status=failed error={type(exc).__name__}")
         return 1
@@ -221,6 +222,7 @@ def seed_cmd(path: str) -> int:
     print(
         f"seed status=ok entries={result.entries} companies_added={result.companies_added} "
         f"boards_added={result.boards_added} boards_existing={result.boards_existing}"
+        f" aggregators_added={len(aggregators)}"
     )
     return 0
 

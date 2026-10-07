@@ -94,7 +94,7 @@ _TOO_GOOD = re.compile(
 # pools, and conversion postings only existing temporary staff may use (all found on real boards, 2026-10-06).
 _NOT_A_JOB_TITLE = re.compile(
     r"\btalent\s+(?:community|network|pool)\b|\bopen\s+(?:application|sollicitatie)\b|\b(?:general|spontaneous)\s+application\b"
-    r"|\bfuture\s+(?:opportunities|openings|roles|\w+\s+roles)\b|\bexpression\s+of\s+interest\b|\bapply\s+here\b|\bsollicitatie\b"
+    r"|\bfuture\s+(?:opportunities|openings|roles|positions?|\w+\s+roles)\b|\bexpression\s+of\s+interest\b|\bapply\s+here\b|\bsollicitatie\b"
     r"|\bjoin\s+our\s+(?:talent|team)\s+(?:community|network|pool)\b|\btemp\s+to\s+(?:full[- ]?time|perm\w*)\b",
     _I,
 )

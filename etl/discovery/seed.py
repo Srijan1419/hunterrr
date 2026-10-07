@@ -149,3 +149,33 @@ def sync(engine, entries: Iterable[Entry]) -> SeedResult:
             result.boards_added += 1
             result.added.append(f"{e.name} ({e.ats}/{e.slug})")
     return result
+
+
+def ensure_aggregators(engine) -> list[str]:
+    """Create the pseudo-board of every saved aggregator query that does not exist yet (never edits one that does).
+
+    An aggregator query is stored as a board with ats `other` and slug `agg-<source>-<query>`, owned by one
+    placeholder company per aggregator; the postings name their own companies (see `process`).
+    """
+    from etl.sources.remote.himalayas import QUERIES, SLUG_PREFIX, query_url
+
+    added: list[str] = []
+    with session_scope(engine) as conn:
+        norm = normalize_company("Himalayas (aggregator)")
+        company_id = conn.execute(text("SELECT id FROM hunterrr.companies WHERE normalized_name = :n LIMIT 1"), {"n": norm}).scalar()
+        if company_id is None:
+            company_id = conn.execute(
+                text("INSERT INTO hunterrr.companies (name, normalized_name) VALUES ('Himalayas (aggregator)', :n) RETURNING id"), {"n": norm}).scalar()
+        for name in QUERIES:
+            slug = SLUG_PREFIX + name
+            exists = conn.execute(
+                text("SELECT 1 FROM hunterrr.boards WHERE ats = CAST('other' AS hunterrr.ats) AND slug = :s"), {"s": slug}).first()
+            if exists:
+                continue
+            conn.execute(
+                text("INSERT INTO hunterrr.boards (company_id, ats, slug, url) VALUES (:c, CAST('other' AS hunterrr.ats), :s, :u) "
+                     "ON CONFLICT (ats, slug) DO NOTHING"),
+                {"c": company_id, "s": slug, "u": query_url(name)},
+            )
+            added.append(slug)
+    return added
