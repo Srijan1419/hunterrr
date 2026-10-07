@@ -23,6 +23,8 @@ export type FeedFilters = {
   postedWithinDays?: number;
   /** Only full-time fresher and entry-level postings, no internships (the default; `?level=all` turns it off). */
   entryLevel?: boolean;
+  /** Instead of the country rule: decided postings that do not say whether the country may apply (`?unconfirmed=1`). */
+  unconfirmed?: boolean;
   /** "match" ranks by fit with the profile (needs one); "newest" is date order. Default: match. */
   sort?: "match" | "newest";
   page?: number;
@@ -71,6 +73,8 @@ export type FeedResult = {
   openTotal: number;
   /** Postings a country filter hides because they do not say whether that country may apply. */
   eligibilityUnknown: number;
+  /** Postings that pass every filter except that they do not say whether the country may apply (decided unknown). */
+  unconfirmed: number;
   /** Postings the entry-level filter hides because they state neither a level nor years of experience. */
   levelUnknown: number;
   /** Postings the remote filter hides because they do not say whether the job is remote, hybrid or on-site. */
@@ -173,7 +177,9 @@ function conditions(f: FeedFilters): SQL[] {
     out.push(sql`(p.title ILIKE ${pat} OR c.name ILIKE ${pat})`);
   }
   if (f.remote) out.push(sql`p.remote_type = 'remote'`);
-  if (f.country && /^[A-Z]{2}$/.test(f.country)) {
+  if (f.unconfirmed) {
+    out.push(sql`(p.decision_key IS NOT NULL AND p.india_eligible = 'unknown')`);
+  } else if (f.country && /^[A-Z]{2}$/.test(f.country)) {
     out.push(eligibleFor(f.country));
   }
   if (f.hasPay) out.push(sql`(p.pay_min IS NOT NULL OR p.pay_max IS NOT NULL)`);
@@ -276,7 +282,9 @@ export async function queryFeed(db: FeedDb, filters: FeedFilters = {}, profile: 
           AND ${LEVEL_UNSTATED}) AS level_unknown,
       (SELECT count(*) FROM hunterrr.postings p LEFT JOIN hunterrr.companies c ON c.id = p.company_id
         WHERE ${sql.join(conditions({ ...filters, remote: undefined }), sql` AND `)}
-          AND p.remote_type IS NULL) AS mode_unknown`);
+          AND p.remote_type IS NULL) AS mode_unknown,
+      (SELECT count(*) FROM hunterrr.postings p LEFT JOIN hunterrr.companies c ON c.id = p.company_id
+        WHERE ${sql.join(conditions({ ...filters, unconfirmed: true }), sql` AND `)}) AS unconfirmed`);
 
   const c = counts.rows[0] ?? {};
   const total = num(c.total) ?? 0;
@@ -315,6 +323,7 @@ export async function queryFeed(db: FeedDb, filters: FeedFilters = {}, profile: 
     openTotal: num(c.open_total) ?? 0,
     eligibilityUnknown: filters.country ? (num(c.eligibility_unknown) ?? 0) : 0,
     levelUnknown: filters.entryLevel ? (num(c.level_unknown) ?? 0) : 0,
+    unconfirmed: filters.country && !filters.unconfirmed ? (num(c.unconfirmed) ?? 0) : 0,
     modeUnknown: filters.remote ? (num(c.mode_unknown) ?? 0) : 0,
     page,
     pages,
@@ -343,6 +352,7 @@ export function filtersFromSearchParams(
     hasPay: one("pay") === "1" || undefined,
     postedWithinDays: Number.isInteger(days) && days > 0 && days <= 365 ? days : undefined,
     entryLevel: one("level") === "all" ? undefined : true,
+    unconfirmed: one("unconfirmed") === "1" || undefined,
     sort: one("sort") === "newest" ? "newest" : "match",
     page: Number.isInteger(page) && page > 0 && page < 10_000 ? page : undefined,
   };

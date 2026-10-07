@@ -59,7 +59,18 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
       {ranking && result.total > MATCH_CANDIDATES ? (
         <p className={styles.note}>Best match ranks the {MATCH_CANDIDATES} newest of {result.total.toLocaleString("en-US")} matching jobs.</p>
       ) : null}
-      {filters.country && result.eligibilityUnknown > 0 ? (
+      {filters.unconfirmed ? (
+        <p className={styles.note}>
+          These jobs are remote and entry level but do not say whether {filters.country ?? "your country"} may apply. Check the posting before you apply.{" "}
+          <a href={pageHref({ ...params, unconfirmed: undefined }, 1)}>Back to confirmed jobs</a>
+        </p>
+      ) : result.unconfirmed > 0 ? (
+        <p className={styles.note}>
+          {result.unconfirmed.toLocaleString("en-US")} more remote jobs match but do not say whether {filters.country} may apply.{" "}
+          <a href={pageHref({ ...params, unconfirmed: "1" }, 1)}>Show them (check before applying)</a>
+        </p>
+      ) : null}
+      {!filters.unconfirmed && filters.country && result.eligibilityUnknown > 0 ? (
         <p className={styles.note}>
           {result.eligibilityUnknown.toLocaleString("en-US")} other postings do not say whether {filters.country} may apply and are not shown.{" "}
           <a href={pageHref({ ...params, country: "any" }, 1)}>Show any country</a>

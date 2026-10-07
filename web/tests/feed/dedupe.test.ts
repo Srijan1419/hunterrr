@@ -43,6 +43,8 @@ beforeAll(async () => {
   await add(4, "Analyst", { decision_key: "k4", india_eligible: "no", employment_kind: "full_time", eligibility_scope: "countries", eligible_countries: ["US"] }); // newer but US-only: must not hide it
   await add(5, "Writer", { decision_key: "k5", ...yes, eligibility_scope: "countries", eligible_countries: ["IN"] });
   await add(6, "Writer", { decision_key: "k6", ...yes, eligibility_scope: "countries", eligible_countries: ["IN"], flags: ["fee_requested"] }); // flagged copy never hides the good one
+  await add(9, "Maybe Open", { decision_key: "k9", india_eligible: "unknown", employment_kind: "full_time" });
+  await add(10, "Not Open", { decision_key: "k10", india_eligible: "no", employment_kind: "full_time" });
   await add(7, "Tester", { eligibility_scope: "countries", eligible_countries: ["IN"] });                                                       // undecided copies are never collapsed
   await add(8, "Tester", { eligibility_scope: "countries", eligible_countries: ["IN"] });
 }, 90_000);
@@ -65,5 +67,16 @@ describe("duplicates", () => {
   it("copies that are not decided yet are left alone", async () => {
     const r = await queryFeed(db as never, { remote: true, country: "IN", entryLevel: true });
     expect(r.rows.filter((x) => x.title === "Tester")).toHaveLength(2);
+  });
+});
+
+describe("unconfirmed view", () => {
+  it("lists decided-unknown jobs separately and counts them from the confirmed view", async () => {
+    const confirmed = await queryFeed(db as never, { remote: true, country: "IN", entryLevel: true });
+    expect(confirmed.rows.map((x) => x.title)).not.toContain("Maybe Open");
+    expect(confirmed.unconfirmed).toBe(1);
+    const view = await queryFeed(db as never, { remote: true, country: "IN", entryLevel: true, unconfirmed: true });
+    expect(view.rows.map((x) => x.title)).toEqual(["Maybe Open"]);
+    expect(view.unconfirmed).toBe(0);
   });
 });
