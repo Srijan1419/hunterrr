@@ -56,7 +56,7 @@ export function startOfWeekIST(now: Date): Date {
   return new Date(Date.UTC(ist.getUTCFullYear(), ist.getUTCMonth(), ist.getUTCDate() - sinceMonday) - IST_OFFSET_MS);
 }
 
-export async function queryToday(db: TrackerTx, now: Date = new Date(), profile: Profile | null = null): Promise<TodayData> {
+export async function queryToday(db: TrackerTx, userId: string, now: Date = new Date(), profile: Profile | null = null): Promise<TodayData> {
   const since = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
   const stale = new Date(now.getTime() - NEW_JOB_MAX_AGE_DAYS * 24 * 60 * 60 * 1000).toISOString();
   const fresh = sql`p.status = 'open' AND ${NOT_IGNORED} AND ${ENTRY_LEVEL} AND ${remoteFor(DEFAULT_COUNTRY)} AND p.first_seen_at >= ${since}
@@ -71,10 +71,11 @@ export async function queryToday(db: TrackerTx, now: Date = new Date(), profile:
       ORDER BY p.first_seen_at DESC, p.posted_at DESC NULLS LAST, p.id DESC
       LIMIT ${NEW_JOBS_SHOWN}`),
     db.execute(sql`SELECT count(*) AS n FROM hunterrr.postings p LEFT JOIN hunterrr.companies c ON c.id = p.company_id WHERE ${fresh}`),
-    followUpsDue(db, endOfTodayIST(now)),
-    db.execute(sql`SELECT current_state::text AS state, count(*) AS n FROM hunterrr.applications GROUP BY current_state`),
-    db.execute(sql`SELECT count(DISTINCT application_id) AS n FROM hunterrr.application_events
-      WHERE type = 'state_changed' AND payload->>'to' = 'applied' AND occurred_at >= ${weekSince}`),
+    followUpsDue(db, userId, endOfTodayIST(now)),
+    db.execute(sql`SELECT current_state::text AS state, count(*) AS n FROM hunterrr.applications WHERE user_id = ${userId} GROUP BY current_state`),
+    db.execute(sql`SELECT count(DISTINCT e.application_id) AS n FROM hunterrr.application_events e
+      JOIN hunterrr.applications a ON a.id = e.application_id
+      WHERE a.user_id = ${userId} AND e.type = 'state_changed' AND e.payload->>'to' = 'applied' AND e.occurred_at >= ${weekSince}`),
   ]);
 
   const pipeline = Object.fromEntries(APPLICATION_STATES.map((s) => [s, 0])) as Record<ApplicationState, number>;

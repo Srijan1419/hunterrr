@@ -18,7 +18,6 @@ const requiredEnv = [
   "BETTER_AUTH_URL",
   "GOOGLE_CLIENT_ID",
   "GOOGLE_CLIENT_SECRET",
-  "ALLOWED_EMAIL", // without it nobody can sign in (the lock fails closed), so say so at startup
 ] as const;
 
 function validateEnv() {
@@ -26,6 +25,11 @@ function validateEnv() {
     if (!process.env[key]) {
       throw new Error(`Missing required environment variable: ${key}`);
     }
+  }
+  // Without an invite list (ALLOWED_EMAILS, or the older single ALLOWED_EMAIL) nobody can sign in (the lock fails
+  // closed), so say so at startup.
+  if (!process.env.ALLOWED_EMAILS && !process.env.ALLOWED_EMAIL) {
+    throw new Error("Missing required environment variable: ALLOWED_EMAILS (or ALLOWED_EMAIL)");
   }
 }
 

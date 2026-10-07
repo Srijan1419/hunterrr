@@ -8,6 +8,7 @@ import { Description } from "@/components/feed/Description";
 import { initials } from "@/components/feed/JobRow";
 import { PostingFacts } from "@/components/feed/PostingFacts";
 import styles from "@/components/feed/detail.module.css";
+import { requireSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/client.v2";
 import { AppliedButton } from "@/components/tracker/AppliedButton";
 import { SaveButton } from "@/components/tracker/SaveButton";
@@ -37,9 +38,10 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 export default async function JobDetailPage({ params }: { params: Params }) {
   const posting = await queryPosting(db as never, parseId((await params).id));
   if (!posting) notFound();
-  const saved = (await savedPostingIds(db as never, [posting.id])).has(posting.id);
-  const applicationState = await postingApplicationState(db as never, posting.id);
-  const stored = await getActiveProfile(db as never);
+  const { user } = await requireSession();
+  const saved = (await savedPostingIds(db as never, user.id, [posting.id])).has(posting.id);
+  const applicationState = await postingApplicationState(db as never, user.id, posting.id);
+  const stored = await getActiveProfile(db as never, user.id);
   const match = stored
     ? scoreMatch(stored.data, {
         title: posting.title, description: posting.descriptionMd.slice(0, 4000), seniority: posting.seniority,

@@ -12,6 +12,7 @@ import { drizzle } from "drizzle-orm/pglite";
 import { endOfTodayIST, queryToday, startOfWeekIST, WEEKLY_APPLY_GOAL } from "@/lib/queries/today";
 import { ProfileSchema } from "@/lib/profile/schema";
 
+const U1 = "u1";
 const DIR = path.join(__dirname, "..", "..", "drizzle-v2");
 // 2026-10-06 14:00 IST
 const NOW = new Date("2026-10-06T08:30:00Z");
@@ -39,8 +40,8 @@ async function posting(n: number, o: Record<string, string | number | null>) {
 
 async function application(title: string, state: string, nextAction: string | null) {
   await pg.query(
-    `INSERT INTO hunterrr.applications (title, source, current_state, next_action_at, company_id)
-     VALUES ($1, 'ui', $2, $3, 1)`,
+    `INSERT INTO hunterrr.applications (title, source, current_state, next_action_at, company_id, user_id)
+     VALUES ($1, 'ui', $2, $3, 1, 'u1')`,
     [title, state, nextAction],
   );
 }
@@ -54,6 +55,7 @@ beforeAll(async () => {
     }
   }
   await pg.exec("INSERT INTO hunterrr.companies (name, normalized_name) VALUES ('Acme Corp', 'acme')");
+  await pg.exec("INSERT INTO hunterrr.\"user\" (id, name, email) VALUES ('u1', 'Asha', 'asha@example.com'), ('u2', 'Ben', 'ben@example.com')");
   db = drizzle(pg);
 
   await posting(1, { title: "Fresher, found 2 h ago", seniority: "entry", first_seen_at: hoursAgo(2) });
@@ -80,7 +82,7 @@ beforeAll(async () => {
   // applications moved to "applied": two this week (Mon 00:00 IST = 2026-10-04T18:30Z), one last week, one only saved
   for (const [title, to, at] of [["Applied Tue", "applied", "2026-10-05T10:00:00Z"], ["Applied Mon", "applied", "2026-10-04T19:00:00Z"],
     ["Applied last week", "applied", "2026-10-03T10:00:00Z"], ["Saved this week", "saved", "2026-10-05T10:00:00Z"]]) {
-    const id = (await pg.query<{ id: number }>("INSERT INTO hunterrr.applications (title, source, current_state, company_id) VALUES ($1, 'ui', 'withdrawn', 1) RETURNING id", [title])).rows[0].id;
+    const id = (await pg.query<{ id: number }>("INSERT INTO hunterrr.applications (title, source, current_state, company_id, user_id) VALUES ($1, 'ui', 'withdrawn', 1, 'u1') RETURNING id", [title])).rows[0].id;
     await pg.query(
       "INSERT INTO hunterrr.application_events (application_id, type, occurred_at, actor, payload, payload_hash) VALUES ($1, 'state_changed', $2, 'user', $3::jsonb, $4)",
       [id, at, JSON.stringify({ from: "saved", to }), `h-${title}`]);
@@ -103,7 +105,7 @@ describe("endOfTodayIST", () => {
 
 describe("queryToday", () => {
   it("counts only open entry-level postings first seen in the last 24 hours, newest first", async () => {
-    const t = await queryToday(db as never, NOW);
+    const t = await queryToday(db as never, U1, NOW);
     // remote + open to India + entry level only: worldwide and APAC (which contains India) count;
     // on-site, US-only and "eligibility not stated" do not
     expect(t.newJobsCount).toBe(3);
@@ -111,12 +113,12 @@ describe("queryToday", () => {
   });
 
   it("lists open applications due today or overdue (IST), soonest first, never closed ones", async () => {
-    const t = await queryToday(db as never, NOW);
+    const t = await queryToday(db as never, U1, NOW);
     expect(t.followUps.map((a) => a.title)).toEqual(["Overdue", "Due later today (IST)"]);
   });
 
   it("counts the pipeline by state and the active (not closed) total", async () => {
-    const t = await queryToday(db as never, NOW);
+    const t = await queryToday(db as never, U1, NOW);
     expect(t.pipeline).toMatchObject({ saved: 1, applied: 2, interview: 1, rejected: 1, offer: 0 });
     expect(t.activeCount).toBe(4);
   });
@@ -132,15 +134,15 @@ describe("Apply today (with a profile) and the weekly goal", () => {
   });
 
   it("counts applications moved to applied this week, against the goal", async () => {
-    const t = await queryToday(db as never, NOW);
+    const t = await queryToday(db as never, U1, NOW);
     expect(t.weekApplied).toBe(2);
     expect(t.weeklyGoal).toBe(WEEKLY_APPLY_GOAL);
   });
 
   it("without a profile the list is the 24-hour new jobs; with one it is the 48-hour fits, best first", async () => {
-    const plain = await queryToday(db as never, NOW);
+    const plain = await queryToday(db as never, U1, NOW);
     expect(plain.ranked).toBe(false);
-    const ranked = await queryToday(db as never, NOW, me);
+    const ranked = await queryToday(db as never, U1, NOW, me);
     expect(ranked.ranked).toBe(true);
     expect(ranked.newJobs.length).toBeGreaterThan(0);
     expect(ranked.newJobs.every((r) => r.match?.bucket === "strong" || r.match?.bucket === "worth")).toBe(true);

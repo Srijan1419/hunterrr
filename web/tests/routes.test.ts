@@ -93,7 +93,7 @@ describe("middleware and requireSession", () => {
   beforeEach(() => {
     vi.resetModules();
     getSession.mockReset();
-    vi.doMock("@/lib/auth/config", () => ({ auth: { api: { getSession } } }));
+    vi.doMock("@/lib/auth/config", () => ({ auth: { api: { getSession } }, isAllowedEmail: (e: string | null | undefined) => e === "me@example.com" }));
     vi.doMock("next/headers", () => ({ headers: async () => new Headers() }));
   });
 
@@ -118,6 +118,13 @@ describe("middleware and requireSession", () => {
     expect(res.headers.get("location")).toBeNull();
   });
 
+  it("locks out a signed-in person who has been taken off the invite list", async () => {
+    getSession.mockResolvedValue({ user: { email: "removed@example.com" } });
+    const res = await run("/tracker");
+    expect(res.status).toBe(307);
+    expect(new URL(res.headers.get("location")!).pathname).toBe("/not-allowed");
+  });
+
   it("does not even look up a session for a public page", async () => {
     const res = await run("/signin");
     expect(res.headers.get("location")).toBeNull();
@@ -130,5 +137,7 @@ describe("middleware and requireSession", () => {
     await expect(requireSession()).rejects.toThrow("Not signed in");
     getSession.mockResolvedValueOnce({ user: { email: "me@example.com" } });
     await expect(requireSession()).resolves.toMatchObject({ user: { email: "me@example.com" } });
+    getSession.mockResolvedValueOnce({ user: { email: "removed@example.com" } });
+    await expect(requireSession()).rejects.toThrow("Not on the invite list");
   });
 });

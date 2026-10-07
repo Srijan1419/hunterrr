@@ -19,9 +19,9 @@ function refresh() {
 
 /** Save a posting to the tracker (idempotent). Every action starts with the session check. */
 export async function saveJob(postingId: number): Promise<ActionResult> {
-  await requireSession();
+  const { user } = await requireSession();
   if (!validId(postingId)) return BAD_INPUT;
-  const saved = await saveApplication(db as never, postingId);
+  const saved = await saveApplication(db as never, user.id, postingId);
   if (!saved) return { ok: false, error: "That job no longer exists." };
   refresh();
   return { ok: true, applicationId: saved.application.id };
@@ -29,18 +29,18 @@ export async function saveJob(postingId: number): Promise<ActionResult> {
 
 /** "I applied": save the job, mark it applied and set a follow-up reminder a week ahead (idempotent). */
 export async function appliedToJob(postingId: number): Promise<ActionResult> {
-  await requireSession();
+  const { user } = await requireSession();
   if (!validId(postingId)) return BAD_INPUT;
-  const app = await markApplied(db as never, postingId);
+  const app = await markApplied(db as never, user.id, postingId);
   if (!app) return { ok: false, error: "That job no longer exists." };
   refresh();
   return { ok: true, applicationId: app.id };
 }
 
 export async function moveApplication(applicationId: number, state: string): Promise<ActionResult> {
-  await requireSession();
+  const { user } = await requireSession();
   if (!validId(applicationId) || !isApplicationState(state)) return BAD_INPUT;
-  const moved = await changeState(db as never, applicationId, state);
+  const moved = await changeState(db as never, user.id, applicationId, state);
   if (!moved) return { ok: false, error: "That application was not found." };
   refresh();
   return { ok: true, applicationId: moved.id };
@@ -48,7 +48,7 @@ export async function moveApplication(applicationId: number, state: string): Pro
 
 /** `date` is "YYYY-MM-DD" or an empty string to clear the reminder. */
 export async function scheduleNextAction(applicationId: number, date: string): Promise<ActionResult> {
-  await requireSession();
+  const { user } = await requireSession();
   if (!validId(applicationId)) return BAD_INPUT;
   let when: Date | null = null;
   if (date !== "") {
@@ -56,16 +56,16 @@ export async function scheduleNextAction(applicationId: number, date: string): P
     when = new Date(`${date}T09:00:00Z`);
     if (Number.isNaN(when.getTime())) return BAD_INPUT;
   }
-  const updated = await setNextAction(db as never, applicationId, when);
+  const updated = await setNextAction(db as never, user.id, applicationId, when);
   if (!updated) return { ok: false, error: "That application was not found." };
   refresh();
   return { ok: true, applicationId: updated.id };
 }
 
 export async function saveNotes(applicationId: number, notes: string): Promise<ActionResult> {
-  await requireSession();
+  const { user } = await requireSession();
   if (!validId(applicationId) || typeof notes !== "string") return BAD_INPUT;
-  const updated = await setNotes(db as never, applicationId, notes);
+  const updated = await setNotes(db as never, user.id, applicationId, notes);
   if (!updated) return { ok: false, error: "That application was not found." };
   refresh();
   return { ok: true, applicationId: updated.id };

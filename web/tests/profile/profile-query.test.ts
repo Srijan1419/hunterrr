@@ -13,6 +13,7 @@ import { getActiveProfile, saveProfile } from "@/lib/queries/profile";
 import { mergeResume } from "@/components/profile/ProfileEditor";
 import { EMPTY_PROFILE } from "@/lib/profile/schema";
 
+const U1 = "u1";
 const DIR = path.join(__dirname, "..", "..", "drizzle-v2");
 let pg: PGlite;
 let db: ReturnType<typeof drizzle>;
@@ -25,19 +26,20 @@ beforeAll(async () => {
       if (s.trim()) await pg.exec(s);
     }
   }
+  await pg.exec("INSERT INTO hunterrr.\"user\" (id, name, email) VALUES ('u1', 'Asha', 'asha@example.com'), ('u2', 'Ben', 'ben@example.com')");
   db = drizzle(pg);
 }, 90_000);
 
 describe("profile versions", () => {
   it("has no profile until the first save", async () => {
-    expect(await getActiveProfile(db as never)).toBeNull();
+    expect(await getActiveProfile(db as never, U1)).toBeNull();
   });
 
   it("saves each change as a new version and keeps exactly one active", async () => {
-    const v1 = await saveProfile(db as never, { name: "Priya", skills: ["SQL"] });
-    const v2 = await saveProfile(db as never, { name: "Priya", skills: ["SQL", "sql", "Python"], minPayLpa: 6 });
+    const v1 = await saveProfile(db as never, U1, { name: "Priya", skills: ["SQL"] });
+    const v2 = await saveProfile(db as never, U1, { name: "Priya", skills: ["SQL", "sql", "Python"], minPayLpa: 6 });
     expect([v1?.version, v2?.version]).toEqual([1, 2]);
-    const active = await getActiveProfile(db as never);
+    const active = await getActiveProfile(db as never, U1);
     expect(active?.version).toBe(2);
     expect(active?.data.skills).toEqual(["SQL", "Python"]); // de-duplicated, first spelling wins
     expect(active?.data.workCountries).toEqual(["IN"]); // safe default
@@ -47,9 +49,9 @@ describe("profile versions", () => {
   });
 
   it("refuses invalid input and leaves the active version alone", async () => {
-    expect(await saveProfile(db as never, { graduationYear: 1800 })).toBeNull();
-    expect(await saveProfile(db as never, { workCountries: ["India"] })).toBeNull();
-    expect((await getActiveProfile(db as never))?.version).toBe(2);
+    expect(await saveProfile(db as never, U1, { graduationYear: 1800 })).toBeNull();
+    expect(await saveProfile(db as never, U1, { workCountries: ["India"] })).toBeNull();
+    expect((await getActiveProfile(db as never, U1))?.version).toBe(2);
   });
 });
 

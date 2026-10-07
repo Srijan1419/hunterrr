@@ -99,4 +99,26 @@ describe("single-user lock", () => {
   it("sends rejected sign-ins to a plain explanation page", () => {
     expect(mod.authOptions.onAPIError.errorURL).toBe("/not-allowed");
   });
+
+  describe("the invite list (several friends)", () => {
+    it("accepts any listed address, separated by commas, spaces or new lines, in any case", () => {
+      const list = "me@example.com, Friend@Example.com\nthird@example.com;fourth@example.com";
+      for (const e of ["me@example.com", "FRIEND@example.com", "third@example.com", "fourth@example.com"]) {
+        expect(mod.isAllowedEmail(e, list)).toBe(true);
+      }
+    });
+    it("rejects everyone else: no wildcards, no domains, no partial matches", () => {
+      const list = "me@example.com,friend@example.com";
+      for (const e of ["stranger@example.com", "me@example.com.evil.com", "xme@example.com", "@example.com", "example.com", "*@example.com"]) {
+        expect(mod.isAllowedEmail(e, list)).toBe(false);
+      }
+      expect(mod.isAllowedEmail("me@example.com", " , ;")).toBe(false);
+    });
+    it("reads ALLOWED_EMAILS first and falls back to the older ALLOWED_EMAIL", () => {
+      expect(mod.allowedEmailsFromEnv({ ALLOWED_EMAILS: "a@x.com,b@x.com", ALLOWED_EMAIL: "old@x.com" })).toBe("a@x.com,b@x.com");
+      expect(mod.allowedEmailsFromEnv({ ALLOWED_EMAIL: "old@x.com" })).toBe("old@x.com");
+      expect(mod.allowedEmailsFromEnv({ ALLOWED_EMAILS: "  ", ALLOWED_EMAIL: "old@x.com" })).toBe("old@x.com");
+      expect(mod.allowedEmailsFromEnv({})).toBe("");
+    });
+  });
 });

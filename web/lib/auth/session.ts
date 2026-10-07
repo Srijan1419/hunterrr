@@ -1,5 +1,5 @@
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth/config";
+import { auth, isAllowedEmail } from "@/lib/auth/config";
 
 /**
  * Call this first in every server action and route handler that reads or writes personal data.
@@ -9,5 +9,6 @@ import { auth } from "@/lib/auth/config";
 export async function requireSession() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) throw new Error("Not signed in");
+  if (!isAllowedEmail(session.user.email)) throw new Error("Not on the invite list");
   return session;
 }

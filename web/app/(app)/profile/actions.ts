@@ -29,8 +29,8 @@ export async function readResume(form: FormData): Promise<ResumeResult> {
 export type SaveResult = { ok: true; version: number } | { ok: false; error: string };
 
 export async function saveProfileAction(input: unknown): Promise<SaveResult> {
-  await requireSession();
-  const saved = await saveProfile(db as never, input);
+  const { user } = await requireSession();
+  const saved = await saveProfile(db as never, user.id, input);
   if (!saved) return { ok: false, error: "Some fields are not valid. Check them and save again." };
   revalidatePath("/profile");
   revalidatePath("/today");

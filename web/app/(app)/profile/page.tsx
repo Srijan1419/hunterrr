@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ProfileEditor } from "@/components/profile/ProfileEditor";
 import { SkillGap } from "@/components/profile/SkillGap";
+import { requireSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/client.v2";
 import { EMPTY_PROFILE } from "@/lib/profile/schema";
 import { querySkillGap } from "@/lib/queries/gap";
@@ -15,7 +16,8 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 export default async function ProfilePage() {
-  const stored = await getActiveProfile(db as never);
+  const { user } = await requireSession();
+  const stored = await getActiveProfile(db as never, user.id);
   const gap = stored ? await querySkillGap(db as never, stored.data) : null;
   return (
     <>

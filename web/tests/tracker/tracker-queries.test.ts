@@ -25,6 +25,7 @@ import {
   setNotes,
 } from "@/lib/queries/tracker";
 
+const U1 = "u1";
 const DIR = path.join(__dirname, "..", "..", "drizzle-v2");
 let pg: PGlite;
 let db: ReturnType<typeof drizzle>;
@@ -49,6 +50,7 @@ beforeAll(async () => {
     for (const s of fs.readFileSync(path.join(DIR, f), "utf8").split("--> statement-breakpoint")) if (s.trim()) await pg.exec(s);
   }
   await pg.exec("INSERT INTO hunterrr.companies (name, normalized_name) VALUES ('Acme Corp', 'acme')");
+  await pg.exec("INSERT INTO hunterrr.\"user\" (id, name, email) VALUES ('u1', 'Asha', 'asha@example.com'), ('u2', 'Ben', 'ben@example.com')");
   db = drizzle(pg);
 }, 90_000);
 
@@ -63,101 +65,101 @@ beforeEach(async () => {
 
 describe("saveApplication", () => {
   it("creates a saved application from a posting, with a saved event", async () => {
-    const r = await saveApplication(db as never, p1, T0);
+    const r = await saveApplication(db as never, U1, p1, T0);
     expect(r!.created).toBe(true);
     expect(r!.application).toMatchObject({ postingId: p1, title: "Job 1", companyName: "Acme Corp", state: "saved", notes: "" });
     expect(r!.application.applyUrl).toBe("https://x.example/apply/1");
-    const history = await applicationHistory(db as never, r!.application.id);
+    const history = await applicationHistory(db as never, U1, r!.application.id);
     expect(history.map((e) => [e.type, e.actor])).toEqual([["saved", "user"]]);
   });
 
   it("two saves at once give one application and one saved event", async () => {
-    const [a, b] = await Promise.all([saveApplication(db as never, p1, T0), saveApplication(db as never, p1, T0)]);
+    const [a, b] = await Promise.all([saveApplication(db as never, U1, p1, T0), saveApplication(db as never, U1, p1, T0)]);
     expect(a!.application.id).toBe(b!.application.id);
     expect([a!.created, b!.created].filter(Boolean).length).toBe(1);
-    expect((await applicationHistory(db as never, a!.application.id)).length).toBe(1);
+    expect((await applicationHistory(db as never, U1, a!.application.id)).length).toBe(1);
   });
 
   it("saving the same posting twice returns the same application and writes one event", async () => {
-    const a = await saveApplication(db as never, p1, T0);
-    const b = await saveApplication(db as never, p1, minutes(5));
+    const a = await saveApplication(db as never, U1, p1, T0);
+    const b = await saveApplication(db as never, U1, p1, minutes(5));
     expect(b!.created).toBe(false);
     expect(b!.application.id).toBe(a!.application.id);
-    expect((await applicationHistory(db as never, a!.application.id)).length).toBe(1);
+    expect((await applicationHistory(db as never, U1, a!.application.id)).length).toBe(1);
   });
 
   it("returns null for a missing or invalid posting id", async () => {
-    for (const id of [999999, 0, -1, 1.5, 2 ** 40, Number.NaN]) expect(await saveApplication(db as never, id)).toBeNull();
+    for (const id of [999999, 0, -1, 1.5, 2 ** 40, Number.NaN]) expect(await saveApplication(db as never, U1, id)).toBeNull();
   });
 });
 
 describe("changeState", () => {
   it("writes the event, then moves the application", async () => {
-    const { application } = (await saveApplication(db as never, p1, T0))!;
-    const moved = await changeState(db as never, application.id, "applied", { now: minutes(10) });
+    const { application } = (await saveApplication(db as never, U1, p1, T0))!;
+    const moved = await changeState(db as never, U1, application.id, "applied", { now: minutes(10) });
     expect(moved!.state).toBe("applied");
     expect(moved!.stateChangedAt).toBe(minutes(10).toISOString());
-    const history = await applicationHistory(db as never, application.id);
+    const history = await applicationHistory(db as never, U1, application.id);
     expect(history.map((e) => e.type)).toEqual(["saved", "state_changed"]);
     expect(history[1].payload).toMatchObject({ from: "saved", to: "applied" });
   });
 
   it("current state always equals the last state_changed event", async () => {
-    const { application } = (await saveApplication(db as never, p1, T0))!;
+    const { application } = (await saveApplication(db as never, U1, p1, T0))!;
     for (const [i, s] of (["applied", "assessment", "interview", "offer", "withdrawn"] as const).entries()) {
-      await changeState(db as never, application.id, s, { now: minutes(i + 1) });
+      await changeState(db as never, U1, application.id, s, { now: minutes(i + 1) });
     }
-    const history = await applicationHistory(db as never, application.id);
+    const history = await applicationHistory(db as never, U1, application.id);
     const last = [...history].reverse().find((e) => e.type === "state_changed")!;
-    expect((await getApplication(db as never, application.id))!.state).toBe(last.payload.to);
+    expect((await getApplication(db as never, U1, application.id))!.state).toBe(last.payload.to);
   });
 
   it("moving to the state it is already in writes no event", async () => {
-    const { application } = (await saveApplication(db as never, p1, T0))!;
-    await changeState(db as never, application.id, "applied", { now: minutes(1) });
-    await changeState(db as never, application.id, "applied", { now: minutes(2) });
-    expect((await applicationHistory(db as never, application.id)).length).toBe(2);
+    const { application } = (await saveApplication(db as never, U1, p1, T0))!;
+    await changeState(db as never, U1, application.id, "applied", { now: minutes(1) });
+    await changeState(db as never, U1, application.id, "applied", { now: minutes(2) });
+    expect((await applicationHistory(db as never, U1, application.id)).length).toBe(2);
   });
 
   it("machine moves are recorded as machine; bad states and unknown ids return null", async () => {
-    const { application } = (await saveApplication(db as never, p1, T0))!;
-    await changeState(db as never, application.id, "interview", { actor: "machine", now: minutes(1) });
-    const history = await applicationHistory(db as never, application.id);
+    const { application } = (await saveApplication(db as never, U1, p1, T0))!;
+    await changeState(db as never, U1, application.id, "interview", { actor: "machine", now: minutes(1) });
+    const history = await applicationHistory(db as never, U1, application.id);
     expect(history[1].actor).toBe("machine");
-    expect(await changeState(db as never, application.id, "hired")).toBeNull();
-    expect(await changeState(db as never, application.id, undefined)).toBeNull();
-    expect(await changeState(db as never, 999999, "applied")).toBeNull();
-    expect((await getApplication(db as never, application.id))!.state).toBe("interview");
+    expect(await changeState(db as never, U1, application.id, "hired")).toBeNull();
+    expect(await changeState(db as never, U1, application.id, undefined)).toBeNull();
+    expect(await changeState(db as never, U1, 999999, "applied")).toBeNull();
+    expect((await getApplication(db as never, U1, application.id))!.state).toBe("interview");
   });
 
   it("A to B, B to A, A to B in the same millisecond keeps every move and the final state", async () => {
-    const { application } = (await saveApplication(db as never, p1, T0))!;
-    for (const s of ["applied", "saved", "applied"] as const) await changeState(db as never, application.id, s, { now: minutes(1) });
-    const moves = (await applicationHistory(db as never, application.id)).filter((e) => e.type === "state_changed");
+    const { application } = (await saveApplication(db as never, U1, p1, T0))!;
+    for (const s of ["applied", "saved", "applied"] as const) await changeState(db as never, U1, application.id, s, { now: minutes(1) });
+    const moves = (await applicationHistory(db as never, U1, application.id)).filter((e) => e.type === "state_changed");
     expect(moves.map((e) => e.payload.to)).toEqual(["applied", "saved", "applied"]);
-    expect((await getApplication(db as never, application.id))!.state).toBe("applied");
+    expect((await getApplication(db as never, U1, application.id))!.state).toBe("applied");
   });
 
   it("two simultaneous moves leave the state equal to the last event", async () => {
-    const { application } = (await saveApplication(db as never, p1, T0))!;
+    const { application } = (await saveApplication(db as never, U1, p1, T0))!;
     await Promise.allSettled([
-      changeState(db as never, application.id, "applied", { now: minutes(1) }),
-      changeState(db as never, application.id, "interview", { now: minutes(2) }),
+      changeState(db as never, U1, application.id, "applied", { now: minutes(1) }),
+      changeState(db as never, U1, application.id, "interview", { now: minutes(2) }),
     ]);
-    const moves = (await applicationHistory(db as never, application.id)).filter((e) => e.type === "state_changed");
-    expect((await getApplication(db as never, application.id))!.state).toBe(moves[moves.length - 1].payload.to);
+    const moves = (await applicationHistory(db as never, U1, application.id)).filter((e) => e.type === "state_changed");
+    expect((await getApplication(db as never, U1, application.id))!.state).toBe(moves[moves.length - 1].payload.to);
   });
 
   it("an absurdly large id is refused, not sent to the database", async () => {
-    expect(await changeState(db as never, 1e20, "applied")).toBeNull();
-    expect(await getApplication(db as never, 1e20)).toBeNull();
-    expect(await setNextAction(db as never, 1e20, null)).toBeNull();
+    expect(await changeState(db as never, U1, 1e20, "applied")).toBeNull();
+    expect(await getApplication(db as never, U1, 1e20)).toBeNull();
+    expect(await setNextAction(db as never, U1, 1e20, null)).toBeNull();
   });
 
   it("an event dated in the past (a reply read later) is kept in order", async () => {
-    const { application } = (await saveApplication(db as never, p1, T0))!;
-    await changeState(db as never, application.id, "applied", { now: minutes(60), occurredAt: minutes(30) });
-    const history = await applicationHistory(db as never, application.id);
+    const { application } = (await saveApplication(db as never, U1, p1, T0))!;
+    await changeState(db as never, U1, application.id, "applied", { now: minutes(60), occurredAt: minutes(30) });
+    const history = await applicationHistory(db as never, U1, application.id);
     expect(history.map((e) => e.type)).toEqual(["saved", "state_changed"]);
     expect(history[1].occurredAt).toBe(minutes(30).toISOString());
   });
@@ -165,35 +167,35 @@ describe("changeState", () => {
 
 describe("notes and next action", () => {
   it("stores notes (NUL stripped, capped) and a next-action date, and logs both", async () => {
-    const { application } = (await saveApplication(db as never, p1, T0))!;
-    const withNotes = await setNotes(db as never, application.id, "Call\u0000 Sam " + "x".repeat(6000), minutes(1));
+    const { application } = (await saveApplication(db as never, U1, p1, T0))!;
+    const withNotes = await setNotes(db as never, U1, application.id, "Call\u0000 Sam " + "x".repeat(6000), minutes(1));
     expect(withNotes!.notes.startsWith("Call Sam")).toBe(true);
     expect(withNotes!.notes.length).toBe(5000);
-    const due = await setNextAction(db as never, application.id, minutes(60 * 24), minutes(2));
+    const due = await setNextAction(db as never, U1, application.id, minutes(60 * 24), minutes(2));
     expect(due!.nextActionAt).toBe(minutes(60 * 24).toISOString());
-    expect((await setNextAction(db as never, application.id, null, minutes(3)))!.nextActionAt).toBeNull();
-    expect(await setNextAction(db as never, application.id, new Date("nope"))).toBeNull();
-    const types = (await applicationHistory(db as never, application.id)).map((e) => e.type);
+    expect((await setNextAction(db as never, U1, application.id, null, minutes(3)))!.nextActionAt).toBeNull();
+    expect(await setNextAction(db as never, U1, application.id, new Date("nope"))).toBeNull();
+    const types = (await applicationHistory(db as never, U1, application.id)).map((e) => e.type);
     expect(types).toEqual(["saved", "notes_edited", "next_action_set", "next_action_set"]);
   });
 });
 
 describe("listApplications and savedPostingIds", () => {
   it("groups by state with every state present, newest change first", async () => {
-    const a = (await saveApplication(db as never, p1, T0))!.application;
-    const b = (await saveApplication(db as never, p2, minutes(5)))!.application;
-    await changeState(db as never, a.id, "applied", { now: minutes(10) });
-    await changeState(db as never, b.id, "applied", { now: minutes(20) });
-    const board = await listApplications(db as never);
+    const a = (await saveApplication(db as never, U1, p1, T0))!.application;
+    const b = (await saveApplication(db as never, U1, p2, minutes(5)))!.application;
+    await changeState(db as never, U1, a.id, "applied", { now: minutes(10) });
+    await changeState(db as never, U1, b.id, "applied", { now: minutes(20) });
+    const board = await listApplications(db as never, U1);
     expect(Object.keys(board).sort()).toEqual([...APPLICATION_STATES].sort());
     expect(board.applied.map((x) => x.id)).toEqual([b.id, a.id]);
     expect(board.saved).toEqual([]);
   });
 
   it("reports which postings are already saved", async () => {
-    await saveApplication(db as never, p1, T0);
-    expect(await savedPostingIds(db as never, [p1, p2])).toEqual(new Set([p1]));
-    expect(await savedPostingIds(db as never, [])).toEqual(new Set());
+    await saveApplication(db as never, U1, p1, T0);
+    expect(await savedPostingIds(db as never, U1, [p1, p2])).toEqual(new Set([p1]));
+    expect(await savedPostingIds(db as never, U1, [])).toEqual(new Set());
   });
 });
 
@@ -207,34 +209,34 @@ describe("payloadHash", () => {
 
 describe("markApplied (one tap)", () => {
   it("saves, moves to applied and sets a follow-up a week ahead", async () => {
-    expect(await postingApplicationState(db as never, p1)).toBeNull();
-    const app = await markApplied(db as never, p1, T0);
+    expect(await postingApplicationState(db as never, U1, p1)).toBeNull();
+    const app = await markApplied(db as never, U1, p1, T0);
     expect(app?.state).toBe("applied");
     expect(app?.nextActionAt).toBe(new Date(T0.getTime() + FOLLOW_UP_DAYS * 86_400_000).toISOString());
-    expect(await postingApplicationState(db as never, p1)).toBe("applied");
-    const history = await applicationHistory(db as never, app!.id);
+    expect(await postingApplicationState(db as never, U1, p1)).toBe("applied");
+    const history = await applicationHistory(db as never, U1, app!.id);
     expect(history.map((e) => e.type)).toEqual(expect.arrayContaining(["saved", "state_changed", "next_action_set"]));
   });
 
   it("is safe to repeat: no second event, and a later state or reminder is kept", async () => {
-    const first = await markApplied(db as never, p1, T0);
-    await changeState(db as never, first!.id, "interview", { now: minutes(30) });
-    const again = await markApplied(db as never, p1, minutes(60));
+    const first = await markApplied(db as never, U1, p1, T0);
+    await changeState(db as never, U1, first!.id, "interview", { now: minutes(30) });
+    const again = await markApplied(db as never, U1, p1, minutes(60));
     expect(again?.state).toBe("interview");
-    const history = await applicationHistory(db as never, first!.id);
+    const history = await applicationHistory(db as never, U1, first!.id);
     expect(history.filter((e) => e.type === "state_changed")).toHaveLength(2);
   });
 
   it("never replaces a reminder the owner already set", async () => {
-    const saved = await saveApplication(db as never, p2, T0);
+    const saved = await saveApplication(db as never, U1, p2, T0);
     const mine = new Date("2026-10-05T04:00:00Z");
-    await setNextAction(db as never, saved!.application.id, mine, T0);
-    const app = await markApplied(db as never, p2, minutes(5));
+    await setNextAction(db as never, U1, saved!.application.id, mine, T0);
+    const app = await markApplied(db as never, U1, p2, minutes(5));
     expect(app?.state).toBe("applied");
     expect(app?.nextActionAt).toBe(mine.toISOString());
   });
 
   it("returns null for a posting that does not exist", async () => {
-    expect(await markApplied(db as never, 999_999)).toBeNull();
+    expect(await markApplied(db as never, U1, 999_999)).toBeNull();
   });
 });

@@ -93,6 +93,8 @@ function toApplication(r: Record<string, unknown>): TrackedApplication {
   };
 }
 
+const validUser = (userId: unknown): userId is string => typeof userId === "string" && userId.length > 0;
+
 const SELECT = sql`
   SELECT a.id, a.posting_id, a.title, a.current_state, a.state_changed_at, a.next_action_at, a.notes, a.created_at,
          c.name AS company_name, p.apply_url_raw
@@ -100,17 +102,18 @@ const SELECT = sql`
   LEFT JOIN hunterrr.companies c ON c.id = a.company_id
   LEFT JOIN hunterrr.postings p ON p.id = a.posting_id`;
 
-export async function getApplication(db: TrackerTx, id: number): Promise<TrackedApplication | null> {
-  if (!validId(id)) return null;
-  const res = await db.execute(sql`${SELECT} WHERE a.id = ${id}`);
+/** One of THIS user's applications; another user's id answers null, as if it did not exist. */
+export async function getApplication(db: TrackerTx, userId: string, id: number): Promise<TrackedApplication | null> {
+  if (!validId(id) || !validUser(userId)) return null;
+  const res = await db.execute(sql`${SELECT} WHERE a.id = ${id} AND a.user_id = ${userId}`);
   return res.rows[0] ? toApplication(res.rows[0]) : null;
 }
 
 /** Save a posting to the tracker. Saving the same posting again returns the existing application. */
 export async function saveApplication(
-  db: TrackerDb, postingId: number, now: Date = new Date(),
+  db: TrackerDb, userId: string, postingId: number, now: Date = new Date(),
 ): Promise<{ application: TrackedApplication; created: boolean } | null> {
-  if (!validId(postingId) || postingId > 2_147_483_647) return null;
+  if (!validUser(userId) || !validId(postingId) || postingId > 2_147_483_647) return null;
   return db.transaction(async (tx) => {
     const posting = await tx.execute(sql`SELECT id, title, company_id FROM hunterrr.postings WHERE id = ${postingId}`);
     const p = posting.rows[0];
@@ -118,14 +121,14 @@ export async function saveApplication(
     // An upsert (not DO NOTHING + SELECT): a concurrent save waits for the first one and then returns
     // its row, instead of seeing nothing. `xmax = 0` is true only for the row this statement inserted.
     const upserted = await tx.execute(sql`
-      INSERT INTO hunterrr.applications (posting_id, company_id, title, source, current_state, state_changed_at)
-      VALUES (${postingId}, ${p.company_id ?? null}, ${String(p.title)}, 'ui', 'saved', ${now.toISOString()})
-      ON CONFLICT (posting_id) WHERE posting_id IS NOT NULL DO UPDATE SET posting_id = EXCLUDED.posting_id
+      INSERT INTO hunterrr.applications (user_id, posting_id, company_id, title, source, current_state, state_changed_at)
+      VALUES (${userId}, ${postingId}, ${p.company_id ?? null}, ${String(p.title)}, 'ui', 'saved', ${now.toISOString()})
+      ON CONFLICT (user_id, posting_id) WHERE posting_id IS NOT NULL DO UPDATE SET posting_id = EXCLUDED.posting_id
       RETURNING id, (xmax = 0) AS inserted`);
     const id = Number(upserted.rows[0].id);
     const created = upserted.rows[0].inserted === true;
     if (created) await addEvent(tx, id, "saved", "user", { postingId }, now);
-    const application = await getApplication(tx, id);
+    const application = await getApplication(tx, userId, id);
     return application ? { application, created } : null;
   });
 }
@@ -136,16 +139,16 @@ export async function saveApplication(
  * Returns null for an unknown application or an invalid state.
  */
 export async function changeState(
-  db: TrackerDb, id: number, to: unknown, opts: { actor?: "machine" | "user"; now?: Date; occurredAt?: Date } = {},
+  db: TrackerDb, userId: string, id: number, to: unknown, opts: { actor?: "machine" | "user"; now?: Date; occurredAt?: Date } = {},
 ): Promise<TrackedApplication | null> {
-  if (!isApplicationState(to) || !validId(id)) return null;
+  if (!isApplicationState(to) || !validId(id) || !validUser(userId)) return null;
   const now = opts.now ?? new Date();
   const occurredAt = opts.occurredAt ?? now;
   return db.transaction(async (tx) => {
     // Lock the row first: two simultaneous moves queue up, so each sees the other's result and the
     // state always equals the last state_changed event.
-    await tx.execute(sql`SELECT id FROM hunterrr.applications WHERE id = ${id} FOR UPDATE`);
-    const current = await getApplication(tx, id);
+    await tx.execute(sql`SELECT id FROM hunterrr.applications WHERE id = ${id} AND user_id = ${userId} FOR UPDATE`);
+    const current = await getApplication(tx, userId, id);
     if (!current) return null;
     if (current.state === to) return current;
     // `since` makes every move a distinct event, so the dedupe constraint can never swallow a real change
@@ -154,8 +157,8 @@ export async function changeState(
     await tx.execute(sql`
       UPDATE hunterrr.applications
       SET current_state = ${to}::hunterrr.application_state, state_changed_at = ${occurredAt.toISOString()}
-      WHERE id = ${id}`);
-    return getApplication(tx, id);
+      WHERE id = ${id} AND user_id = ${userId}`);
+    return getApplication(tx, userId, id);
   });
 }
 
@@ -167,52 +170,52 @@ export const FOLLOW_UP_DAYS = 7;
  * `FOLLOW_UP_DAYS` ahead (never replacing one the owner already set). Safe to repeat: an application that is
  * already applied (or further along) keeps its state and its reminder.
  */
-export async function markApplied(db: TrackerDb, postingId: number, now: Date = new Date()): Promise<TrackedApplication | null> {
-  const saved = await saveApplication(db, postingId, now);
+export async function markApplied(db: TrackerDb, userId: string, postingId: number, now: Date = new Date()): Promise<TrackedApplication | null> {
+  const saved = await saveApplication(db, userId, postingId, now);
   if (!saved) return null;
   const app = saved.application;
   const early = app.state === "saved";
-  const moved = early ? await changeState(db, app.id, "applied", { now }) : app;
+  const moved = early ? await changeState(db, userId, app.id, "applied", { now }) : app;
   if (!moved) return null;
   if (early && moved.nextActionAt === null) {
-    return setNextAction(db, app.id, new Date(now.getTime() + FOLLOW_UP_DAYS * 86_400_000), now);
+    return setNextAction(db, userId, app.id, new Date(now.getTime() + FOLLOW_UP_DAYS * 86_400_000), now);
   }
   return moved;
 }
 
 /** The application state of a posting, or null when it was never saved. */
-export async function postingApplicationState(db: TrackerTx, postingId: number): Promise<ApplicationState | null> {
-  if (!validId(postingId)) return null;
-  const res = await db.execute(sql`SELECT current_state::text AS state FROM hunterrr.applications WHERE posting_id = ${postingId} LIMIT 1`);
+export async function postingApplicationState(db: TrackerTx, userId: string, postingId: number): Promise<ApplicationState | null> {
+  if (!validId(postingId) || !validUser(userId)) return null;
+  const res = await db.execute(sql`SELECT current_state::text AS state FROM hunterrr.applications WHERE posting_id = ${postingId} AND user_id = ${userId} LIMIT 1`);
   const state = res.rows[0]?.state;
   return isApplicationState(state) ? state : null;
 }
 
-export async function setNextAction(db: TrackerDb, id: number, when: Date | null, now: Date = new Date()): Promise<TrackedApplication | null> {
-  if (!validId(id)) return null;
+export async function setNextAction(db: TrackerDb, userId: string, id: number, when: Date | null, now: Date = new Date()): Promise<TrackedApplication | null> {
+  if (!validId(id) || !validUser(userId)) return null;
   if (when !== null && Number.isNaN(when.getTime())) return null;
   return db.transaction(async (tx) => {
-    if (!(await getApplication(tx, id))) return null;
-    await tx.execute(sql`UPDATE hunterrr.applications SET next_action_at = ${when ? when.toISOString() : null} WHERE id = ${id}`);
+    if (!(await getApplication(tx, userId, id))) return null;
+    await tx.execute(sql`UPDATE hunterrr.applications SET next_action_at = ${when ? when.toISOString() : null} WHERE id = ${id} AND user_id = ${userId}`);
     await addEvent(tx, id, "next_action_set", "user", { at: when ? when.toISOString() : null }, now);
-    return getApplication(tx, id);
+    return getApplication(tx, userId, id);
   });
 }
 
-export async function setNotes(db: TrackerDb, id: number, notes: string, now: Date = new Date()): Promise<TrackedApplication | null> {
-  if (!validId(id)) return null;
+export async function setNotes(db: TrackerDb, userId: string, id: number, notes: string, now: Date = new Date()): Promise<TrackedApplication | null> {
+  if (!validId(id) || !validUser(userId)) return null;
   const clean = notes.replace(/\u0000/g, "").slice(0, 5000);
   return db.transaction(async (tx) => {
-    if (!(await getApplication(tx, id))) return null;
-    await tx.execute(sql`UPDATE hunterrr.applications SET notes = ${clean} WHERE id = ${id}`);
+    if (!(await getApplication(tx, userId, id))) return null;
+    await tx.execute(sql`UPDATE hunterrr.applications SET notes = ${clean} WHERE id = ${id} AND user_id = ${userId}`);
     await addEvent(tx, id, "notes_edited", "user", { length: clean.length }, now);
-    return getApplication(tx, id);
+    return getApplication(tx, userId, id);
   });
 }
 
 /** Every application, newest state change first within each state. */
-export async function listApplications(db: TrackerTx): Promise<Record<ApplicationState, TrackedApplication[]>> {
-  const res = await db.execute(sql`${SELECT} ORDER BY a.state_changed_at DESC, a.id DESC`);
+export async function listApplications(db: TrackerTx, userId: string): Promise<Record<ApplicationState, TrackedApplication[]>> {
+  const res = validUser(userId) ? await db.execute(sql`${SELECT} WHERE a.user_id = ${userId} ORDER BY a.state_changed_at DESC, a.id DESC`) : { rows: [] };
   const out = Object.fromEntries(APPLICATION_STATES.map((s) => [s, [] as TrackedApplication[]])) as Record<ApplicationState, TrackedApplication[]>;
   for (const r of res.rows) {
     const app = toApplication(r);
@@ -221,11 +224,12 @@ export async function listApplications(db: TrackerTx): Promise<Record<Applicatio
   return out;
 }
 
-export async function applicationHistory(db: TrackerTx, id: number): Promise<ApplicationEvent[]> {
-  if (!validId(id)) return [];
+export async function applicationHistory(db: TrackerTx, userId: string, id: number): Promise<ApplicationEvent[]> {
+  if (!validId(id) || !validUser(userId)) return [];
   const res = await db.execute(sql`
-    SELECT id, type, occurred_at, actor, payload FROM hunterrr.application_events
-    WHERE application_id = ${id} ORDER BY occurred_at ASC, id ASC`);
+    SELECT e.id, e.type, e.occurred_at, e.actor, e.payload FROM hunterrr.application_events e
+    JOIN hunterrr.applications a ON a.id = e.application_id
+    WHERE e.application_id = ${id} AND a.user_id = ${userId} ORDER BY e.occurred_at ASC, e.id ASC`);
   return res.rows.map((r) => ({
     id: Number(r.id),
     type: String(r.type),
@@ -236,18 +240,19 @@ export async function applicationHistory(db: TrackerTx, id: number): Promise<App
 }
 
 /** Open applications whose follow-up date is before `before` (overdue or due today), soonest first. */
-export async function followUpsDue(db: TrackerTx, before: Date): Promise<TrackedApplication[]> {
+export async function followUpsDue(db: TrackerTx, userId: string, before: Date): Promise<TrackedApplication[]> {
+  if (!validUser(userId)) return [];
   const res = await db.execute(sql`${SELECT}
-    WHERE a.next_action_at IS NOT NULL AND a.next_action_at < ${before.toISOString()}
+    WHERE a.user_id = ${userId} AND a.next_action_at IS NOT NULL AND a.next_action_at < ${before.toISOString()}
       AND a.current_state IN (${sql.join(OPEN_STATES.map((s) => sql`${s}`), sql`, `)})
     ORDER BY a.next_action_at ASC, a.id ASC`);
   return res.rows.map(toApplication);
 }
 
 /** Postings the user already saved, for marking "Saved" in the feed. */
-export async function savedPostingIds(db: TrackerTx, postingIds: number[]): Promise<Set<number>> {
-  if (postingIds.length === 0) return new Set();
+export async function savedPostingIds(db: TrackerTx, userId: string, postingIds: number[]): Promise<Set<number>> {
+  if (postingIds.length === 0 || !validUser(userId)) return new Set();
   const res = await db.execute(sql`
-    SELECT posting_id FROM hunterrr.applications WHERE posting_id IN (${sql.join(postingIds.map((i) => sql`${i}`), sql`, `)})`);
+    SELECT posting_id FROM hunterrr.applications WHERE user_id = ${userId} AND posting_id IN (${sql.join(postingIds.map((i) => sql`${i}`), sql`, `)})`);
   return new Set(res.rows.map((r) => Number(r.posting_id)));
 }

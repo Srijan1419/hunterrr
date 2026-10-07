@@ -3,6 +3,7 @@ import Link from "next/link";
 import { StatTile } from "@/components/atlas/StatTile";
 import { JobRow } from "@/components/feed/JobRow";
 import styles from "@/components/today/today.module.css";
+import { requireSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/client.v2";
 import { queryToday } from "@/lib/queries/today";
 import { getActiveProfile } from "@/lib/queries/profile";
@@ -33,9 +34,10 @@ function dueLabel(iso: string, now: Date): { text: string; overdue: boolean } {
 
 export default async function TodayPage() {
   const now = new Date();
-  const stored = await getActiveProfile(db as never);
-  const data = await queryToday(db as never, now, stored?.data ?? null);
-  const saved = await savedPostingIds(db as never, data.newJobs.map((r) => r.id));
+  const { user } = await requireSession();
+  const stored = await getActiveProfile(db as never, user.id);
+  const data = await queryToday(db as never, user.id, now, stored?.data ?? null);
+  const saved = await savedPostingIds(db as never, user.id, data.newJobs.map((r) => r.id));
   const due = data.followUps.length;
 
   const summary =

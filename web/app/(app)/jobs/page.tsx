@@ -5,6 +5,7 @@ import { EmptyArt } from "@/components/atlas/EmptyArt";
 import { FeedKeys } from "@/components/feed/FeedKeys";
 import { JobRow } from "@/components/feed/JobRow";
 import styles from "@/components/feed/feed.module.css";
+import { requireSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/client.v2";
 import Link from "next/link";
 import { FEED_PAGE_SIZE, MATCH_CANDIDATES, filtersFromSearchParams, queryFeed } from "@/lib/queries/feed";
@@ -30,10 +31,11 @@ function pageHref(params: SearchParams, page: number): string {
 export default async function JobsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const params = await searchParams;
   const filters = filtersFromSearchParams(params);
-  const stored = await getActiveProfile(db as never);
+  const { user } = await requireSession();
+  const stored = await getActiveProfile(db as never, user.id);
   const result = await queryFeed(db as never, filters, stored?.data ?? null);
   const ranking = stored !== null && (filters.sort !== "newest" || filters.bucket !== undefined);
-  const saved = await savedPostingIds(db as never, result.rows.map((r) => r.id));
+  const saved = await savedPostingIds(db as never, user.id, result.rows.map((r) => r.id));
   const from = result.total === 0 ? 0 : (result.page - 1) * FEED_PAGE_SIZE + 1;
   const to = Math.min(result.total, result.page * FEED_PAGE_SIZE);
 

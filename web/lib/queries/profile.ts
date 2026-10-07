@@ -24,25 +24,28 @@ function toStored(r: Record<string, unknown>): StoredProfile {
   };
 }
 
-export async function getActiveProfile(db: ProfileTx): Promise<StoredProfile | null> {
+/** THIS user's active profile (profiles are private: one active version per user). */
+export async function getActiveProfile(db: ProfileTx, userId: string): Promise<StoredProfile | null> {
+  if (typeof userId !== "string" || userId.length === 0) return null;
   const res = await db.execute(sql`
-    SELECT version, data, created_at FROM hunterrr.profiles WHERE is_active ORDER BY version DESC LIMIT 1`);
+    SELECT version, data, created_at FROM hunterrr.profiles WHERE is_active AND user_id = ${userId} ORDER BY version DESC LIMIT 1`);
   return res.rows[0] ? toStored(res.rows[0]) : null;
 }
 
 /** Validate and save as the next version, which becomes the only active one. */
-export async function saveProfile(db: ProfileDb, input: unknown): Promise<StoredProfile | null> {
+export async function saveProfile(db: ProfileDb, userId: string, input: unknown): Promise<StoredProfile | null> {
+  if (typeof userId !== "string" || userId.length === 0) return null;
   const parsed = ProfileSchema.safeParse(input);
   if (!parsed.success) return null;
   return db.transaction(async (tx) => {
     // serialise concurrent saves so two of them cannot pick the same version number
     await tx.execute(sql`LOCK TABLE hunterrr.profiles IN SHARE ROW EXCLUSIVE MODE`);
-    const next = await tx.execute(sql`SELECT coalesce(max(version), 0) + 1 AS v FROM hunterrr.profiles`);
+    const next = await tx.execute(sql`SELECT coalesce(max(version), 0) + 1 AS v FROM hunterrr.profiles WHERE user_id = ${userId}`);
     const version = Number(next.rows[0]?.v ?? 1);
-    await tx.execute(sql`UPDATE hunterrr.profiles SET is_active = false WHERE is_active`);
+    await tx.execute(sql`UPDATE hunterrr.profiles SET is_active = false WHERE is_active AND user_id = ${userId}`);
     const res = await tx.execute(sql`
-      INSERT INTO hunterrr.profiles (version, data, is_active)
-      VALUES (${version}, ${JSON.stringify(parsed.data)}::jsonb, true)
+      INSERT INTO hunterrr.profiles (user_id, version, data, is_active)
+      VALUES (${userId}, ${version}, ${JSON.stringify(parsed.data)}::jsonb, true)
       RETURNING version, data, created_at`);
     return toStored(res.rows[0]);
   });

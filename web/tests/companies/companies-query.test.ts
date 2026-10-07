@@ -13,6 +13,7 @@ import { queryCompanies, setWatch } from "@/lib/queries/companies";
 import { queryFeed } from "@/lib/queries/feed";
 import { queryToday } from "@/lib/queries/today";
 
+const U1 = "u1";
 const DIR = path.join(__dirname, "..", "..", "drizzle-v2");
 const NOW = new Date("2026-10-06T08:30:00Z");
 let pg: PGlite;
@@ -117,7 +118,7 @@ describe("ignoring a company", () => {
     await setWatch(db as never, acme, "ignore");
     const after = await queryFeed(db as never, { entryLevel: true });
     expect(after.rows.map((r) => r.title)).toEqual(["Job 6"]);
-    const today = await queryToday(db as never, NOW);
+    const today = await queryToday(db as never, U1, NOW);
     expect(today.newJobs.map((r) => r.title)).toEqual(["Job 6"]);
     expect(today.newJobsCount).toBe(1);
     await setWatch(db as never, acme, "none");

@@ -22,8 +22,8 @@ function loadMigrationStatements(): string[] {
     .filter((f) => /^\d+_.*\.sql$/.test(f))
     .sort();
   // 0000 schema, 0001 auth tables and grants, 0002 relaxed nullability, 0003 application posting link,
-  // 0004 account.password (Better Auth selects it on every sign-in lookup), 0005 stored decisions, 0006 apply-link check, 0007 skills
-  expect(files.length).toBe(8);
+  // 0004 account.password (Better Auth selects it on every sign-in lookup), 0005 stored decisions, 0006 apply-link check, 0007 skills, 0008 per-user profiles and applications
+  expect(files.length).toBe(9);
   const allSql = files.map((f) => fs.readFileSync(path.join(MIGRATION_DIR, f), "utf8")).join("\n");
   const stmts = allSql
     .split("--> statement-breakpoint")
@@ -75,7 +75,9 @@ const REQUIRED_INDEXES = [
   "application_events_dedupe_unique",
   "emails_received_at_idx",
   "emails_application_id_idx",
-  "profiles_single_active",
+  "profiles_user_single_active",
+  "profiles_user_version_unique",
+  "applications_user_posting_unique",
 ];
 
 async function applyMigration(db: PGlite, stmts: string[]) {

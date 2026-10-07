@@ -5,22 +5,33 @@ import { db } from "@/lib/db/client.v2";
 import { account, session, user, verification } from "@/db/v2/schema";
 
 /**
- * Better Auth on Postgres (schema `hunterrr`), locked to ONE person.
+ * Better Auth on Postgres (schema `hunterrr`), locked to an invite list.
  *
  * - Google sign-in only; email + password sign-up is disabled.
- * - Only the address in ALLOWED_EMAIL may sign in. The check runs in a `databaseHooks.user.create.before`
+ * - Only the addresses in ALLOWED_EMAILS (or the older single ALLOWED_EMAIL) may sign in. The check runs in a `databaseHooks.user.create.before`
  *   hook, which fires BEFORE the user row is written, so a rejected person leaves no user,
  *   account or session behind (an `after` hook would run once the rows already exist).
- * - Fails closed: if ALLOWED_EMAIL is not set, nobody can sign in.
+ * - Fails closed: if no address is configured, nobody can sign in.
+ * - The list is also checked on every request (middleware and `requireSession`), so taking an address off the list
+ *   locks that person out at once, even with a live session.
  */
 
-/** True only when `email` equals the configured allowed address (case-insensitive). */
+/** The invited addresses: ALLOWED_EMAILS (comma, space or newline separated), else the older single ALLOWED_EMAIL. */
+export function allowedEmailsFromEnv(env: Record<string, string | undefined> = process.env): string {
+  return env.ALLOWED_EMAILS?.trim() ? env.ALLOWED_EMAILS : (env.ALLOWED_EMAIL ?? "");
+}
+
+/**
+ * True only when `email` is one of the configured addresses (case-insensitive, exact: no wildcards and no domains).
+ * Nothing configured means nobody is allowed.
+ */
 export function isAllowedEmail(
   email: string | null | undefined,
-  allowed: string | undefined = process.env.ALLOWED_EMAIL,
+  allowed: string | undefined = allowedEmailsFromEnv(),
 ): boolean {
   if (!email || !allowed) return false;
-  return email.trim().toLowerCase() === allowed.trim().toLowerCase();
+  const wanted = email.trim().toLowerCase();
+  return allowed.split(/[\s,;]+/).map((a) => a.trim().toLowerCase()).filter(Boolean).includes(wanted);
 }
 
 export const authOptions = {

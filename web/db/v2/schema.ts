@@ -464,14 +464,17 @@ export const profiles = hunterrr.table(
     id: bigint("id", { mode: "number" })
       .primaryKey()
       .generatedAlwaysAsIdentity(),
-    version: integer("version").notNull().unique("profiles_version_unique"),
+    version: integer("version").notNull(),
+    /** The Better Auth user this profile belongs to (migration 0008); versions and the active profile are per user. */
+    userId: text("user_id").references((): AnyPgColumn => user.id, { onDelete: "cascade" }),
     data: jsonb("data").notNull(),
     embedding: halfvec("embedding", { dimensions: 384 }),
     isActive: boolean("is_active").notNull().default(false),
     createdAt: timestamptz("created_at").notNull().defaultNow(),
   },
   (table) => [
-    uniqueIndex("profiles_single_active").on(table.isActive).where(
+    uniqueIndex("profiles_user_version_unique").on(table.userId, table.version),
+    uniqueIndex("profiles_user_single_active").on(table.userId).where(
       sql`${table.isActive} = true`
     ),
   ]
@@ -531,6 +534,8 @@ export const applications = hunterrr.table("applications", {
   // Added in 0003: the posting the application came from (one application per posting) and notes.
   postingId: bigint("posting_id", { mode: "number" }).references(() => postings.id),
   notes: text("notes").notNull().default(""),
+  /** Whose application this is (migration 0008): saved and applied jobs are private to a user. */
+  userId: text("user_id").references((): AnyPgColumn => user.id, { onDelete: "cascade" }),
 });
 
 // ---------------------------------------------------------------------------
