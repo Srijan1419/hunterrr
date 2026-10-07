@@ -157,7 +157,7 @@ const LEVEL_UNSTATED = sql`(p.seniority IS NULL AND p.experience_min_years IS NU
  * copy. Only an identical copy hides another: same decided eligibility, work mode, level, countries and no flags,
  * so a US copy never hides an India copy of the same title.
  */
-const NEWEST_COPY = sql`(p.decision_key IS NULL OR p.company_id IS NULL OR NOT EXISTS (
+export const NEWEST_COPY = sql`(p.decision_key IS NULL OR p.company_id IS NULL OR NOT EXISTS (
   SELECT 1 FROM hunterrr.postings q
   WHERE q.company_id = p.company_id AND q.title_normalized = p.title_normalized AND q.status = 'open' AND q.id > p.id
     AND q.decision_key IS NOT NULL AND cardinality(q.flags) = 0

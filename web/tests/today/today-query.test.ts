@@ -71,6 +71,11 @@ beforeAll(async () => {
   await pg.query("UPDATE hunterrr.postings SET eligible_countries = ARRAY['IN','SG','VN'] WHERE source_id = '10'");
   await posting(11, { title: "Remote intern", seniority: "intern", first_seen_at: hoursAgo(1) });
 
+  // a new source's back catalogue: found an hour ago but posted a month ago; and a decided job with a hard flag
+  await posting(12, { title: "Old posting, new source", seniority: "entry", first_seen_at: hoursAgo(1), posted_at: new Date(NOW.getTime() - 30 * 86_400_000).toISOString() });
+  await posting(13, { title: "Flagged fresher", seniority: "entry", first_seen_at: hoursAgo(1), decision_key: "k13", india_eligible: "yes" });
+  await pg.query("UPDATE hunterrr.postings SET flags = ARRAY['fee_requested'] WHERE title = 'Flagged fresher'");
+
   await application("Due later today (IST)", "applied", "2026-10-06T17:00:00Z"); // 22:30 IST today
   await application("Overdue", "interview", "2026-10-03T05:00:00Z");
   await application("Due tomorrow (IST)", "applied", "2026-10-06T19:00:00Z"); // 00:30 IST tomorrow

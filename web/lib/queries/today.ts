@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { DEFAULT_COUNTRY, ENTRY_LEVEL, FEED_COLUMNS, NOT_IGNORED, remoteFor, toRow, type FeedRow } from "@/lib/queries/feed";
+import { DEFAULT_COUNTRY, ENTRY_LEVEL, FEED_COLUMNS, NEWEST_COPY, NO_HARD_FLAGS, NOT_IGNORED, remoteFor, toRow, type FeedRow } from "@/lib/queries/feed";
 import {
   APPLICATION_STATES,
   CLOSED_STATES,
@@ -13,12 +13,14 @@ import {
  * The Today screen: what is new, what needs a reply, where the pipeline stands.
  *
  * Only what the owner is looking for: remote, open to India, entry level, not from an ignored company.
- * "New" means first seen by Hunterrr in the last 24 hours (not the board's own posted date, which
- * can be weeks old for a job we only just found). There is no "since your last visit": the app
+ * "New" means first seen by Hunterrr in the last 24 hours and not posted more than 14 days ago (the board's date
+ * alone can be weeks old for a job we only just found, and a new source would otherwise flood the screen). There is no "since your last visit": the app
  * does not record visits, so it does not pretend to.
  */
 
 export const NEW_JOBS_SHOWN = 5;
+/** A job the board posted longer ago than this is not "new" even if we only just found it (a new source brings its back catalogue). */
+const NEW_JOB_MAX_AGE_DAYS = 14;
 const IST_OFFSET_MS = 330 * 60 * 1000;
 
 export type TodayData = {
@@ -39,7 +41,9 @@ export function endOfTodayIST(now: Date): Date {
 
 export async function queryToday(db: TrackerTx, now: Date = new Date()): Promise<TodayData> {
   const since = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
-  const fresh = sql`p.status = 'open' AND ${NOT_IGNORED} AND ${ENTRY_LEVEL} AND ${remoteFor(DEFAULT_COUNTRY)} AND p.first_seen_at >= ${since}`;
+  const stale = new Date(now.getTime() - NEW_JOB_MAX_AGE_DAYS * 24 * 60 * 60 * 1000).toISOString();
+  const fresh = sql`p.status = 'open' AND ${NOT_IGNORED} AND ${ENTRY_LEVEL} AND ${remoteFor(DEFAULT_COUNTRY)} AND p.first_seen_at >= ${since}
+    AND ${NO_HARD_FLAGS} AND ${NEWEST_COPY} AND (p.posted_at IS NULL OR p.posted_at >= ${stale})`;
 
   const [list, count, followUps, states] = await Promise.all([
     db.execute(sql`
