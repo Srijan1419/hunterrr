@@ -36,6 +36,15 @@ def row(**fields):
     return P.to_posting_row(pending(), ex, board_id=None, company_id=None, now=NOW)
 
 
+def test_a_posted_date_in_the_future_is_clamped_to_now_and_a_past_one_is_kept():
+    from etl.core.types import Field
+
+    future = Field(value=datetime(2030, 1, 1, tzinfo=timezone.utc), provenance="source", evidence="x")
+    past = Field(value=datetime(2026, 9, 1, tzinfo=timezone.utc), provenance="source", evidence="x")
+    assert row(posted_at=future)["posted_at"] == NOW
+    assert row(posted_at=past)["posted_at"] == datetime(2026, 9, 1, tzinfo=timezone.utc)
+
+
 # ---- pure mapping ---------------------------------------------------------------------------
 def test_source_id_split():
     assert P.split_source_id("acme/123") == "123"

@@ -47,6 +47,8 @@ beforeAll(async () => {
   await add(10, "Not Open", { decision_key: "k10", india_eligible: "no", employment_kind: "full_time" });
   await add(11, "Expired Role", { decision_key: "k11", ...yes, deadline_at: new Date(Date.now() - 86_400_000).toISOString() });
   await add(12, "Open Deadline Role", { decision_key: "k12", ...yes, deadline_at: new Date(Date.now() + 86_400_000).toISOString() });
+  await add(13, "Two Openings", { decision_key: "k13", ...yes, description_md: "Team A: payments support" });
+  await add(14, "Two Openings", { decision_key: "k14", ...yes, description_md: "Team B: onboarding support" });
   await add(7, "Tester", { eligibility_scope: "countries", eligible_countries: ["IN"] });                                                       // undecided copies are never collapsed
   await add(8, "Tester", { eligibility_scope: "countries", eligible_countries: ["IN"] });
 }, 90_000);
@@ -80,6 +82,13 @@ describe("unconfirmed view", () => {
     const view = await queryFeed(db as never, { remote: true, country: "IN", entryLevel: true, unconfirmed: true });
     expect(view.rows.map((x) => x.title)).toEqual(["Maybe Open"]);
     expect(view.unconfirmed).toBe(0);
+  });
+});
+
+describe("two real openings with the same title", () => {
+  it("both show when their descriptions differ", async () => {
+    const r = await queryFeed(db as never, { remote: true, country: "IN", entryLevel: true });
+    expect(r.rows.filter((x) => x.title === "Two Openings")).toHaveLength(2);
   });
 });
 

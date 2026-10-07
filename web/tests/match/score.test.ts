@@ -96,18 +96,24 @@ describe("scoreMatch with stored skills (matching v2)", () => {
   });
 
   it("covering 80% of the weighted ask is full credit; nothing covered is zero", () => {
-    const all = scoreMatch(python, withSkills([{ skill: "sql", importance: "must" }, { skill: "python", importance: "must" }]));
-    expect(part(all, "skills")?.points).toBe(40);
-    const none = scoreMatch(python, withSkills([{ skill: "tableau", importance: "must" }, { skill: "power-bi", importance: "must" }]));
+    const all = scoreMatch(python, withSkills([{ skill: "sql", importance: "must" }, { skill: "python", importance: "must" }, { skill: "excel", importance: "nice" }]));
+    expect(part(all, "skills")?.points).toBeGreaterThan(30);
+    const none = scoreMatch(python, withSkills([{ skill: "tableau", importance: "must" }, { skill: "power-bi", importance: "must" }, { skill: "looker", importance: "must" }]));
     expect(part(none, "skills")?.points).toBe(0);
   });
 
   it("a nice-to-have counts less than a must-have, and everyday skills count least", () => {
-    const musts = scoreMatch(python, withSkills([{ skill: "sql", importance: "must" }, { skill: "tableau", importance: "must" }]));
-    const nice = scoreMatch(python, withSkills([{ skill: "sql", importance: "must" }, { skill: "tableau", importance: "nice" }]));
+    const musts = scoreMatch(python, withSkills([{ skill: "sql", importance: "must" }, { skill: "tableau", importance: "must" }, { skill: "looker", importance: "must" }]));
+    const nice = scoreMatch(python, withSkills([{ skill: "sql", importance: "must" }, { skill: "tableau", importance: "nice" }, { skill: "looker", importance: "nice" }]));
     expect(part(nice, "skills")!.points).toBeGreaterThan(part(musts, "skills")!.points);
-    const soft = scoreMatch(python, withSkills([{ skill: "sql", importance: "must" }, { skill: "communication", importance: "must" }]));
+    const soft = scoreMatch(python, withSkills([{ skill: "sql", importance: "must" }, { skill: "communication", importance: "must" }, { skill: "teamwork", importance: "must" }]));
     expect(part(soft, "skills")!.points).toBeGreaterThanOrEqual(part(musts, "skills")!.points);
+  });
+
+  it("one or two named skills is too thin to judge: the part is left out and said so", () => {
+    const r = scoreMatch(python, withSkills([{ skill: "sql", importance: "must" }, { skill: "python", importance: "must" }]));
+    expect(part(r, "skills")).toBeUndefined();
+    expect(r.flags).toContain("Too few skills named to judge");
   });
 
   it("without stored skills it falls back to your skills found in the text", () => {
@@ -135,14 +141,14 @@ describe("scoreMatch with stored skills (matching v2)", () => {
   });
 
   it("buckets: strong needs a high score at a reachable level; a stretch is worth a shot; blocked is other", () => {
-    const strong = scoreMatch(python, withSkills([{ skill: "sql", importance: "must" }, { skill: "python", importance: "must" }], { experienceMin: 1 }));
+    const strong = scoreMatch(python, withSkills([{ skill: "sql", importance: "must" }, { skill: "python", importance: "must" }, { skill: "excel", importance: "must" }], { experienceMin: 1 }));
     expect(strong.score).toBeGreaterThanOrEqual(65);
     expect(strong.bucket).toBe("strong");
-    const stretch = scoreMatch(python, withSkills([{ skill: "sql", importance: "must" }, { skill: "python", importance: "must" }], { experienceMin: 2 }));
+    const stretch = scoreMatch(python, withSkills([{ skill: "sql", importance: "must" }, { skill: "python", importance: "must" }, { skill: "excel", importance: "must" }], { experienceMin: 2 }));
     expect(stretch.bucket).toBe("worth");   // asks 2 years, you have 0.5: not "strong", still worth a shot
     const blocked = scoreMatch(python, withSkills([{ skill: "sql", importance: "must" }], { seniority: "senior" }));
     expect(blocked.bucket).toBe("other");
-    const poor = scoreMatch(python, withSkills([{ skill: "tableau", importance: "must" }], { title: "Chef", experienceMin: 5 }));
+    const poor = scoreMatch(python, withSkills([{ skill: "tableau", importance: "must" }, { skill: "looker", importance: "must" }, { skill: "power-bi", importance: "must" }], { title: "Chef", experienceMin: 5 }));
     expect(poor.bucket).toBe("other");
   });
 });

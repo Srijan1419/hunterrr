@@ -254,6 +254,9 @@ def to_posting_row(
             })
 
     row["posted_at"], row["posted_at_provenance"] = _aware(fields.get("posted_at"))
+    # A date in the future (a clock-skewed board, a typo) would float the job to the top of every list: clamp to now.
+    if row["posted_at"] is not None and row["posted_at"] > now:
+        row["posted_at"] = now
     row["deadline_at"], row["deadline_at_provenance"] = _aware(fields.get("deadline_at"))
     row["joining"], row["joining_provenance"] = _json_field(fields.get("joining"))
     if row["pay_min"] is None and row["pay_max"] is None:

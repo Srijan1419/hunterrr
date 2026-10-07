@@ -43,6 +43,8 @@ const IMPORTANCE = { must: 1, nice: 0.4 } as const;
 const GENERAL = 0.25;
 /** Covering this share of what a posting asks is full credit (entry-level postings list more than anyone has). */
 const FULL_CREDIT = 0.8;
+/** A posting must name at least this many skills before the skills part judges it (the honesty rule). */
+const MIN_SKILLS_TO_JUDGE = 3;
 const STRONG_SCORE = 65;
 const WORTH_SCORE = 40;
 const SENIOR = new Set(["senior", "lead", "staff", "principal", "director"]);
@@ -77,7 +79,10 @@ export function scoreMatch(profile: Profile, job: MatchInput): MatchResult {
   // fully, nice-to-have less, everyday skills least) you cover. Otherwise your skills are looked up in its text.
   const mine = profile.experienceYears ?? 0;
   const myIds = new Set(skillIdsFromText(profile.skills));
-  if (profile.skills.length > 0 && job.skills && job.skills.length > 0 && myIds.size > 0) {
+  const thin = !!job.skills && job.skills.length > 0 && job.skills.length < MIN_SKILLS_TO_JUDGE;
+  if (profile.skills.length > 0 && thin) {
+    flags.push("Too few skills named to judge");   // one or two named skills is thin evidence: left out, never guessed
+  } else if (profile.skills.length > 0 && job.skills && job.skills.length >= MIN_SKILLS_TO_JUDGE && myIds.size > 0) {
     const weight = (s: { skill: string; importance: "must" | "nice" }) => IMPORTANCE[s.importance] * (isGeneralSkill(s.skill) ? GENERAL : 1);
     const total = job.skills.reduce((a, s) => a + weight(s), 0);
     const got = job.skills.filter((s) => myIds.has(s.skill));

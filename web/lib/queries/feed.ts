@@ -165,8 +165,9 @@ const LEVEL_UNSTATED = sql`(p.seniority IS NULL AND p.experience_min_years IS NU
 
 /**
  * The same job listed twice (same company and title, e.g. once per board or re-posted) shows once: the newest open
- * copy. Only an identical copy hides another: same decided eligibility, work mode, level, countries and no flags,
- * so a US copy never hides an India copy of the same title.
+ * copy. Only an identical copy hides another: same decided eligibility, work mode, level, countries, no flags and the
+ * same description text, so a US copy never hides an India copy and two genuinely different openings with the same
+ * title both show.
  */
 export const NEWEST_COPY = sql`(p.decision_key IS NULL OR p.company_id IS NULL OR NOT EXISTS (
   SELECT 1 FROM hunterrr.postings q
@@ -177,7 +178,8 @@ export const NEWEST_COPY = sql`(p.decision_key IS NULL OR p.company_id IS NULL O
     AND q.eligible_countries IS NOT DISTINCT FROM p.eligible_countries
     AND q.seniority IS NOT DISTINCT FROM p.seniority
     AND q.experience_min_years IS NOT DISTINCT FROM p.experience_min_years
-    AND q.employment_kind IS NOT DISTINCT FROM p.employment_kind))`;
+    AND q.employment_kind IS NOT DISTINCT FROM p.employment_kind
+    AND md5(left(coalesce(q.description_md, ''), 2000)) = md5(left(coalesce(p.description_md, ''), 2000))))`;
 
 /** The WHERE clause of the feed for these filters (shared with the skill-gap view). */
 export function feedWhere(f: FeedFilters): SQL {

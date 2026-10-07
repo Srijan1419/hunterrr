@@ -52,9 +52,9 @@ beforeAll(async () => {
   await add(1, "Data Analyst", { ...yes, decision_key: "k1" });
   await add(2, "Report Builder", { ...yes, decision_key: "k2" });
   await add(3, "Chef de Partie", { ...yes, decision_key: "k3", role_family: "operations" });
-  await skills("Data Analyst", [["sql", "must"], ["python", "must"]]);
+  await skills("Data Analyst", [["sql", "must"], ["python", "must"], ["excel", "nice"]]);
   await skills("Report Builder", [["sql", "must"], ["tableau", "must"], ["power-bi", "must"]]);
-  await skills("Chef de Partie", [["tableau", "must"]]);
+  await skills("Chef de Partie", [["tableau", "must"], ["looker", "must"], ["power-bi", "must"]]);
 }, 90_000);
 
 describe("fit buckets", () => {
@@ -88,7 +88,7 @@ describe("skill gap", () => {
     expect(gap.gaps.map((g) => [g.label, g.jobs])).toEqual([["Power BI", 1], ["Tableau", 1]]);
   });
   it("says nothing is missing when you cover everything asked", async () => {
-    const all = ProfileSchema.parse({ ...me, skills: ["SQL", "Python", "Tableau", "Power BI"] });
+    const all = ProfileSchema.parse({ ...me, skills: ["SQL", "Python", "Tableau", "Power BI", "Excel", "Looker"] });
     expect((await querySkillGap(db as never, all)).gaps).toEqual([]);
   });
 });
